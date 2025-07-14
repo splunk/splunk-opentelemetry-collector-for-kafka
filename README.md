@@ -1,0 +1,1 @@
+# splunk-opentelemetry-collector-for-kafka-
