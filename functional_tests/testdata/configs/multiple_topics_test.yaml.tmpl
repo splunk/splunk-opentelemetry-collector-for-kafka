@@ -1,0 +1,42 @@
+---
+receivers:
+  kafka/{{ .KafkaTopicName1 }}:
+    brokers: [ {{ .KafkaBrokerAddress }} ]
+    topic: {{ .KafkaTopicName1 }}
+    encoding: "text"
+  kafka/{{ .KafkaTopicName2 }}:
+    brokers: [ {{ .KafkaBrokerAddress }} ]
+    topic: {{ .KafkaTopicName2 }}
+    encoding: "text"
+
+processors:
+  batch:
+
+exporters:
+  splunk_hec/{{ .KafkaTopicName1 }}:
+    token: {{ .SplunkHECToken }}
+    endpoint: {{ .SplunkHECEndpoint }}
+    tls:
+      insecure_skip_verify: true
+    source: {{ .Source1 }}
+    sourcetype: {{ .Sourcetype }}
+    index: {{ .Index }}
+  splunk_hec/{{ .KafkaTopicName2 }}:
+    token: {{ .SplunkHECToken }}
+    endpoint: {{ .SplunkHECEndpoint }}
+    tls:
+      insecure_skip_verify: true
+    source: {{ .Source2 }}
+    sourcetype: {{ .Sourcetype }}
+    index: {{ .Index }}
+
+service:
+  pipelines:
+    logs/1:
+      receivers: [ kafka/{{ .KafkaTopicName1 }} ]
+      processors: [ batch ]
+      exporters: [ splunk_hec/{{ .KafkaTopicName1 }} ]
+    logs/2:
+      receivers: [ kafka/{{ .KafkaTopicName2 }} ]
+      processors: [ batch ]
+      exporters: [ splunk_hec/{{ .KafkaTopicName2 }} ]
