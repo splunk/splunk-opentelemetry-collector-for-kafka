@@ -1,0 +1,34 @@
+---
+receivers:
+  kafka:
+    brokers: [ {{ .KafkaBrokerAddress }} ]
+    topic: {{ .KafkaTopicName }}
+    encoding: "text"
+    header_extraction:
+      extract_headers: true
+      headers: [ index, source, sourcetype, host, {{ .CustomHeader }} ]
+
+processors:
+  batch:
+
+exporters:
+  splunk_hec:
+    token: {{ .SplunkHECToken }}
+    endpoint: {{ .SplunkHECEndpoint }}
+    tls:
+      insecure_skip_verify: true
+    source: {{ .Source }}
+    sourcetype: {{ .Sourcetype }}
+    index: {{ .Index }}
+    otel_attrs_to_hec_metadata:
+      index: kafka.header.index
+      source: kafka.header.source
+      sourcetype: kafka.header.sourcetype
+      host: kafka.header.host
+
+service:
+  pipelines:
+    logs:
+      receivers: [ kafka ]
+      processors: [ batch ]
+      exporters: [ splunk_hec ]

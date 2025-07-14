@@ -1,0 +1,32 @@
+---
+receivers:
+  kafka:
+    brokers: [ {{ .KafkaBrokerAddress }} ]
+    topic: {{ .KafkaTopicName }}
+    encoding: "text"
+
+processors:
+  transform:
+    error_mode: ignore
+    log_statements:
+      - set(log.attributes["extracted_ts"], ExtractPatterns(log.body, "{{ .ExtractPattern }}"))
+      - set(log.time, Time(log.attributes["extracted_ts"]["timestamp"], "{{ .FormatStr }}", "UTC"))
+      - delete_key(log.attributes, "extracted_ts")
+  batch:
+
+exporters:
+  splunk_hec:
+    token: {{ .SplunkHECToken }}
+    endpoint: {{ .SplunkHECEndpoint }}
+    tls:
+      insecure_skip_verify: true
+    source: {{ .Source }}
+    sourcetype: {{ .Sourcetype }}
+    index: {{ .Index }}
+
+service:
+  pipelines:
+    logs:
+      receivers: [ kafka ]
+      processors: [ batch, transform ]
+      exporters: [ splunk_hec ]

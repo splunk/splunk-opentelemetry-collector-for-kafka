@@ -1,0 +1,7 @@
+export CI_SPLUNK_USERNAME=admin
+export CI_SPLUNK_PASSWORD=
+export CI_SPLUNK_HOST=
+export CI_SPLUNK_MGMT_PORT=8089
+export CI_SPLUNK_HEC_TOKEN=
+export CI_KAFKA_BROKER_ADDRESS=
+export CI_OTEL_BINARY_FILE="otelcol_darwin_arm64"
