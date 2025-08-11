@@ -1,6 +1,6 @@
 # SOC4Kafka Health Dashboard
 
-The SOC4Kafka dashboard is a preconfigured Splunk dashboard that allows users to monitor key metrics in their Kafka + SOC4Kafka + Splunk environment. It collects data from all three sources to provide a comprehensive overview of the performance and health of the environment.
+The SOC4Kafka dashboard is a preconfigured Splunk dashboard that allows users to monitor key metrics in their Kafka environment. It collects data from all three sources to provide a comprehensive overview of the performance and health of the environment.
 
 ## Overview
 
