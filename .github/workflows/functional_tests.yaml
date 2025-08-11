@@ -113,12 +113,12 @@ jobs:
 
 
       - name: Download Splunk Otel Collector Binary
-        working-directory: functional_tests
+        working-directory: tests
         run: |
           wget -q https://github.com/signalfx/splunk-otel-collector/releases/latest/download/otelcol_linux_amd64
           chmod +x otelcol_linux_amd64
 
       - name: Run Functional Tests
-        working-directory: functional_tests
+        working-directory: tests
         run: |
           go test -v -timeout 10m

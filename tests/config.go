@@ -1,4 +1,4 @@
-package functional_tests
+package tests
 
 import (
 	"bytes"

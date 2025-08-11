@@ -1,12 +1,13 @@
-package functional_tests
+package tests
 
 import (
 	"fmt"
+	"testing"
+	"time"
+
 	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"testing"
-	"time"
 )
 
 const (
@@ -267,6 +268,6 @@ func testScenarioTimestampExtraction(t *testing.T) {
 		assert.Equal(t, timestamp, eventTime, "Event time does not match timestamp in the event body")
 
 		return true
-	}, 30*time.Second, 5*time.Second, "Search query: \n\"%s\"\n returned NO events for topic %s", searchQuery, topicName)
+	}, testCaseDuration, testCaseTick, "Search query: \n\"%s\"\n returned NO events for topic %s", searchQuery, topicName)
 	defer stopOTelKafkaConnector(t, connectorHandler)
 }

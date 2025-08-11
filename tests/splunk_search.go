@@ -1,10 +1,9 @@
-package functional_tests
+package tests
 
 import (
 	"crypto/tls"
 	"encoding/json"
 	"fmt"
-	"github.com/stretchr/testify/require"
 	"io"
 	"log"
 	"net/http"
@@ -14,6 +13,8 @@ import (
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/require"
 )
 
 const (
@@ -42,15 +43,42 @@ func checkEventsFromSplunk(t *testing.T, searchQuery string, startTime string, e
 		time.Sleep(1 * time.Second)
 	}
 	// get events
-	results := getSplunkSearchResults(t, user, password, baseURL, jobID)
+	reqUrl := fmt.Sprintf("%s/services/search/v2/jobs/%s/events?output_mode=json", baseURL, jobID)
+	results := getSplunkSearchResults[any](t, user, password, reqUrl)
 	return results
 }
 
-func getSplunkSearchResults(t *testing.T, user string, password string, baseURL string, jobID string) []any {
+func checkStatisticsFromSplunk[V any](t *testing.T, searchQuery string, startTime string, endTimeOptional ...string) []V {
 	logger := log.New(os.Stdout, "", log.LstdFlags)
-	eventURL := fmt.Sprintf("%s/services/search/v2/jobs/%s/events?output_mode=json", baseURL, jobID)
-	logger.Println("URL: " + eventURL)
-	reqEvents, err := http.NewRequest("GET", eventURL, nil)
+	logger.Println("-->> Splunk Search: checking events in Splunk --")
+	user := GetConfigVariable("USER")
+	password := GetConfigVariable("PASSWORD")
+	baseURL := "https://" + GetConfigVariable("HOST") + ":" + GetConfigVariable("MANAGEMENT_PORT")
+	endTime := "now"
+	if len(endTimeOptional) > 0 {
+		endTime = endTimeOptional[0]
+	}
+	// post search
+	jobID := postSearchRequest(t, user, password, baseURL, searchQuery, startTime, endTime)
+	// wait for search status done == true
+	for i := 0; i < MAX_SEARCH_RETRIES; i++ { // limit loop - not allowing infinite looping
+		logger.Println("Checking Search Status ...")
+		isDone := checkSearchJobStatusCode(t, user, password, baseURL, jobID)
+		if isDone {
+			break
+		}
+		time.Sleep(1 * time.Second)
+	}
+	// get events
+	reqUrl := fmt.Sprintf("%s/services/search/v2/jobs/%s/results?output_mode=json", baseURL, jobID)
+	results := getSplunkSearchResults[V](t, user, password, reqUrl)
+	return results
+}
+
+func getSplunkSearchResults[V any](t *testing.T, user string, password string, reqUrl string) []V {
+	logger := log.New(os.Stdout, "", log.LstdFlags)
+	logger.Println("URL: " + reqUrl)
+	reqEvents, err := http.NewRequest("GET", reqUrl, nil)
 	require.NoError(t, err, "Error while preparing GET request to get search results")
 	tr := &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
@@ -69,7 +97,18 @@ func getSplunkSearchResults(t *testing.T, user string, password string, baseURL 
 	err = json.Unmarshal(bodyEvents, &jsonResponseEvents)
 	require.NoError(t, err, "Error while unmarshalling response body to JSON")
 
-	results := jsonResponseEvents["results"].([]any)
+	rawResults := jsonResponseEvents["results"].([]any)
+
+	var results []V
+	for _, raw := range rawResults {
+		b, err := json.Marshal(raw)
+		require.NoError(t, err, "Error while marshalling result item")
+		var v V
+		err = json.Unmarshal(b, &v)
+		require.NoError(t, err, "Error while unmarshalling result item to target type")
+		results = append(results, v)
+	}
+
 	return results
 }
 

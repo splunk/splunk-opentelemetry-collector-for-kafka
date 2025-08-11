@@ -1,17 +1,20 @@
-package functional_tests
+package tests
 
 import (
 	"fmt"
-	"github.com/stretchr/testify/require"
+	"os"
 	"os/exec"
 	"syscall"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/require"
 )
 
 func stopOTelKafkaConnector(t *testing.T, cmd *exec.Cmd) {
 	// Kill the process
 	err := cmd.Process.Signal(syscall.SIGTERM)
+
 	require.NoError(t, err)
 
 	done := make(chan error)
@@ -34,7 +37,11 @@ func startOTelKafkaConnector(t *testing.T, configName string, configFilesDir str
 	// Start the process
 	cmd := exec.Command(fmt.Sprintf("./%s", GetConfigVariable("OTEL_BINARY_FILE")), "--config", fmt.Sprintf("%s/%s", configFilesDir, configName))
 
-	err := cmd.Start()
+	outFile, err := os.Create("output.log")
+	errFile, err := os.Create("error.log")
+	cmd.Stdout = outFile
+	cmd.Stderr = errFile
+	err = cmd.Start()
 	require.NoError(t, err)
 
 	fmt.Printf("Process started with PID: %d\n", cmd.Process.Pid)
