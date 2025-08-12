@@ -145,8 +145,6 @@ exporters:
   splunk_hec/metrics:
     token: <hec-token>
     endpoint: http://<splunk-address>:8088/services/collector
-    tls:
-      insecure_skip_verify: true
     source: <source>
     sourcetype: <sourcetype>
     index: <metrics-index>
@@ -176,17 +174,9 @@ service:
 service:
   pipelines:
     metrics:
-      receivers: [ prometheus ]
+      receivers: [ prometheus, hostmetrics, kafkametrics ]
       processors: [resourcedetection]
       exporters: [ splunk_hec/metrics ]
-    metrics/2:
-      receivers: [hostmetrics]
-      processors: [resourcedetection]
-      exporters: [splunk_hec/metrics]
-    metrics/3:
-      receivers: [kafkametrics]
-      processors: [resourcedetection]
-      exporters: [splunk_hec/metrics]
 ```
 
    Configure other receivers & exporters as normal.
