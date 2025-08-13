@@ -54,7 +54,7 @@ func testBasicScenarioWithSingleTopic(t *testing.T) {
 	searchQuery := eventSearchQueryString + "index=" + index + " sourcetype=" + sourcetype + " source=" + source
 	startTime := "-1m@m"
 	require.Eventually(t, func() bool {
-		events := checkEventsFromSplunk(t, searchQuery, startTime)
+		events := checkEventsFromSplunk[any](t, searchQuery, startTime)
 		if len(events) < 1 {
 			return false
 		}
@@ -102,7 +102,7 @@ func testScenarioWithMultipleTopic(t *testing.T) {
 	searchQuery := eventSearchQueryString + "index=" + index + " sourcetype=" + sourcetype + " source=" + sourceSuf + "*"
 	startTime := "-1m@m"
 	require.Eventually(t, func() bool {
-		events := checkEventsFromSplunk(t, searchQuery, startTime)
+		events := checkEventsFromSplunk[any](t, searchQuery, startTime)
 		if len(events) < 1 {
 			return false
 		}
@@ -197,7 +197,7 @@ func testScenarioWithCustomHeaders(t *testing.T) {
 		sourceHeaderVal + " host=" + hostHeaderVal + " kafka.header." + headerKey + "=" + headerVal
 	startTime := "-1m@m"
 	require.Eventually(t, func() bool {
-		events := checkEventsFromSplunk(t, searchQuery, startTime)
+		events := checkEventsFromSplunk[any](t, searchQuery, startTime)
 		if len(events) < 1 {
 			return false
 		}
@@ -210,7 +210,7 @@ func testScenarioWithCustomHeaders(t *testing.T) {
 
 	// Check if there are no events with the original source, index, and sourcetype
 	searchQuery = eventSearchQueryString + "index=" + index + " sourcetype=" + sourcetype + " source=" + source
-	events := checkEventsFromSplunk(t, searchQuery, startTime)
+	events := checkEventsFromSplunk[any](t, searchQuery, startTime)
 	assert.Equal(t, 0, len(events), "Expected zero events for topic %s but got %d", topicName, len(events))
 
 	defer stopOTelKafkaConnector(t, connectorHandler)
@@ -253,7 +253,7 @@ func testScenarioTimestampExtraction(t *testing.T) {
 	startTime := "2020-01-01T11:55:00"
 	endTime := "2020-01-01T12:05:00"
 	require.Eventually(t, func() bool {
-		events := checkEventsFromSplunk(t, searchQuery, startTime, endTime)
+		events := checkEventsFromSplunk[any](t, searchQuery, startTime, endTime)
 		if len(events) < 1 {
 			return false
 		}

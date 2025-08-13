@@ -21,34 +21,15 @@ const (
 	MAX_SEARCH_RETRIES = 20 // maximum number of retries for checking search status
 )
 
-func checkEventsFromSplunk(t *testing.T, searchQuery string, startTime string, endTimeOptional ...string) []any {
-	logger := log.New(os.Stdout, "", log.LstdFlags)
-	logger.Println("-->> Splunk Search: checking events in Splunk --")
-	user := GetConfigVariable("USER")
-	password := GetConfigVariable("PASSWORD")
-	baseURL := "https://" + GetConfigVariable("HOST") + ":" + GetConfigVariable("MANAGEMENT_PORT")
-	endTime := "now"
-	if len(endTimeOptional) > 0 {
-		endTime = endTimeOptional[0]
-	}
-	// post search
-	jobID := postSearchRequest(t, user, password, baseURL, searchQuery, startTime, endTime)
-	// wait for search status done == true
-	for i := 0; i < MAX_SEARCH_RETRIES; i++ { // limit loop - not allowing infinite looping
-		logger.Println("Checking Search Status ...")
-		isDone := checkSearchJobStatusCode(t, user, password, baseURL, jobID)
-		if isDone {
-			break
-		}
-		time.Sleep(1 * time.Second)
-	}
-	// get events
-	reqUrl := fmt.Sprintf("%s/services/search/v2/jobs/%s/events?output_mode=json", baseURL, jobID)
-	results := getSplunkSearchResults[any](t, user, password, reqUrl)
-	return results
+func checkEventsFromSplunk[V any](t *testing.T, searchQuery string, startTime string, endTimeOptional ...string) []V {
+	return getDataFromSplunk[V](t, searchQuery, startTime, "events", endTimeOptional...)
 }
 
 func checkStatisticsFromSplunk[V any](t *testing.T, searchQuery string, startTime string, endTimeOptional ...string) []V {
+	return getDataFromSplunk[V](t, searchQuery, startTime, "results", endTimeOptional...)
+}
+
+func getDataFromSplunk[V any](t *testing.T, searchQuery string, startTime string, dataType string, endTimeOptional ...string) []V {
 	logger := log.New(os.Stdout, "", log.LstdFlags)
 	logger.Println("-->> Splunk Search: checking events in Splunk --")
 	user := GetConfigVariable("USER")
@@ -70,7 +51,7 @@ func checkStatisticsFromSplunk[V any](t *testing.T, searchQuery string, startTim
 		time.Sleep(1 * time.Second)
 	}
 	// get events
-	reqUrl := fmt.Sprintf("%s/services/search/v2/jobs/%s/results?output_mode=json", baseURL, jobID)
+	reqUrl := fmt.Sprintf("%s/services/search/v2/jobs/%s/%s?output_mode=json", baseURL, jobID, dataType)
 	results := getSplunkSearchResults[V](t, user, password, reqUrl)
 	return results
 }

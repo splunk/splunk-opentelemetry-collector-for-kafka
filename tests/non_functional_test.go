@@ -2,6 +2,7 @@ package tests
 
 import (
 	"fmt"
+	"log"
 	"strconv"
 	"testing"
 	"time"
@@ -11,8 +12,9 @@ import (
 )
 
 const (
-	splunkWaitTime     = time.Second * 60
-	minIngestionRateMb = 1
+	splunkWaitTime  = time.Second * 60
+	minIngestRateMb = 1
+	minIngestLag    = 1
 )
 
 type Statistic struct {
@@ -23,8 +25,8 @@ type Statistic struct {
 
 func TestNonFunctional(t *testing.T) {
 	topicName := "kafka-perf-test"
-	index := "kafka1"
-	sourcetype := "otel"
+	index := "kafka"
+	sourcetype := "otel-perf-tests"
 	source := "otel"
 	configFileTemplate := "basic_test.yaml.tmpl"
 	numOfMsg := 1_000_000
@@ -34,7 +36,7 @@ func TestNonFunctional(t *testing.T) {
 		"KafkaBrokerAddress": GetConfigVariable("KAFKA_BROKER_ADDRESS"),
 		"KafkaTopicName":     topicName,
 		"SplunkHECToken":     GetConfigVariable("HEC_TOKEN"),
-		"SplunkHECEndpoint":  fmt.Sprintf("http://%s:8088/services/collector", GetConfigVariable("HOST")),
+		"SplunkHECEndpoint":  fmt.Sprintf("https://%s:8088/services/collector", GetConfigVariable("HOST")),
 		"Source":             source,
 		"Index":              index,
 		"Sourcetype":         sourcetype,
@@ -46,13 +48,13 @@ func TestNonFunctional(t *testing.T) {
 
 	addKafkaTopic(t, topicName, 1, 1)
 	firstMsgSendTime, lstMsgSendTime := sendRandomizedMessages(topicName, numOfMsg, msgSize)
-	fmt.Printf("It took kafka client %f seconds to send all events", lstMsgSendTime.Sub(firstMsgSendTime).Seconds())
+	fmt.Printf("It took kafka client %f seconds to send all events\n", lstMsgSendTime.Sub(firstMsgSendTime).Seconds())
 
-	fmt.Printf("Waiting %f seconds for splunk to ingest all data", splunkWaitTime.Seconds())
+	fmt.Printf("Waiting %f seconds for splunk to ingest all data\n", splunkWaitTime.Seconds())
 	time.Sleep(splunkWaitTime)
-	fmt.Printf("Finished waiting")
+	fmt.Printf("Finished waiting\n")
 
-	searchQuery := eventSearchQueryString + "index=*" +
+	searchQuery := eventSearchQueryString + "index=" + index + " source=" + source + " sourcetype=" + sourcetype +
 		" | stats earliest(_time) as earliest_time, latest(_time) as latest_time, count as total_events"
 	startTime := "-2m@m"
 	require.Eventually(t, func() bool {
@@ -61,26 +63,27 @@ func TestNonFunctional(t *testing.T) {
 			return false
 		}
 		stats := statistics[0]
-		totalEvents, _ := strconv.Atoi(stats.TotalEvents)
-		fmt.Printf("\n %s %s %s \n", statistics[0].EarliestTime, statistics[0].LatestTime, statistics[0].TotalEvents)
-		assert.Equal(t, numOfMsg, totalEvents, "Expected %d events, but got %d", topicName, totalEvents)
+		totalEvents, err := strconv.Atoi(stats.TotalEvents)
+		assert.Equal(t, numOfMsg, totalEvents, "Expected %d events, but got %d", numOfMsg, totalEvents)
 
 		// time
-		earliestTime, _ := strconv.ParseFloat(stats.EarliestTime, 64)
+		earliestTime, err := strconv.ParseFloat(stats.EarliestTime, 64)
 
-		latestTime, _ := strconv.ParseFloat(stats.LatestTime, 64)
+		latestTime, err := strconv.ParseFloat(stats.LatestTime, 64)
+
+		if err != nil {
+			log.Fatalf("Couldn't parse data from job request: %s", err.Error())
+		}
 
 		ingestionTime := latestTime - earliestTime
 		dataVolumeMb := float64((numOfMsg * msgSize) / (1024 * 1024))
 		ingestionRateMb := dataVolumeMb / ingestionTime
-		fmt.Printf("Splunk igested %d events of size %d in %f seconds. Which results in %f mb/s ingestion rate", totalEvents, msgSize, ingestionTime, ingestionRateMb)
-		assert.Equal(t, minIngestionRateMb, ingestionRateMb, "Splunk ingestion rate of %f didn't satisfied minimum requirement of %f", ingestionRateMb, minIngestionRateMb)
+		fmt.Printf("Splunk igested %d events of size %d in %f seconds. Which results in %f mb/s ingestion rate\n", totalEvents, msgSize, ingestionTime, ingestionRateMb)
+		assert.GreaterOrEqual(t, ingestionRateMb, float64(minIngestRateMb), "Splunk ingestion rate of %f didn't satisfied minimum requirement of %d", ingestionRateMb, minIngestRateMb)
 
-		fmt.Printf("\n Ingest time was: %f \n", latestTime-earliestTime)
 		ingestLag := earliestTime - float64(firstMsgSendTime.Unix())
-		fmt.Printf("Ingest lag %f", ingestLag)
+		fmt.Printf("Ingest lag: %f\n", ingestLag)
+		assert.LessOrEqual(t, ingestLag, float64(minIngestLag), "Ingest lag of %f seconds exceeded maximum value of %d second\n", ingestLag, minIngestLag)
 		return true
-	}, testCaseDuration, testCaseTick, "Search query: \n\"%s\"\n returned NO events for topic %s", searchQuery, topicName)
-
-	fmt.Printf("End of test")
+	}, testCaseDuration, testCaseTick, "Search query: \n\"%s\"\n returned NO events", searchQuery)
 }

@@ -118,7 +118,7 @@ jobs:
           wget -q https://github.com/signalfx/splunk-otel-collector/releases/latest/download/otelcol_linux_amd64
           chmod +x otelcol_linux_amd64
 
-      - name: Run Functional Tests
+      - name: Run Tests
         working-directory: tests
         run: |
           go test -v -timeout 10m

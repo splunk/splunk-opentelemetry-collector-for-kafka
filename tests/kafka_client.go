@@ -115,7 +115,10 @@ func sendRandomizedMessages(topicName string, numOfMsg int, msgSize int) (time.T
 	deliveryChan := make(chan kafka.Event, numOfMsg)
 	for i := 0; i < numOfMsg; i++ {
 		randomBytes := make([]byte, msgSize)
-		rand.Read(randomBytes)
+		_, err := rand.Read(randomBytes)
+		if err != nil {
+			log.Fatalf("Couldn't generate random message!")
+		}
 		kafkaMsg := kafka.Message{
 			TopicPartition: kafka.TopicPartition{Topic: &topicName, Partition: kafka.PartitionAny},
 			Value:          randomBytes,
@@ -129,7 +132,7 @@ func sendRandomizedMessages(topicName string, numOfMsg int, msgSize int) (time.T
 		if i%int(0.1*float32(numOfMsg)) == 0 {
 			log.Printf("Sending %d message \n", i)
 		}
-		err := producer.Produce(&kafkaMsg, deliveryChan)
+		err = producer.Produce(&kafkaMsg, deliveryChan)
 		if err != nil {
 			log.Fatalf("Failed to send all messages to Kafka broker!")
 		}

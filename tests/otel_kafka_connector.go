@@ -2,7 +2,6 @@ package tests
 
 import (
 	"fmt"
-	"os"
 	"os/exec"
 	"syscall"
 	"testing"
@@ -37,11 +36,7 @@ func startOTelKafkaConnector(t *testing.T, configName string, configFilesDir str
 	// Start the process
 	cmd := exec.Command(fmt.Sprintf("./%s", GetConfigVariable("OTEL_BINARY_FILE")), "--config", fmt.Sprintf("%s/%s", configFilesDir, configName))
 
-	outFile, err := os.Create("output.log")
-	errFile, err := os.Create("error.log")
-	cmd.Stdout = outFile
-	cmd.Stderr = errFile
-	err = cmd.Start()
+	err := cmd.Start()
 	require.NoError(t, err)
 
 	fmt.Printf("Process started with PID: %d\n", cmd.Process.Pid)
