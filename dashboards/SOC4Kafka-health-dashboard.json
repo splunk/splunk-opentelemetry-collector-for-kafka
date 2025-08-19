@@ -1,0 +1,2166 @@
+{
+  "title": "SOC4Kafka",
+  "description": "",
+  "inputs": {
+    "input_0NyhMmCs": {
+      "dataSources": {
+        "primary": "ds_AHaHKBzR_ds_uDzRgWTo_ds_IqIj9kRN_ds_60K4avlb"
+      },
+      "options": {
+        "items": [],
+        "selectFirstSearchResult": true,
+        "token": "istance"
+      },
+      "title": "Select Instance",
+      "type": "input.dropdown"
+    },
+    "input_1": {
+      "options": {
+        "defaultValue": "-1h,now",
+        "token": "global_time_tok"
+      },
+      "title": "Time Range",
+      "type": "input.timerange"
+    },
+    "input_2LbGQBKr": {
+      "dataSources": {
+        "primary": "ds_AHaHKBzR_ds_uDzRgWTo_ds_IqIj9kRN_ds_60K4avlb"
+      },
+      "options": {
+        "items": [],
+        "selectFirstSearchResult": true,
+        "token": "host-io"
+      },
+      "title": "Host",
+      "type": "input.dropdown"
+    },
+    "input_AKCkSSzX": {
+      "dataSources": {
+        "primary": "ds_AHaHKBzR_ds_uDzRgWTo_ds_IqIj9kRN_ds_60K4avlb"
+      },
+      "options": {
+        "items": [],
+        "selectFirstSearchResult": true,
+        "token": "instance-hostmetrics"
+      },
+      "title": "Host",
+      "type": "input.dropdown"
+    },
+    "input_C3fGWgGQ": {
+      "options": {
+        "defaultValue": "5s",
+        "items": [
+          {
+            "label": "1s",
+            "value": "1s"
+          },
+          {
+            "label": "5s",
+            "value": "5s"
+          },
+          {
+            "label": "10s",
+            "value": "10s"
+          },
+          {
+            "label": "1m",
+            "value": "1m"
+          },
+          {
+            "label": "5m",
+            "value": "5m"
+          }
+        ],
+        "token": "time_bucket"
+      },
+      "title": "Time Span",
+      "type": "input.dropdown"
+    },
+    "input_GN3RCqT3": {
+      "dataSources": {
+        "primary": "ds_PxgDKnEh_ds_LrbR0FdZ"
+      },
+      "options": {
+        "defaultValue": [
+          "system",
+          "user"
+        ],
+        "items": [],
+        "token": "selected_states"
+      },
+      "title": "CPU Modes",
+      "type": "input.multiselect"
+    },
+    "input_NxPNO0QD": {
+      "context": {
+        "formattedConfig": {
+          "number": {
+            "prefix": ""
+          }
+        },
+        "formattedStatics": ">statics | formatByType(formattedConfig)",
+        "label": ">primary | seriesByName(\"state\") | renameSeries(\"label\") | formatByType(formattedConfig)",
+        "statics": [],
+        "value": ">primary | seriesByName(\"state\") | renameSeries(\"value\") | formatByType(formattedConfig)"
+      },
+      "dataSources": {
+        "primary": "ds_pPQwfvkG_ds_l2Wm9z1Q_ds_o3cfVFsP"
+      },
+      "options": {
+        "defaultValue": [
+          "used"
+        ],
+        "items": ">frame(label, value) | prepend(formattedStatics) | objects()",
+        "token": "memory_type"
+      },
+      "title": "Memory Usage",
+      "type": "input.multiselect"
+    },
+    "input_Ny2SlyOe": {
+      "dataSources": {
+        "primary": "ds_7yVZjJhI_ds_zpxMQVze"
+      },
+      "options": {
+        "items": [],
+        "selectFirstSearchResult": true,
+        "token": "topic"
+      },
+      "title": "Topic",
+      "type": "input.dropdown"
+    },
+    "input_PDiKbEOH": {
+      "dataSources": {
+        "primary": "ds_uY9W3W7W"
+      },
+      "options": {
+        "items": [],
+        "token": "host_token"
+      },
+      "title": "Host",
+      "type": "input.multiselect"
+    },
+    "input_T0Ysqc8G": {
+      "options": {
+        "defaultValue": [
+          "read",
+          "write"
+        ],
+        "items": [
+          {
+            "label": "Read",
+            "value": "read"
+          },
+          {
+            "label": "Write",
+            "value": "write"
+          }
+        ],
+        "token": "io_direction"
+      },
+      "title": "I/O Direction",
+      "type": "input.multiselect"
+    },
+    "input_nuhJNcnA": {
+      "dataSources": {
+        "primary": "ds_vACryaD3_ds_5J7QIT6R"
+      },
+      "options": {
+        "items": [],
+        "selectFirstSearchResult": true,
+        "token": "io_devices"
+      },
+      "title": "Device",
+      "type": "input.multiselect"
+    },
+    "input_pLbyzbAX": {
+      "dataSources": {
+        "primary": "ds_AHaHKBzR_ds_uDzRgWTo_ds_IqIj9kRN_ds_60K4avlb"
+      },
+      "options": {
+        "items": [],
+        "selectFirstSearchResult": true,
+        "token": "host-mem"
+      },
+      "title": "Host",
+      "type": "input.dropdown"
+    },
+    "input_pg6yMpkX": {
+      "dataSources": {
+        "primary": "ds_AHaHKBzR_ds_uDzRgWTo_ds_IqIj9kRN_ds_60K4avlb"
+      },
+      "options": {
+        "items": [],
+        "selectFirstSearchResult": true,
+        "token": "instances"
+      },
+      "title": "Select Instances",
+      "type": "input.multiselect"
+    },
+    "input_qI1GJKMP": {
+      "dataSources": {
+        "primary": "ds_wMzZ0T2J_ds_YqssWQrS"
+      },
+      "options": {
+        "items": [],
+        "selectFirstSearchResult": true,
+        "token": "io_filesystem"
+      },
+      "title": "Filesystem",
+      "type": "input.dropdown"
+    },
+    "input_wIJLzGuP": {
+      "dataSources": {
+        "primary": "ds_U4OU8Isa_ds_GBM4oWdY_ds_2Mzt9nqN"
+      },
+      "options": {
+        "defaultValue": [],
+        "items": [],
+        "token": "sourcetype_token"
+      },
+      "title": "Sourcetype",
+      "type": "input.multiselect"
+    },
+    "input_xXfyqwDb": {
+      "dataSources": {
+        "primary": "ds_42CqJR9J"
+      },
+      "options": {
+        "items": [],
+        "token": "indexes"
+      },
+      "title": "Log Indexes",
+      "type": "input.multiselect"
+    },
+    "input_xwqCp5tI": {
+      "dataSources": {
+        "primary": "ds_Qrgg6iYY_ds_StKqCSXK_ds_2Mzt9nqN"
+      },
+      "options": {
+        "defaultValue": [],
+        "items": [],
+        "token": "source_token"
+      },
+      "title": "Source",
+      "type": "input.multiselect"
+    },
+    "input_yeZ9kiX4": {
+      "dataSources": {
+        "primary": "ds_Y5CZYzfn_ds_87HRinNi"
+      },
+      "options": {
+        "items": [],
+        "selectFirstSearchResult": true,
+        "token": "group"
+      },
+      "title": "Consumer Group",
+      "type": "input.dropdown"
+    }
+  },
+  "defaults": {
+    "dataSources": {}
+  },
+  "visualizations": {
+    "chart_8": {
+      "containerOptions": {},
+      "dataSources": {
+        "primary": "search_8"
+      },
+      "description": "",
+      "options": {
+        "yAxisTitleText": "Read/Write [kb]"
+      },
+      "showLastUpdated": false,
+      "showProgressBar": false,
+      "title": "Disk Usage - Read/Write",
+      "type": "splunk.line"
+    },
+    "chart_9": {
+      "containerOptions": {},
+      "dataSources": {
+        "primary": "ds_P7ogw7fO"
+      },
+      "description": "",
+      "options": {
+        "stackMode": "stacked",
+        "yAxisTitleText": "CPU [%]"
+      },
+      "showLastUpdated": false,
+      "showProgressBar": false,
+      "title": "Process CPU Utilization",
+      "type": "splunk.area"
+    },
+    "viz_26sOE5B9": {
+      "dataSources": {
+        "primary": "ds_WM8EcANy"
+      },
+      "options": {
+        "yAxisTitleText": "Bytes"
+      },
+      "title": "Transmited Bytes Of Data",
+      "type": "splunk.line"
+    },
+    "viz_2J9rcctk": {
+      "dataSources": {
+        "primary": "ds_W96DigC0_ds_Fr33CoCF"
+      },
+      "title": "Num of Kafka Brokers",
+      "type": "splunk.singlevalue"
+    },
+    "viz_2cbaDPOx": {
+      "containerOptions": {},
+      "dataSources": {
+        "primary": "ds_YYmMEUZR"
+      },
+      "options": {
+        "seriesColorsByField": {}
+      },
+      "showLastUpdated": false,
+      "showProgressBar": false,
+      "title": "Distribution of \"sourcetype\" Field",
+      "type": "splunk.column"
+    },
+    "viz_2wOCXAJy": {
+      "options": {
+        "markdown": "### Exporter Queue\n\nDetails about the rate of ingestion for Receivers and the rate of exporting logs via Exporters. Please select instances you are interested in.\n"
+      },
+      "type": "splunk.markdown"
+    },
+    "viz_4UYh3NZo": {
+      "options": {
+        "markdown": "### Ingested & Exported Data\nBelow graphs present ingested data by all receivers on given istance and all exported data on all exporters on a given instance"
+      },
+      "type": "splunk.markdown"
+    },
+    "viz_4pkJDrfY": {
+      "options": {
+        "markdown": "### CPU Information\nData regarding CPU usage. Please select the host you are interested in and the CPU modes you want to include in your charts. Recommended modes: user + system."
+      },
+      "type": "splunk.markdown"
+    },
+    "viz_6Y8API6V": {
+      "containerOptions": {},
+      "dataSources": {
+        "primary": "ds_8n4qOcEt_search_3"
+      },
+      "description": "Per core",
+      "options": {
+        "yAxisTitleText": "CPU [%]"
+      },
+      "showLastUpdated": false,
+      "showProgressBar": false,
+      "title": "System CPU Utilization",
+      "type": "splunk.line"
+    },
+    "viz_8ZftSVOW": {
+      "options": {
+        "markdown": "### Disk Usage\nInfomration about disk usage. Please select host, I/O direction, filesystem and device.\n\n"
+      },
+      "type": "splunk.markdown"
+    },
+    "viz_9QpuVTBv": {
+      "containerOptions": {},
+      "dataSources": {
+        "primary": "ds_DOL4AIM4_ds_Vu2uY24j"
+      },
+      "options": {
+        "tableFormat": {
+          "align": "> table | type() | matchValue(tableAlignByType)",
+          "headerAlign": "center"
+        }
+      },
+      "showLastUpdated": false,
+      "showProgressBar": false,
+      "title": "Topics",
+      "type": "splunk.table"
+    },
+    "viz_9cOHXPYy": {
+      "containerOptions": {},
+      "dataSources": {
+        "primary": "ds_DYdNOZ5s_ds_HKsM4Lqb_ds_YWR8zalL"
+      },
+      "description": "Rate for refused logs by receiver",
+      "options": {
+        "stackMode": "stacked",
+        "y2": "> primary | frameBySeriesNames('')"
+      },
+      "showLastUpdated": false,
+      "showProgressBar": false,
+      "title": "Receiver Logs Refused Rate",
+      "type": "splunk.area"
+    },
+    "viz_9oCnGAAu": {
+      "options": {
+        "markdown": "### Details about received events\n\nPlease select indexes, sources and sourcetype and host."
+      },
+      "type": "splunk.markdown"
+    },
+    "viz_C07dUpoX": {
+      "containerOptions": {},
+      "dataSources": {
+        "primary": "ds_VKBk5wVT"
+      },
+      "showLastUpdated": false,
+      "showProgressBar": false,
+      "title": "Distribution of \"host\" Field",
+      "type": "splunk.column"
+    },
+    "viz_CtIeYEVB": {
+      "dataSources": {
+        "primary": "ds_xn8IveA5_ds_plBB9q0t"
+      },
+      "description": "Average of all partitions and consumer groups",
+      "options": {
+        "nullValueDisplay": "connect",
+        "yAxisTitleText": ""
+      },
+      "title": "Consumer Group Lag per Topic",
+      "type": "splunk.line"
+    },
+    "viz_D8cFzvHY": {
+      "dataSources": {
+        "primary": "ds_YbQSTOOP"
+      },
+      "title": "Exporter Queue Capacity",
+      "type": "splunk.table"
+    },
+    "viz_EZyMKqzW": {
+      "containerOptions": {},
+      "dataSources": {
+        "primary": "ds_ZiOXtXGZ_ds_jvzRkEA4"
+      },
+      "description": "Exporter sent logs rate for all exporters on given instance",
+      "options": {
+        "stackMode": "stacked"
+      },
+      "showLastUpdated": false,
+      "showProgressBar": false,
+      "title": "Exporter Sent Logs Rate",
+      "type": "splunk.area"
+    },
+    "viz_EkTH143w": {
+      "dataSources": {
+        "primary": "ds_QFvvsjHQ"
+      },
+      "title": "Exporter Queue Size",
+      "type": "splunk.line"
+    },
+    "viz_EsqV6xFp": {
+      "containerOptions": {},
+      "dataSources": {
+        "primary": "ds_qrEBl7KV_ds_xHgD3csx_search_5"
+      },
+      "description": "",
+      "options": {
+        "numberPrecision": 2,
+        "sparklineDisplay": "off",
+        "trendDisplay": "off",
+        "unit": "GB"
+      },
+      "showLastUpdated": false,
+      "showProgressBar": false,
+      "title": "Total Avalible Memory",
+      "type": "splunk.singlevalue"
+    },
+    "viz_FbSd5gZ9": {
+      "dataSources": {
+        "primary": "ds_l3E6PTp9"
+      },
+      "options": {
+        "yAxisTitleText": "Bytes"
+      },
+      "title": "Received Bytes",
+      "type": "splunk.line"
+    },
+    "viz_GukaWqeD": {
+      "containerOptions": {},
+      "dataSources": {
+        "primary": "ds_bHsblBfZ_ds_ZiOXtXGZ_ds_jvzRkEA4"
+      },
+      "description": "Rate for logs failed to send",
+      "options": {
+        "stackMode": "stacked"
+      },
+      "showLastUpdated": false,
+      "showProgressBar": false,
+      "title": "Exporter Send Failed Rate",
+      "type": "splunk.area"
+    },
+    "viz_H9srxqi5": {
+      "containerOptions": {},
+      "dataSources": {
+        "primary": "ds_vKXPyaOL_ds_dImd6ZvH_search_2"
+      },
+      "description": "",
+      "options": {
+        "stackMode": "stacked",
+        "yAxisTitleText": "Memory [MB]"
+      },
+      "showLastUpdated": false,
+      "showProgressBar": false,
+      "title": "System Memory Usage",
+      "type": "splunk.area"
+    },
+    "viz_HOQmIULa": {
+      "dataSources": {
+        "primary": "ds_1y6WJpk9_ds_msPIqTrF"
+      },
+      "description": "",
+      "options": {
+        "yAxisTitleText": "Pending Operations"
+      },
+      "title": "Disk Pending Operations",
+      "type": "splunk.line"
+    },
+    "viz_HsLhPEjF": {
+      "dataSources": {
+        "primary": "ds_W96DigC0_ds_Fr33CoCF"
+      },
+      "title": "Num of Kafka Brokers",
+      "type": "splunk.singlevalue"
+    },
+    "viz_JDtv2UME": {
+      "dataSources": {
+        "primary": "ds_6Eb1m55N_ds_nB6lljdh"
+      },
+      "description": "",
+      "title": "Logical CPU Cores",
+      "type": "splunk.singlevalue"
+    },
+    "viz_Kd965JMF": {
+      "dataSources": {
+        "primary": "ds_ZY75hVc7_ds_iqy4duFN"
+      },
+      "title": "Consumer Groups",
+      "type": "splunk.table"
+    },
+    "viz_Lw7VmwzY": {
+      "dataSources": {
+        "primary": "ds_fUNEMrdc_ds_HQvYFgXE"
+      },
+      "description": "For selected consumer group and topic",
+      "options": {
+        "nullValueDisplay": "connect",
+        "yAxisTitleText": ""
+      },
+      "title": "Consumer Group Offset per Partition",
+      "type": "splunk.line"
+    },
+    "viz_Nfne0BBA": {
+      "containerOptions": {},
+      "context": {
+        "majorColorEditorConfig": [
+          {
+            "to": 20,
+            "value": "#118832"
+          },
+          {
+            "from": 20,
+            "to": 40,
+            "value": "#669922"
+          },
+          {
+            "from": 40,
+            "to": 60,
+            "value": "#CBA700"
+          },
+          {
+            "from": 60,
+            "to": 80,
+            "value": "#D94E17"
+          },
+          {
+            "from": 80,
+            "value": "#D41F1F"
+          }
+        ],
+        "trendColorEditorConfig": [
+          {
+            "to": 1,
+            "value": "#1C6B2D"
+          },
+          {
+            "from": 1,
+            "value": "#9E2520"
+          }
+        ]
+      },
+      "dataSources": {
+        "primary": "ds_aXGBKeH0_ds_k5Byiwxu"
+      },
+      "description": "",
+      "options": {
+        "majorColor": "> majorValue | rangeValue(majorColorEditorConfig)",
+        "radialBackgroundColor": "#292929",
+        "trendColor": "> trendValue | rangeValue(trendColorEditorConfig)",
+        "unit": "%"
+      },
+      "showLastUpdated": false,
+      "showProgressBar": false,
+      "title": "Filesystem Utilization",
+      "type": "splunk.singlevalueradial"
+    },
+    "viz_RBdkcJJd": {
+      "context": {
+        "last_seenColumnFormatEditorConfig": {
+          "string": {
+            "unitPosition": "after"
+          }
+        },
+        "last_seenRowColorsEditorConfig": [
+          {
+            "match": "",
+            "value": "#5C33FF"
+          }
+        ]
+      },
+      "dataSources": {
+        "primary": "ds_csLnNqun_ds_60K4avlb"
+      },
+      "description": "",
+      "options": {
+        "columnFormat": {
+          "last_seen": {
+            "align": "auto",
+            "data": "> table | seriesByName(\"last_seen\") | formatByType(last_seenColumnFormatEditorConfig)",
+            "headerAlign": "auto",
+            "rowColors": "> table | seriesByName('last_seen') | matchValue(last_seenRowColorsEditorConfig)",
+            "textOverflow": "break-word"
+          }
+        },
+        "showInternalFields": false,
+        "tableFormat": {
+          "align": "> table | type() | matchValue(tableAlignByType)",
+          "headerAlign": "left",
+          "rowBackgroundColors": "> table | seriesByIndex(0) | pick(tableRowBackgroundColorsByTheme)"
+        }
+      },
+      "title": "Active Collector Istances",
+      "type": "splunk.table"
+    },
+    "viz_RXvk6PRg": {
+      "dataSources": {
+        "primary": "ds_okOx1cf3"
+      },
+      "title": "Indexes Information",
+      "type": "splunk.table"
+    },
+    "viz_ScWnIEiC": {
+      "containerOptions": {},
+      "dataSources": {
+        "primary": "ds_DuFrXaO1_ds_BlBXGKfv_search_1"
+      },
+      "description": "",
+      "options": {
+        "stackMode": "stacked",
+        "yAxisTitleText": "Utilization [%]"
+      },
+      "showLastUpdated": false,
+      "showProgressBar": false,
+      "title": "System Memory Utilization",
+      "type": "splunk.area"
+    },
+    "viz_SgYJO6wR": {
+      "containerOptions": {},
+      "dataSources": {
+        "primary": "ds_5Pm9K3mP_ds_T4Krokxx_ds_N3Px24PC_ds_CtFQoypH"
+      },
+      "description": "",
+      "options": {
+        "stackMode": "stacked"
+      },
+      "showLastUpdated": false,
+      "showProgressBar": false,
+      "title": "Exporter Send Failed Logs Rate",
+      "type": "splunk.area"
+    },
+    "viz_TmsZnSC6": {
+      "containerOptions": {},
+      "dataSources": {
+        "primary": "ds_cwAoWS1H_ds_ZTjR5bm4_ds_90h7fepN"
+      },
+      "description": "",
+      "options": {
+        "stackMode": "stacked"
+      },
+      "showLastUpdated": false,
+      "showProgressBar": false,
+      "title": "Receiver Logs Ingestion Rate",
+      "type": "splunk.area"
+    },
+    "viz_WV5dKoaY": {
+      "options": {
+        "markdown": "### Receiver & Exporter Statistics\n\nDetails about the rate of ingestion for receivers and the rate of exporting logs via exporters. Please select the instances you are interested in. If multiple instances are selected, the average among those instances is calculated.\n"
+      },
+      "type": "splunk.markdown"
+    },
+    "viz_ayUTQKs2": {
+      "containerOptions": {},
+      "dataSources": {
+        "primary": "ds_j5tv7r78"
+      },
+      "showLastUpdated": false,
+      "showProgressBar": false,
+      "title": "Distribution of \"source\" Field",
+      "type": "splunk.column"
+    },
+    "viz_cecrtmvl": {
+      "context": {
+        "majorColorEditorConfig": [
+          {
+            "to": 1,
+            "value": "#118832"
+          },
+          {
+            "from": 1,
+            "to": 100,
+            "value": "#d97a0d"
+          },
+          {
+            "from": 100,
+            "to": 1000,
+            "value": "#d94e17"
+          },
+          {
+            "from": 1000,
+            "value": "#D41F1F"
+          }
+        ]
+      },
+      "dataSources": {
+        "primary": "ds_2wxGyTW1"
+      },
+      "description": "In the selected time range",
+      "options": {
+        "majorColor": "> majorValue | rangeValue(majorColorEditorConfig)"
+      },
+      "title": "Receiver Refused Logs",
+      "type": "splunk.singlevalue"
+    },
+    "viz_eHDzKXiV": {
+      "containerOptions": {},
+      "dataSources": {
+        "primary": "ds_J1QCY06g_search_3"
+      },
+      "description": "",
+      "options": {
+        "stackMode": "stacked",
+        "yAxisTitleText": "CPU [%]"
+      },
+      "showLastUpdated": false,
+      "showProgressBar": false,
+      "title": "System CPU Utilization",
+      "type": "splunk.area"
+    },
+    "viz_eluCmvxL": {
+      "dataSources": {
+        "primary": "ds_TiW8LjQx"
+      },
+      "title": "Distribution of Messages Across Indexes",
+      "type": "splunk.pie"
+    },
+    "viz_fgaNSfUw": {
+      "dataSources": {
+        "primary": "ds_AkRMlhzl_ds_zBsa8UmC_ds_plBB9q0t"
+      },
+      "description": "For selected consumer group and topic",
+      "options": {
+        "nullValueDisplay": "connect",
+        "yAxisTitleText": ""
+      },
+      "title": "Consumer Group Lag per Partition",
+      "type": "splunk.line"
+    },
+    "viz_jAOfucAh": {
+      "context": {
+        "majorColorEditorConfig": [
+          {
+            "to": 1,
+            "value": "#118832"
+          },
+          {
+            "from": 1,
+            "to": 100,
+            "value": "#d97a0d"
+          },
+          {
+            "from": 100,
+            "to": 1000,
+            "value": "#d94e17"
+          },
+          {
+            "from": 1000,
+            "value": "#D41F1F"
+          }
+        ]
+      },
+      "dataSources": {
+        "primary": "ds_Fi472bHl"
+      },
+      "description": "In the selected time range",
+      "options": {
+        "majorColor": "> majorValue | rangeValue(majorColorEditorConfig)"
+      },
+      "title": "Failed Log Exports",
+      "type": "splunk.singlevalue"
+    },
+    "viz_mWtoG6NQ": {
+      "containerOptions": {},
+      "dataSources": {
+        "primary": "ds_T4Krokxx_ds_N3Px24PC_ds_CtFQoypH"
+      },
+      "description": "",
+      "options": {
+        "stackMode": "stacked"
+      },
+      "showLastUpdated": false,
+      "showProgressBar": false,
+      "title": "Exporter Sent Logs Rate",
+      "type": "splunk.area"
+    },
+    "viz_meWXSym7": {
+      "containerOptions": {},
+      "dataSources": {
+        "primary": "ds_HKsM4Lqb_ds_YWR8zalL"
+      },
+      "description": "Receiver logs ingestion rate for all receivers on given instance",
+      "options": {
+        "nullValueDisplay": "zero",
+        "stackMode": "stacked",
+        "y2": "> primary | frameBySeriesNames('')"
+      },
+      "showLastUpdated": false,
+      "showProgressBar": false,
+      "title": "Receiver Logs Ingestion Rate",
+      "type": "splunk.area"
+    },
+    "viz_msZaQabj": {
+      "containerOptions": {},
+      "dataSources": {
+        "primary": "ds_0fF99ArI_ds_KSLx80dt_search_7"
+      },
+      "description": "",
+      "options": {
+        "stackMode": "stacked",
+        "yAxisTitleText": "Memory [MB]"
+      },
+      "showLastUpdated": false,
+      "showProgressBar": false,
+      "title": "Process Memory Usage",
+      "type": "splunk.area"
+    },
+    "viz_s68ebvOS": {
+      "containerOptions": {},
+      "context": {},
+      "dataSources": {
+        "primary": "ds_lNrdOrIz_ds_d9zD9rhN_ds_Fr33CoCF"
+      },
+      "description": "Last 5 Minutes",
+      "options": {},
+      "showLastUpdated": false,
+      "showProgressBar": false,
+      "title": "Active Collectors",
+      "type": "splunk.singlevalue"
+    },
+    "viz_tNRcOsBy": {
+      "options": {
+        "markdown": "### Memory Information\nData regarding memory usage. Please select the host you are interested in and the memory metrics you want to include in your charts.\n\n"
+      },
+      "type": "splunk.markdown"
+    },
+    "viz_uLu22Lhd": {
+      "containerOptions": {},
+      "dataSources": {
+        "primary": "ds_Xm7Zbyjt_ds_cwAoWS1H_ds_ZTjR5bm4_ds_90h7fepN"
+      },
+      "description": "",
+      "options": {
+        "stackMode": "stacked"
+      },
+      "showLastUpdated": false,
+      "showProgressBar": false,
+      "title": "Receiver Logs Refused Rate",
+      "type": "splunk.area"
+    },
+    "viz_xPMIBchm": {
+      "dataSources": {
+        "primary": "ds_eCerAk5f_ds_u0VcaQVQ"
+      },
+      "description": "",
+      "options": {
+        "yAxisTitleText": "Disk Usage [%]"
+      },
+      "title": "Disk Usage - per Device",
+      "type": "splunk.line"
+    },
+    "viz_z3vvVMRh": {
+      "options": {
+        "markdown": "### Offset & Lag\n\nBelow charts represent consumer group offset and lag for each partition. Lag is the difference between the offset of the last message committed by the broker and the offset of the last message consumed by the consumer group. It represents the delay between producing and consuming messages. The lower the lag, the more real-time behavior from the system. Please select the topic and consumer group you are interested in."
+      },
+      "type": "splunk.markdown"
+    }
+  },
+  "dataSources": {
+    "ds_0fF99ArI_ds_KSLx80dt_search_7": {
+      "name": "process.memory.usage",
+      "options": {
+        "query": "| mstats avg(\"process.memory.usage\") prestats=true WHERE index IN ($indexes$) AND host=$host-mem$ span=$time_bucket$\n| timechart avg(\"process.memory.usage\") AS Avg span=$time_bucket$\n| eval \"Memory\"=round(Avg/1024/1024, 2)\n| fields - _span*, Avg",
+        "queryParameters": {
+          "earliest": "$global_time_tok.earliest$",
+          "latest": "$global_time_tok.latest$"
+        }
+      },
+      "type": "ds.search"
+    },
+    "ds_1y6WJpk9_ds_msPIqTrF": {
+      "name": "system.disk.pending_operations",
+      "options": {
+        "query": "| mstats avg(\"system.disk.pending_operations\") prestats=true WHERE index IN ($indexes$) AND \"device\" IN ($io_devices$) AND host=$host-io$ span=$time_bucket$ BY device\n| timechart avg(\"system.disk.pending_operations\") span=$time_bucket$ useother=false BY device\n| fields - _span*",
+        "queryParameters": {
+          "earliest": "$global_time_tok.earliest$",
+          "latest": "$global_time_tok.latest$"
+        }
+      },
+      "type": "ds.search"
+    },
+    "ds_2wxGyTW1": {
+      "name": "refused_receiver_logs",
+      "options": {
+        "query": "| mstats range(\"otelcol_receiver_refused_log_records_total\") AS \"Total Failed Log Records\" WHERE \"index\"=\"metrics_test\"\n| fields \"Total Failed Log Records\"",
+        "queryParameters": {
+          "earliest": "$global_time_tok.earliest$",
+          "latest": "$global_time_tok.latest$"
+        }
+      },
+      "type": "ds.search"
+    },
+    "ds_42CqJR9J": {
+      "name": "indexes",
+      "options": {
+        "query": "| eventcount summarize=false index=* \n| dedup index \n| table index \n| sort index",
+        "queryParameters": {
+          "earliest": "$global_time_tok.earliest$",
+          "latest": "$global_time_tok.latest$"
+        }
+      },
+      "type": "ds.search"
+    },
+    "ds_5Pm9K3mP_ds_T4Krokxx_ds_N3Px24PC_ds_CtFQoypH": {
+      "name": "otelcol_exporter_send_failed_log_records_total_by_exporter",
+      "options": {
+        "query": "| mstats rate_sum(\"otelcol_exporter_send_failed_log_records_total\") chart=true WHERE index IN ($indexes$) AND host IN ($instances$) span=$time_bucket$ chart.useother=false chart.agg=max chart.limit=top5 BY exporter\n| fields - _span*\n| rename * AS \"* /s\"\n| rename \"_time /s\" AS _time",
+        "queryParameters": {
+          "earliest": "$global_time_tok.earliest$",
+          "latest": "$global_time_tok.latest$"
+        }
+      },
+      "type": "ds.search"
+    },
+    "ds_6Eb1m55N_ds_nB6lljdh": {
+      "name": "system.cpu.logical.count",
+      "options": {
+        "query": "| mstats latest(\"system.cpu.logical.count\") WHERE index IN ($indexes$) AND host=$instance-hostmetrics$ BY host\n| rename \"latest(system.cpu.logical.count)\" as \"CPU Logical Count\"\n| table host, \"CPU Logical Count\"",
+        "queryParameters": {
+          "earliest": "$global_time_tok.earliest$",
+          "latest": "$global_time_tok.latest$"
+        }
+      },
+      "type": "ds.search"
+    },
+    "ds_7yVZjJhI_ds_zpxMQVze": {
+      "name": "kafka_topic_dropdown",
+      "options": {
+        "query": "| mcatalog values(topic) WHERE index IN ($indexes$)\n| mvexpand values(topic)\n| rename values(topic) as \"topic\"\n| dedup \"topic\"",
+        "queryParameters": {
+          "earliest": "$global_time_tok.earliest$",
+          "latest": "$global_time_tok.latest$"
+        }
+      },
+      "type": "ds.search"
+    },
+    "ds_8n4qOcEt_search_3": {
+      "name": "system.cpu.utilization-per-cpu",
+      "options": {
+        "query": "| mstats avg(\"system.cpu.utilization\") prestats=true WHERE index IN ($indexes$) AND \"state\" IN ($selected_states$) AND host IN ($instance-hostmetrics$) span=$time_bucket$ BY cpu\n| timechart avg(\"system.cpu.utilization\") span=$time_bucket$ useother=false BY cpu\n| foreach * [ eval <<FIELD>>_pct = round('<<FIELD>>' * 100, 2) ]\n| fields _time, *_pct\n| rename *_pct as \"*\"",
+        "queryParameters": {
+          "earliest": "$global_time_tok.earliest$",
+          "latest": "$global_time_tok.latest$"
+        }
+      },
+      "type": "ds.search"
+    },
+    "ds_AHaHKBzR_ds_uDzRgWTo_ds_IqIj9kRN_ds_60K4avlb": {
+      "name": "active_instances_expand",
+      "options": {
+        "query": "| mcatalog values(host) WHERE index IN ($indexes$)\n| mvexpand values(host)\n| rename values(host) as \"host\"\n| dedup \"host\"",
+        "queryParameters": {
+          "earliest": "$global_time_tok.earliest$",
+          "latest": "$global_time_tok.latest$"
+        }
+      },
+      "type": "ds.search"
+    },
+    "ds_AkRMlhzl_ds_zBsa8UmC_ds_plBB9q0t": {
+      "name": "kafka.consumer_group.lag",
+      "options": {
+        "query": "| mstats avg(\"kafka.consumer_group.lag\") prestats=true WHERE index IN ($indexes$) AND group=$group$ AND topic=$topic$ span=$time_bucket$ BY partition\n| timechart avg(\"kafka.consumer_group.lag\") span=$time_bucket$ useother=false BY partition\n| fields - _span*",
+        "queryParameters": {
+          "earliest": "$global_time_tok.earliest$",
+          "latest": "$global_time_tok.latest$"
+        }
+      },
+      "type": "ds.search"
+    },
+    "ds_DOL4AIM4_ds_Vu2uY24j": {
+      "name": "kafka_topics_table",
+      "options": {
+        "query": "| mstats \n    max(\"kafka.topic.partitions\") as partitions,\n    max(\"kafka.partition.replicas\") as replicas,\n    min(\"kafka.partition.replicas_in_sync\") as replicas_in_sync\n    WHERE index IN ($indexes$) BY topic\n| eval \"Number of Partitions\"=round(partitions, 0)\n| eval \"Number of Replicas\"=round(replicas, 0)\n| eval \"Replicas In Sync\"=round(replicas_in_sync, 0)\n| table topic, \"Number of Partitions\", \"Number of Replicas\", \"Replicas In Sync\"",
+        "queryParameters": {
+          "earliest": "$global_time_tok.earliest$",
+          "latest": "$global_time_tok.latest$"
+        }
+      },
+      "type": "ds.search"
+    },
+    "ds_DYdNOZ5s_ds_HKsM4Lqb_ds_YWR8zalL": {
+      "name": "otelcol_receiver_refused_log_records_total",
+      "options": {
+        "query": "| mstats rate_sum(\"otelcol_receiver_refused_log_records_total\") chart=true WHERE index IN ($indexes$) span=$time_bucket$ chart.useother=false chart.agg=max BY host\n| fields - _span*\n| rename * AS \"* /s\"\n| rename \"_time /s\" AS _time",
+        "queryParameters": {
+          "earliest": "$global_time_tok.earliest$",
+          "latest": "$global_time_tok.latest$"
+        }
+      },
+      "type": "ds.search"
+    },
+    "ds_DuFrXaO1_ds_BlBXGKfv_search_1": {
+      "name": "system.memory.utilization",
+      "options": {
+        "query": "| mstats avg(\"system.memory.utilization\") prestats=true WHERE index IN ($indexes$) AND \"state\" IN ($memory_type$) AND host=$host-mem$ span=$time_bucket$ BY state\n| timechart avg(\"system.memory.utilization\") span=$time_bucket$ useother=false BY state\n| foreach * [ eval <<FIELD>>_pct = round('<<FIELD>>' * 100, 2) ]\n| fields _time, *_pct\n| rename *_pct as \"*\"",
+        "queryParameters": {
+          "earliest": "$global_time_tok.earliest$",
+          "latest": "$global_time_tok.latest$"
+        }
+      },
+      "type": "ds.search"
+    },
+    "ds_Fi472bHl": {
+      "name": "failed_exports",
+      "options": {
+        "query": "| mstats range(\"otelcol_exporter_send_failed_log_records_total\") AS \"Total Failed Log Records\" WHERE \"index\"=\"metrics_test\"\n| fields \"Total Failed Log Records\"",
+        "queryParameters": {
+          "earliest": "$global_time_tok.earliest$",
+          "latest": "$global_time_tok.latest$"
+        }
+      },
+      "type": "ds.search"
+    },
+    "ds_HKsM4Lqb_ds_YWR8zalL": {
+      "name": "otelcol_receiver_accepted_log_records_total",
+      "options": {
+        "query": "| mstats rate_sum(\"otelcol_receiver_accepted_log_records_total\") chart=true WHERE index IN ($indexes$) span=$time_bucket$ chart.useother=false chart.agg=max BY host\n| fields - _span*\n| rename * AS \"* /s\"\n| rename \"_time /s\" AS _time",
+        "queryParameters": {
+          "earliest": "$global_time_tok.earliest$",
+          "latest": "$global_time_tok.latest$"
+        }
+      },
+      "type": "ds.search"
+    },
+    "ds_J1QCY06g_search_3": {
+      "name": "system.cpu.utilization",
+      "options": {
+        "query": "| mstats avg(\"system.cpu.utilization\") prestats=true WHERE index IN ($indexes$) AND \"state\" IN ($selected_states$) AND host IN ($instance-hostmetrics$) span=$time_bucket$ BY state\n| timechart avg(\"system.cpu.utilization\") span=$time_bucket$ useother=false BY state\n| foreach * [ eval <<FIELD>>_pct = round('<<FIELD>>' * 100, 2) ]\n| fields _time, *_pct\n| rename *_pct as \"*\"",
+        "queryParameters": {
+          "earliest": "$global_time_tok.earliest$",
+          "latest": "$global_time_tok.latest$"
+        }
+      },
+      "type": "ds.search"
+    },
+    "ds_P7ogw7fO": {
+      "name": "process.cpu.utilization",
+      "options": {
+        "query": "| mstats avg(\"process.cpu.utilization\") prestats=true WHERE index IN ($indexes$) AND \"state\" IN ($selected_states$) AND host IN ($instance-hostmetrics$) span=$time_bucket$ BY state\n| timechart avg(\"process.cpu.utilization\") span=$time_bucket$ useother=false BY state\n| eval wait_percantage=round(wait*100, 2)\n| eval user_percentage=round(user*100,2)\n| eval system_percantage=round(system*100, 2)\n| fields - _span*, user, system, wait\n| rename user_percentage as \"CPU User\"\n| rename system_percantage as \"CPU System\"\n| rename wait_percantage as \"CPU Wait\"",
+        "queryParameters": {
+          "earliest": "$global_time_tok.earliest$",
+          "latest": "$global_time_tok.latest$"
+        }
+      },
+      "type": "ds.search"
+    },
+    "ds_PxgDKnEh_ds_LrbR0FdZ": {
+      "name": "cpu_states_dropdown",
+      "options": {
+        "query": "| mstats latest(\"system.cpu.utilization\") WHERE index IN ($indexes$) BY state\n| stats values(state) as states\n| mvexpand states\n| rename states as state",
+        "queryParameters": {
+          "earliest": "$global_time_tok.earliest$",
+          "latest": "$global_time_tok.latest$"
+        }
+      },
+      "type": "ds.search"
+    },
+    "ds_QFvvsjHQ": {
+      "name": "otelcol_exporter_queue_size",
+      "options": {
+        "query": "| mstats max(\"otelcol_exporter_queue_size\") prestats=true WHERE index IN ($indexes$) AND host=$istance$ span=$time_bucket$ BY exporter\n| timechart max(\"otelcol_exporter_queue_size\") span=$time_bucket$ useother=false BY exporter\n| fields - _span*",
+        "queryParameters": {
+          "earliest": "$global_time_tok.earliest$",
+          "latest": "$global_time_tok.latest$"
+        }
+      },
+      "type": "ds.search"
+    },
+    "ds_Qrgg6iYY_ds_StKqCSXK_ds_2Mzt9nqN": {
+      "name": "list_sources",
+      "options": {
+        "query": "| tstats values(source) WHERE index IN ($indexes$)\n| mvexpand values(source)\n| rename values(source) as source\n| sort source",
+        "queryParameters": {
+          "earliest": "$global_time_tok.earliest$",
+          "latest": "$global_time_tok.latest$"
+        }
+      },
+      "type": "ds.search"
+    },
+    "ds_T4Krokxx_ds_N3Px24PC_ds_CtFQoypH": {
+      "name": "otelcol_exporter_sent_log_records_total_by_exporter",
+      "options": {
+        "query": "| mstats rate_sum(\"otelcol_exporter_sent_log_records_total\") chart=true WHERE index IN ($indexes$) AND host IN ($instances$) span=$time_bucket$ chart.useother=false chart.agg=max chart.limit=top5 BY exporter\n| fields - _span*\n| rename * AS \"* /s\"\n| rename \"_time /s\" AS _time",
+        "queryParameters": {
+          "earliest": "$global_time_tok.earliest$",
+          "latest": "$global_time_tok.latest$"
+        }
+      },
+      "type": "ds.search"
+    },
+    "ds_TiW8LjQx": {
+      "name": "distirbution_of_messages_across_indexes",
+      "options": {
+        "query": "| tstats count WHERE index IN ($indexes$) \n    AND host IN ($host_token$) \n    AND source IN ($source_token$) \n    AND sourcetype IN ($sourcetype_token$)\n    BY index\n| rename count as \"Message Count\"\n| sort - \"Message Count\"",
+        "queryParameters": {
+          "earliest": "$global_time_tok.earliest$",
+          "latest": "$global_time_tok.latest$"
+        }
+      },
+      "type": "ds.search"
+    },
+    "ds_U4OU8Isa_ds_GBM4oWdY_ds_2Mzt9nqN": {
+      "name": "list_sourcetypes",
+      "options": {
+        "query": "| tstats values(sourcetype) WHERE index IN ($indexes$)\n| mvexpand values(sourcetype)\n| rename values(sourcetype) as sourcetype\n| sort sourcetype",
+        "queryParameters": {
+          "earliest": "$global_time_tok.earliest$",
+          "latest": "$global_time_tok.latest$"
+        }
+      },
+      "type": "ds.search"
+    },
+    "ds_VKBk5wVT": {
+      "name": "distribution_of_host_field",
+      "options": {
+        "query": "| tstats count WHERE index IN ($indexes$) \n    AND host IN ($host_token$) \n    AND source IN ($source_token$) \n    AND sourcetype IN ($sourcetype_token$)\n    BY host\n| rename count as \"Message Count\"\n| sort - \"Message Count\"",
+        "queryParameters": {
+          "earliest": "$global_time_tok.earliest$",
+          "latest": "$global_time_tok.latest$"
+        }
+      },
+      "type": "ds.search"
+    },
+    "ds_W96DigC0_ds_Fr33CoCF": {
+      "name": "num_of_kafka_brokers_latest",
+      "options": {
+        "query": "| mstats latest(\"kafka.brokers\") WHERE index IN ($indexes$)",
+        "queryParameters": {
+          "earliest": "$global_time_tok.earliest$",
+          "latest": "$global_time_tok.latest$"
+        }
+      },
+      "type": "ds.search"
+    },
+    "ds_WM8EcANy": {
+      "name": "system.network.packets_by_host",
+      "options": {
+        "query": "| mstats rate_sum(\"system.network.packets\") chart=true WHERE index IN ($indexes$) AND direction=\"transmit\" span=$time_bucket$ chart.useother=false chart.agg=max BY host\n| fields - _span*\n| rename * AS \"* /s\"\n| rename \"_time /s\" AS _time",
+        "queryParameters": {
+          "earliest": "$global_time_tok.earliest$",
+          "latest": "$global_time_tok.latest$"
+        }
+      },
+      "type": "ds.search"
+    },
+    "ds_Xm7Zbyjt_ds_cwAoWS1H_ds_ZTjR5bm4_ds_90h7fepN": {
+      "name": "otelcol_receiver_refused_log_records_total_by_receiver",
+      "options": {
+        "query": "| mstats rate_sum(\"otelcol_receiver_refused_log_records_total\") chart=true WHERE index IN ($indexes$) AND host IN ($instances$) span=$time_bucket$ chart.useother=false chart.agg=max chart.limit=top5 BY receiver\n| fields - _span*\n| rename * AS \"* /s\"\n| rename \"_time /s\" AS _time",
+        "queryParameters": {
+          "earliest": "$global_time_tok.earliest$",
+          "latest": "$global_time_tok.latest$"
+        }
+      },
+      "type": "ds.search"
+    },
+    "ds_Y5CZYzfn_ds_87HRinNi": {
+      "name": "kafka_consumer_group_dropdown",
+      "options": {
+        "query": "| mcatalog values(group) WHERE index IN ($indexes$)\n| mvexpand values(group)\n| rename values(group) as \"group\"\n| dedup \"group\"",
+        "queryParameters": {
+          "earliest": "$global_time_tok.earliest$",
+          "latest": "$global_time_tok.latest$"
+        }
+      },
+      "type": "ds.search"
+    },
+    "ds_YYmMEUZR": {
+      "name": "distribution_of_sorucetype",
+      "options": {
+        "query": "| tstats count WHERE index IN ($indexes$) \n    AND host IN ($host_token$) \n    AND source IN ($source_token$) \n    AND sourcetype IN ($sourcetype_token$)\n    BY sourcetype\n| rename count as \"Message Count\"\n| sort - \"Message Count\"",
+        "queryParameters": {
+          "earliest": "$global_time_tok.earliest$",
+          "latest": "$global_time_tok.latest$"
+        }
+      },
+      "type": "ds.search"
+    },
+    "ds_YbQSTOOP": {
+      "name": "otelcol_exporter_queue_capacity_table",
+      "options": {
+        "query": "| mstats latest(\"otelcol_exporter_queue_capacity\") WHERE index IN ($indexes$) AND host=$istance$ BY exporter\n| sort - \"latest(otelcol_exporter_queue_capacity)\"\n| rename \"latest(otelcol_exporter_queue_capacity)\" as \"Current Queue Capacity\"\n| table exporter, \"Current Queue Capacity\"",
+        "queryParameters": {
+          "earliest": "$global_time_tok.earliest$",
+          "latest": "$global_time_tok.latest$"
+        }
+      },
+      "type": "ds.search"
+    },
+    "ds_ZY75hVc7_ds_iqy4duFN": {
+      "name": "consumer_groups_table",
+      "options": {
+        "query": "| mstats max(\"kafka.consumer_group.members\") WHERE index IN ($indexes$) BY group\n| rename \"max(kafka.consumer_group.members)\" as val\n| eval \"Number of Members\"=round(val,0)\n| table group, \"Number of Members\"",
+        "queryParameters": {
+          "earliest": "$global_time_tok.earliest$",
+          "latest": "$global_time_tok.latest$"
+        }
+      },
+      "type": "ds.search"
+    },
+    "ds_ZiOXtXGZ_ds_jvzRkEA4": {
+      "name": "otelcol_exporter_sent_log_records_total",
+      "options": {
+        "query": "| mstats rate_sum(\"otelcol_exporter_sent_log_records_total\") chart=true WHERE index IN ($indexes$) span=$time_bucket$ chart.useother=false chart.agg=max BY host\n| fields - _span*\n| rename * AS \"* /s\"\n| rename \"_time /s\" AS _time",
+        "queryParameters": {
+          "earliest": "$global_time_tok.earliest$",
+          "latest": "$global_time_tok.latest$"
+        }
+      },
+      "type": "ds.search"
+    },
+    "ds_aXGBKeH0_ds_k5Byiwxu": {
+      "name": "system.filesystem.utilization_gauge",
+      "options": {
+        "query": "| mstats latest(\"system.filesystem.utilization\") prestats=true WHERE index IN ($indexes$) AND \"device\"=$io_filesystem$ AND host=$host-io$ span=$time_bucket$ BY device\n| timechart latest(\"system.filesystem.utilization\") span=$time_bucket$ useother=false BY device WHERE max in top10\n| rename $io_filesystem$ AS var\n| eval \"Disk Usage\"=round(var * 100, 2)\n| fields - _span*, var",
+        "queryParameters": {
+          "earliest": "$global_time_tok.earliest$",
+          "latest": "$global_time_tok.latest$"
+        }
+      },
+      "type": "ds.search"
+    },
+    "ds_bHsblBfZ_ds_ZiOXtXGZ_ds_jvzRkEA4": {
+      "name": "otelcol_exporter_send_failed_log_records_total",
+      "options": {
+        "query": "| mstats rate_sum(\"otelcol_exporter_send_failed_log_records_total\") chart=true WHERE index IN ($indexes$) span=$time_bucket$ chart.useother=false chart.agg=max BY host\n| fields - _span*\n| rename * AS \"* /s\"\n| rename \"_time /s\" AS _time",
+        "queryParameters": {
+          "earliest": "$global_time_tok.earliest$",
+          "latest": "$global_time_tok.latest$"
+        }
+      },
+      "type": "ds.search"
+    },
+    "ds_csLnNqun_ds_60K4avlb": {
+      "name": "active_collectors_table",
+      "options": {
+        "query": "| mstats latest_time(*) WHERE index IN ($indexes$) BY host, \"service.version\"\n| foreach latest_time* [ eval max_time = if(isnull(max_time) OR '<<FIELD>>' > max_time, '<<FIELD>>', max_time) ]\n| eval minutes_ago = round((now() - max_time) / 60, 0)\n| eval time_ago = if(minutes_ago < 60, tostring(minutes_ago) + \" min ago\", tostring(round(minutes_ago/60, 1)) + \" hours ago\")\n| sort - max_time\n| fields host, \"service.version\", time_ago\n| rename host as Hostname, \"service.version\" as \"Service Version\", time_ago as \"Last seen\"",
+        "queryParameters": {
+          "earliest": "$global_time_tok.earliest$",
+          "latest": "$global_time_tok.latest$"
+        }
+      },
+      "type": "ds.search"
+    },
+    "ds_cwAoWS1H_ds_ZTjR5bm4_ds_90h7fepN": {
+      "name": "otelcol_receiver_accepted_log_records_total_by_receiver",
+      "options": {
+        "query": "| mstats rate_sum(\"otelcol_receiver_accepted_log_records_total\") chart=true WHERE index IN ($indexes$) AND host IN ($instances$) span=$time_bucket$ chart.useother=false chart.agg=max BY receiver\n| fields - _span*\n| rename * AS \"* /s\"\n| rename \"_time /s\" AS _time",
+        "queryParameters": {
+          "earliest": "$global_time_tok.earliest$",
+          "latest": "$global_time_tok.latest$"
+        }
+      },
+      "type": "ds.search"
+    },
+    "ds_eCerAk5f_ds_u0VcaQVQ": {
+      "name": "system.disk.io_per_device",
+      "options": {
+        "query": "| mstats rate_sum(\"system.disk.io\") WHERE index IN ($indexes$) AND \"device\" IN ($io_devices$) AND host=$host-io$ AND \"direction\" IN ($io_direction$) span=$time_bucket$ BY device, direction\n| eval key = device + \" \" + direction\n| eval io_kbps = round('rate_sum(system.disk.io)' / 1024, 2)\n| timechart span=$time_bucket$ max(io_kbps) as \"KB/s\" BY key",
+        "queryParameters": {
+          "earliest": "$global_time_tok.earliest$",
+          "latest": "$global_time_tok.latest$"
+        }
+      },
+      "type": "ds.search"
+    },
+    "ds_fUNEMrdc_ds_HQvYFgXE": {
+      "name": "kafka.consumer_group.offset",
+      "options": {
+        "query": "| mstats avg(\"kafka.consumer_group.offset\") prestats=true WHERE index IN ($indexes$) AND group=$group$ AND topic=$topic$ span=$time_bucket$ BY partition\n| timechart avg(\"kafka.consumer_group.offset\") span=$time_bucket$ useother=false BY partition\n| fields - _span*",
+        "queryParameters": {
+          "earliest": "$global_time_tok.earliest$",
+          "latest": "$global_time_tok.latest$"
+        }
+      },
+      "type": "ds.search"
+    },
+    "ds_j5tv7r78": {
+      "name": "distirbution_of_source",
+      "options": {
+        "query": "| tstats count WHERE index IN ($indexes$) \n    AND host IN ($host_token$) \n    AND source IN ($source_token$) \n    AND sourcetype IN ($sourcetype_token$)\n    BY source\n| rename count as \"Message Count\"\n| sort - \"Message Count\"",
+        "queryParameters": {
+          "earliest": "$global_time_tok.earliest$",
+          "latest": "$global_time_tok.latest$"
+        }
+      },
+      "type": "ds.search"
+    },
+    "ds_l3E6PTp9": {
+      "name": "system.network.packets",
+      "options": {
+        "query": "| mstats rate_sum(\"system.network.packets\") chart=true WHERE index IN ($indexes$) AND direction=\"receive\" span=$time_bucket$ chart.useother=false chart.agg=max BY host\n| fields - _span*\n| rename * AS \"* /s\"\n| rename \"_time /s\" AS _time",
+        "queryParameters": {
+          "earliest": "$global_time_tok.earliest$",
+          "latest": "$global_time_tok.latest$"
+        }
+      },
+      "type": "ds.search"
+    },
+    "ds_lNrdOrIz_ds_d9zD9rhN_ds_Fr33CoCF": {
+      "name": "num_of_active_collectors",
+      "options": {
+        "query": "| mstats count(*) WHERE index IN ($indexes$) earliest=-5m latest=now BY host\n| stats dc(host) as unique_hosts",
+        "queryParameters": {
+          "earliest": "$global_time_tok.earliest$",
+          "latest": "$global_time_tok.latest$"
+        }
+      },
+      "type": "ds.search"
+    },
+    "ds_okOx1cf3": {
+      "name": "index_table",
+      "options": {
+        "query": "index IN ($indexes$) host IN ($host_token$) source IN ($source_token$) sourcetype IN ($sourcetype_token$)\n| eval msg_size = len(_raw)\n| bucket _time span=1s\n| stats avg(msg_size) as avg_size, count as msg_count by _time, index\n| stats avg(avg_size) as \"Avg Size\", sum(msg_count) as \"Messages\", avg(msg_count) as \"Avg Rate/sec\", max(msg_count) as \"Peak Rate/sec\", latest(_time) as last_message_time by index\n| eval \"Avg Size\" = round('Avg Size', 2), \"Avg Rate/sec\" = round('Avg Rate/sec', 2), \"Seconds Ago\" = round((now() - last_message_time), 0), \"Last Message\" = strftime(last_message_time, \"%Y-%m-%d %H:%M:%S\")\n| addcoltotals labelfield=index label=\"*** TOTAL ***\"\n| eval \"Seconds Ago\" = if(index=\"*** TOTAL ***\", \"\", 'Seconds Ago'), \"Last Message\" = if(index=\"*** TOTAL ***\", \"\", 'Last Message')\n| fields index, \"Messages\", \"Avg Size\", \"Avg Rate/sec\", \"Peak Rate/sec\", \"Seconds Ago\", \"Last Message\"\n| sort - \"Messages\"",
+        "queryParameters": {
+          "earliest": "$global_time_tok.earliest$",
+          "latest": "$global_time_tok.latest$"
+        }
+      },
+      "type": "ds.search"
+    },
+    "ds_pPQwfvkG_ds_l2Wm9z1Q_ds_o3cfVFsP": {
+      "name": "memory_types",
+      "options": {
+        "query": "| mstats latest(\"system.memory.utilization\") WHERE index IN ($indexes$) BY state\n| stats values(state) as states\n| mvexpand states\n| rename states as state",
+        "queryParameters": {
+          "earliest": "$global_time_tok.earliest$",
+          "latest": "$global_time_tok.latest$"
+        }
+      },
+      "type": "ds.search"
+    },
+    "ds_qrEBl7KV_ds_xHgD3csx_search_5": {
+      "name": "process.memory.virtual",
+      "options": {
+        "query": "| mstats latest(\"system.memory.limit\") WHERE index IN ($indexes$) AND host=$host-mem$\n| sort - \"latest(system.memory.limit)\"\n| eval \"Memory Limit (GB)\" = round('latest(system.memory.limit)' / 1073741824, 2)\n| table \"Memory Limit (GB)\"",
+        "queryParameters": {
+          "earliest": "$global_time_tok.earliest$",
+          "latest": "$global_time_tok.latest$"
+        }
+      },
+      "type": "ds.search"
+    },
+    "ds_uY9W3W7W": {
+      "name": "hosts_from_logs",
+      "options": {
+        "query": "| tstats values(host) WHERE index=*\n| mvexpand values(host)\n| rename values(host) as host",
+        "queryParameters": {
+          "earliest": "$global_time_tok.earliest$",
+          "latest": "$global_time_tok.latest$"
+        }
+      },
+      "type": "ds.search"
+    },
+    "ds_vACryaD3_ds_5J7QIT6R": {
+      "name": "system.disk.io_device_dropdown",
+      "options": {
+        "query": "| mstats latest(\"system.disk.io\") prestats=true WHERE index IN ($indexes$) span=$time_bucket$ BY device\n| where NOT match(device, \"loop\")\n| dedup device\n| table device",
+        "queryParameters": {
+          "earliest": "$global_time_tok.earliest$",
+          "latest": "$global_time_tok.latest$"
+        }
+      },
+      "type": "ds.search"
+    },
+    "ds_vKXPyaOL_ds_dImd6ZvH_search_2": {
+      "name": "system.memory.usage",
+      "options": {
+        "query": "| mstats avg(\"system.memory.usage\") prestats=true WHERE index IN ($indexes$) AND \"state\" IN ($memory_type$) AND host=$host-mem$ span=$time_bucket$ BY state\n| timechart avg(\"system.memory.usage\") span=$time_bucket$ useother=false BY state\n| foreach * [ eval <<FIELD>>_pct = round('<<FIELD>>' / 1024 / 1024, 2) ]\n| fields _time, *_pct\n| rename *_pct as \"*\"",
+        "queryParameters": {
+          "earliest": "$global_time_tok.earliest$",
+          "latest": "$global_time_tok.latest$"
+        }
+      },
+      "type": "ds.search"
+    },
+    "ds_wMzZ0T2J_ds_YqssWQrS": {
+      "name": "system.filesystem.utilization_dropdown",
+      "options": {
+        "query": "| mstats latest(\"system.filesystem.utilization\") prestats=true WHERE index IN ($indexes$) span=$time_bucket$ BY device\n| where NOT match(device, \"loop\")\n| dedup device\n| table device",
+        "queryParameters": {
+          "earliest": "$global_time_tok.earliest$",
+          "latest": "$global_time_tok.latest$"
+        }
+      },
+      "type": "ds.search"
+    },
+    "ds_xn8IveA5_ds_plBB9q0t": {
+      "name": "kafka.consumer_group.lag_per_topic",
+      "options": {
+        "query": "| mstats avg(\"kafka.consumer_group.lag\") prestats=true WHERE index IN ($indexes$) span=$time_bucket$ BY topic\n| timechart avg(\"kafka.consumer_group.lag\") span=$time_bucket$ useother=false BY topic\n| fields - _span*",
+        "queryParameters": {
+          "earliest": "$global_time_tok.earliest$",
+          "latest": "$global_time_tok.latest$"
+        }
+      },
+      "type": "ds.search"
+    },
+    "search_8": {
+      "name": "process.disk.io",
+      "options": {
+        "query": "| mstats rate_sum(\"process.disk.io\") chart=true WHERE index IN ($indexes$) AND \"direction\" IN ($io_direction$) AND host=$host-io$ span=$time_bucket$ chart.useother=false chart.agg=max BY direction\n| eval \"Read kb\"=round(read/1024, 2)\n| eval \"Write kb\"=round(write/1024, 2)\n| fields - _span*, read, write\n| rename * AS \"* /s\"\n| rename \"_time /s\" AS _time",
+        "queryParameters": {
+          "earliest": "$global_time_tok.earliest$",
+          "latest": "$global_time_tok.latest$"
+        }
+      },
+      "type": "ds.search"
+    }
+  },
+  "layout": {
+    "globalInputs": [
+      "input_1",
+      "input_xXfyqwDb",
+      "input_C3fGWgGQ"
+    ],
+    "layoutDefinitions": {
+      "layout_1dPmmfh3": {
+        "structure": [
+          {
+            "item": "viz_tNRcOsBy",
+            "position": {
+              "h": 200,
+              "w": 300,
+              "x": 0,
+              "y": 0
+            },
+            "type": "block"
+          },
+          {
+            "item": "input_pLbyzbAX",
+            "position": {
+              "h": 100,
+              "w": 300,
+              "x": 0,
+              "y": 200
+            },
+            "type": "input"
+          },
+          {
+            "item": "input_NxPNO0QD",
+            "position": {
+              "h": 100,
+              "w": 300,
+              "x": 0,
+              "y": 300
+            },
+            "type": "input"
+          },
+          {
+            "item": "viz_H9srxqi5",
+            "position": {
+              "h": 400,
+              "w": 1200,
+              "x": 0,
+              "y": 400
+            },
+            "type": "block"
+          },
+          {
+            "item": "viz_msZaQabj",
+            "position": {
+              "h": 400,
+              "w": 1200,
+              "x": 0,
+              "y": 800
+            },
+            "type": "block"
+          },
+          {
+            "item": "viz_ScWnIEiC",
+            "position": {
+              "h": 400,
+              "w": 657,
+              "x": 300,
+              "y": 0
+            },
+            "type": "block"
+          },
+          {
+            "item": "viz_EsqV6xFp",
+            "position": {
+              "h": 400,
+              "w": 243,
+              "x": 957,
+              "y": 0
+            },
+            "type": "block"
+          }
+        ],
+        "type": "grid"
+      },
+      "layout_HWd15wWc": {
+        "structure": [
+          {
+            "item": "viz_4pkJDrfY",
+            "position": {
+              "h": 213,
+              "w": 216,
+              "x": 0,
+              "y": 0
+            },
+            "type": "block"
+          },
+          {
+            "item": "input_AKCkSSzX",
+            "position": {
+              "h": 91,
+              "w": 216,
+              "x": 0,
+              "y": 213
+            },
+            "type": "input"
+          },
+          {
+            "item": "input_GN3RCqT3",
+            "position": {
+              "h": 96,
+              "w": 216,
+              "x": 0,
+              "y": 304
+            },
+            "type": "input"
+          },
+          {
+            "item": "viz_eHDzKXiV",
+            "position": {
+              "h": 400,
+              "w": 1200,
+              "x": 0,
+              "y": 400
+            },
+            "type": "block"
+          },
+          {
+            "item": "viz_6Y8API6V",
+            "position": {
+              "h": 400,
+              "w": 1200,
+              "x": 0,
+              "y": 800
+            },
+            "type": "block"
+          },
+          {
+            "item": "chart_9",
+            "position": {
+              "h": 400,
+              "w": 752,
+              "x": 216,
+              "y": 0
+            },
+            "type": "block"
+          },
+          {
+            "item": "viz_JDtv2UME",
+            "position": {
+              "h": 400,
+              "w": 232,
+              "x": 968,
+              "y": 0
+            },
+            "type": "block"
+          }
+        ],
+        "type": "grid"
+      },
+      "layout_Sur7iLpk": {
+        "structure": [
+          {
+            "item": "viz_RBdkcJJd",
+            "position": {
+              "h": 338,
+              "w": 600,
+              "x": 0,
+              "y": 0
+            },
+            "type": "block"
+          },
+          {
+            "item": "viz_4UYh3NZo",
+            "position": {
+              "h": 72,
+              "w": 1200,
+              "x": 0,
+              "y": 338
+            },
+            "type": "block"
+          },
+          {
+            "item": "viz_meWXSym7",
+            "position": {
+              "h": 315,
+              "w": 600,
+              "x": 0,
+              "y": 410
+            },
+            "type": "block"
+          },
+          {
+            "item": "viz_9cOHXPYy",
+            "position": {
+              "h": 288,
+              "w": 600,
+              "x": 0,
+              "y": 725
+            },
+            "type": "block"
+          },
+          {
+            "item": "viz_WV5dKoaY",
+            "position": {
+              "h": 94,
+              "w": 600,
+              "x": 0,
+              "y": 1013
+            },
+            "type": "block"
+          },
+          {
+            "item": "viz_TmsZnSC6",
+            "position": {
+              "h": 291,
+              "w": 600,
+              "x": 0,
+              "y": 1107
+            },
+            "type": "block"
+          },
+          {
+            "item": "viz_uLu22Lhd",
+            "position": {
+              "h": 290,
+              "w": 600,
+              "x": 0,
+              "y": 1398
+            },
+            "type": "block"
+          },
+          {
+            "item": "viz_2wOCXAJy",
+            "position": {
+              "h": 91,
+              "w": 600,
+              "x": 0,
+              "y": 1688
+            },
+            "type": "block"
+          },
+          {
+            "item": "viz_D8cFzvHY",
+            "position": {
+              "h": 333,
+              "w": 600,
+              "x": 0,
+              "y": 1779
+            },
+            "type": "block"
+          },
+          {
+            "item": "viz_EZyMKqzW",
+            "position": {
+              "h": 315,
+              "w": 600,
+              "x": 600,
+              "y": 410
+            },
+            "type": "block"
+          },
+          {
+            "item": "viz_GukaWqeD",
+            "position": {
+              "h": 288,
+              "w": 600,
+              "x": 600,
+              "y": 725
+            },
+            "type": "block"
+          },
+          {
+            "item": "input_pg6yMpkX",
+            "position": {
+              "h": 94,
+              "w": 600,
+              "x": 600,
+              "y": 1013
+            },
+            "type": "input"
+          },
+          {
+            "item": "viz_mWtoG6NQ",
+            "position": {
+              "h": 291,
+              "w": 600,
+              "x": 600,
+              "y": 1107
+            },
+            "type": "block"
+          },
+          {
+            "item": "viz_SgYJO6wR",
+            "position": {
+              "h": 290,
+              "w": 600,
+              "x": 600,
+              "y": 1398
+            },
+            "type": "block"
+          },
+          {
+            "item": "input_0NyhMmCs",
+            "position": {
+              "h": 91,
+              "w": 600,
+              "x": 600,
+              "y": 1688
+            },
+            "type": "input"
+          },
+          {
+            "item": "viz_EkTH143w",
+            "position": {
+              "h": 333,
+              "w": 600,
+              "x": 600,
+              "y": 1779
+            },
+            "type": "block"
+          },
+          {
+            "item": "viz_cecrtmvl",
+            "position": {
+              "h": 168,
+              "w": 304,
+              "x": 600,
+              "y": 170
+            },
+            "type": "block"
+          },
+          {
+            "item": "viz_s68ebvOS",
+            "position": {
+              "h": 170,
+              "w": 304,
+              "x": 600,
+              "y": 0
+            },
+            "type": "block"
+          },
+          {
+            "item": "viz_2J9rcctk",
+            "position": {
+              "h": 170,
+              "w": 296,
+              "x": 904,
+              "y": 0
+            },
+            "type": "block"
+          },
+          {
+            "item": "viz_jAOfucAh",
+            "position": {
+              "h": 168,
+              "w": 296,
+              "x": 904,
+              "y": 170
+            },
+            "type": "block"
+          }
+        ],
+        "type": "grid"
+      },
+      "layout_URbiBPHF": {
+        "options": {
+          "gutterSize": 16
+        },
+        "structure": [
+          {
+            "item": "viz_HsLhPEjF",
+            "position": {
+              "h": 272,
+              "w": 233,
+              "x": 0,
+              "y": 0
+            },
+            "type": "block"
+          },
+          {
+            "item": "viz_z3vvVMRh",
+            "position": {
+              "h": 308,
+              "w": 281,
+              "x": 0,
+              "y": 272
+            },
+            "type": "block"
+          },
+          {
+            "item": "input_yeZ9kiX4",
+            "position": {
+              "h": 142,
+              "w": 138,
+              "x": 0,
+              "y": 580
+            },
+            "type": "input"
+          },
+          {
+            "item": "input_Ny2SlyOe",
+            "position": {
+              "h": 153,
+              "w": 138,
+              "x": 0,
+              "y": 722
+            },
+            "type": "input"
+          },
+          {
+            "item": "viz_Lw7VmwzY",
+            "position": {
+              "h": 295,
+              "w": 501,
+              "x": 138,
+              "y": 580
+            },
+            "type": "block"
+          },
+          {
+            "item": "viz_9QpuVTBv",
+            "position": {
+              "h": 272,
+              "w": 647,
+              "x": 233,
+              "y": 0
+            },
+            "type": "block"
+          },
+          {
+            "item": "viz_CtIeYEVB",
+            "position": {
+              "h": 308,
+              "w": 919,
+              "x": 281,
+              "y": 272
+            },
+            "type": "block"
+          },
+          {
+            "item": "viz_fgaNSfUw",
+            "position": {
+              "h": 295,
+              "w": 561,
+              "x": 639,
+              "y": 580
+            },
+            "type": "block"
+          },
+          {
+            "item": "viz_Kd965JMF",
+            "position": {
+              "h": 272,
+              "w": 320,
+              "x": 880,
+              "y": 0
+            },
+            "type": "block"
+          }
+        ],
+        "type": "grid"
+      },
+      "layout_Zz5W8Q7n": {
+        "structure": [
+          {
+            "item": "viz_FbSd5gZ9",
+            "position": {
+              "h": 400,
+              "w": 599,
+              "x": 0,
+              "y": 0
+            },
+            "type": "block"
+          },
+          {
+            "item": "viz_26sOE5B9",
+            "position": {
+              "h": 400,
+              "w": 601,
+              "x": 599,
+              "y": 0
+            },
+            "type": "block"
+          }
+        ],
+        "type": "grid"
+      },
+      "layout_enca6c5j": {
+        "structure": [
+          {
+            "item": "viz_8ZftSVOW",
+            "position": {
+              "h": 141,
+              "w": 300,
+              "x": 0,
+              "y": 0
+            },
+            "type": "block"
+          },
+          {
+            "item": "input_2LbGQBKr",
+            "position": {
+              "h": 101,
+              "w": 150,
+              "x": 0,
+              "y": 141
+            },
+            "type": "input"
+          },
+          {
+            "item": "input_qI1GJKMP",
+            "position": {
+              "h": 90,
+              "w": 150,
+              "x": 0,
+              "y": 242
+            },
+            "type": "input"
+          },
+          {
+            "item": "viz_HOQmIULa",
+            "position": {
+              "h": 400,
+              "w": 600,
+              "x": 0,
+              "y": 332
+            },
+            "type": "block"
+          },
+          {
+            "item": "input_T0Ysqc8G",
+            "position": {
+              "h": 101,
+              "w": 150,
+              "x": 150,
+              "y": 141
+            },
+            "type": "input"
+          },
+          {
+            "item": "input_nuhJNcnA",
+            "position": {
+              "h": 90,
+              "w": 150,
+              "x": 150,
+              "y": 242
+            },
+            "type": "input"
+          },
+          {
+            "item": "chart_8",
+            "position": {
+              "h": 332,
+              "w": 642,
+              "x": 300,
+              "y": 0
+            },
+            "type": "block"
+          },
+          {
+            "item": "viz_xPMIBchm",
+            "position": {
+              "h": 400,
+              "w": 600,
+              "x": 600,
+              "y": 332
+            },
+            "type": "block"
+          },
+          {
+            "item": "viz_Nfne0BBA",
+            "position": {
+              "h": 332,
+              "w": 258,
+              "x": 942,
+              "y": 0
+            },
+            "type": "block"
+          }
+        ],
+        "type": "grid"
+      },
+      "layout_xA4hbNpy": {
+        "options": {
+          "gutterSize": 16
+        },
+        "structure": [
+          {
+            "item": "viz_9oCnGAAu",
+            "position": {
+              "h": 282,
+              "w": 255,
+              "x": 0,
+              "y": 0
+            },
+            "type": "block"
+          },
+          {
+            "item": "input_PDiKbEOH",
+            "position": {
+              "h": 109,
+              "w": 255,
+              "x": 0,
+              "y": 282
+            },
+            "type": "input"
+          },
+          {
+            "item": "input_xwqCp5tI",
+            "position": {
+              "h": 120,
+              "w": 255,
+              "x": 0,
+              "y": 391
+            },
+            "type": "input"
+          },
+          {
+            "item": "input_wIJLzGuP",
+            "position": {
+              "h": 120,
+              "w": 255,
+              "x": 0,
+              "y": 511
+            },
+            "type": "input"
+          },
+          {
+            "item": "viz_2cbaDPOx",
+            "position": {
+              "h": 369,
+              "w": 600,
+              "x": 0,
+              "y": 631
+            },
+            "type": "block"
+          },
+          {
+            "item": "viz_RXvk6PRg",
+            "position": {
+              "h": 282,
+              "w": 945,
+              "x": 255,
+              "y": 0
+            },
+            "type": "block"
+          },
+          {
+            "item": "viz_C07dUpoX",
+            "position": {
+              "h": 349,
+              "w": 509,
+              "x": 255,
+              "y": 282
+            },
+            "type": "block"
+          },
+          {
+            "item": "viz_ayUTQKs2",
+            "position": {
+              "h": 369,
+              "w": 600,
+              "x": 600,
+              "y": 631
+            },
+            "type": "block"
+          },
+          {
+            "item": "viz_eluCmvxL",
+            "position": {
+              "h": 349,
+              "w": 436,
+              "x": 764,
+              "y": 282
+            },
+            "type": "block"
+          }
+        ],
+        "type": "grid"
+      }
+    },
+    "tabs": {
+      "items": [
+        {
+          "label": "General",
+          "layoutId": "layout_Sur7iLpk"
+        },
+        {
+          "label": "Kafka",
+          "layoutId": "layout_URbiBPHF"
+        },
+        {
+          "label": "CPU",
+          "layoutId": "layout_HWd15wWc"
+        },
+        {
+          "label": "Memory",
+          "layoutId": "layout_1dPmmfh3"
+        },
+        {
+          "label": "Disk",
+          "layoutId": "layout_enca6c5j"
+        },
+        {
+          "label": "Network",
+          "layoutId": "layout_Zz5W8Q7n"
+        },
+        {
+          "label": "Events",
+          "layoutId": "layout_xA4hbNpy"
+        }
+      ]
+    }
+  }
+}
