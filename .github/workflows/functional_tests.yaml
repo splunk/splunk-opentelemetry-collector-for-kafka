@@ -1,9 +1,11 @@
 name: Splunk Otel Kafka Connector Functional Test
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
+      - non-functional-tests
   pull_request:
 
 env:
@@ -11,6 +13,15 @@ env:
   # Make sure to exit early if cache segment download times out after 2 minutes.
   # We limit cache download as a whole to 5 minutes.
   SEGMENT_DOWNLOAD_TIMEOUT_MINS: 2
+  CI_SPLUNK_VERSION: 9.4.1
+  CI_SPLUNK_HOST: localhost
+  CI_SPLUNK_USERNAME: admin
+  CI_SPLUNK_HEC_TOKEN: "00000000-0000-0000-0000-0000000000000"
+  CI_SPLUNK_PASSWORD: helloworld
+  CI_SPLUNK_MGMT_PORT: 8089
+  CI_KAFKA_BROKER_ADDRESS: "localhost:9092"
+  CI_OTEL_BINARY_FILE: "otelcol_linux_amd64"
+  CI_SPLUNK_INDEX: kafka
 
 
 
@@ -18,20 +29,42 @@ jobs:
   functional-test:
     runs-on: ubuntu-latest
     env:
-      CI_SPLUNK_VERSION: 9.4.1
-      CI_SPLUNK_HOST: localhost
-      CI_SPLUNK_USERNAME: admin
-      CI_SPLUNK_HEC_TOKEN: "00000000-0000-0000-0000-0000000000000"
-      CI_SPLUNK_PASSWORD: helloworld
-      CI_SPLUNK_MGMT_PORT: 8089
-      CI_KAFKA_BROKER_ADDRESS: "localhost:9092"
-      CI_OTEL_BINARY_FILE: "otelcol_linux_amd64"
-      CI_SPLUNK_INDEX: kafka
       CI_SPLUNK_HEADER_TEST_INDEX: kafka-header-index
 
     steps:
-      - uses: ./.github/workflows/actions/setup_env
+      - name: Checkout
+        uses: actions/checkout@v4.2.2
+      - uses: ./.github/actions/setup_env
       - name: Run Tests
         working-directory: tests
         run: |
           go test ./functional_tests/functional_test.go -v -timeout 10m
+
+  non-functional-test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        kafka:
+          - num_records: "1000"
+            record_size: "1000"
+            throughput: "1000"
+          - num_records: "2000"
+            record_size: "2000"
+            throughput: "2000"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.2.2
+      - uses: ./.github/actions/setup_env
+      - name: Run Performance Script
+        run: |
+          echo "Entering kafka container"
+          echo ${{matrix.kafka.num_records}}
+          echo ${{matrix.kafka.record_size}}
+          echo ${{matrix.kafka.throughput}}
+          docker exec -i cp-kafka-container /bin/kafka-producer-perf-test --topic test --num-records ${{ matrix.kafka.num_records }} --record-size ${{ matrix.kafka.record_size }} --throughput ${{ matrix.kafka.throughput }} --producer-props bootstrap.servers=localhost:9092
+      - name: Run Tests
+        working-directory: tests
+        run: |
+          go test ./non_functional_tests/non_functional_test.go -v -timeout 10m

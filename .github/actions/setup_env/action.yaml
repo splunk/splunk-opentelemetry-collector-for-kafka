@@ -4,8 +4,6 @@ description: "Setup Env"
 runs:
   using: "composite"
   steps:
-    - name: Checkout
-      uses: actions/checkout@v4.2.2
     - uses: actions/setup-go@v5
       with:
         go-version: ${{ env.GO_VERSION }}
@@ -17,6 +15,7 @@ runs:
         compose-file: "./.github/docker_files/kafka_docker_compose.yaml"
 
     - name: Wait for Kafka Initialization
+      shell: bash
       run: |
         #Wait for Kafka to Be Ready
         for i in {1..30}; do
@@ -27,6 +26,7 @@ runs:
         echo "Kafka did not start in time!" && exit 1
 
     - name: Start Splunk in docker
+      shell: bash
       run: |
         # Start Splunk in Docker
         docker run -d \
@@ -40,6 +40,7 @@ runs:
         splunk/splunk:${CI_SPLUNK_VERSION} \
 
     - name: Wait for Splunk Initialization
+      shell: bash
       run: |
         echo "Waiting for Splunk to initialize..."
         timeout_seconds=120 # Set your timeout in seconds 
@@ -67,6 +68,7 @@ runs:
         done
 
     - name: Configure Splunk
+      shell: bash
       run: |
         # configure indexes
         curl -u ${CI_SPLUNK_USERNAME}:${CI_SPLUNK_PASSWORD} -k \
@@ -87,6 +89,7 @@ runs:
 
 
     - name: Download Splunk Otel Collector Binary
+      shell: bash
       working-directory: tests
       run: |
         wget -q https://github.com/signalfx/splunk-otel-collector/releases/latest/download/otelcol_linux_amd64

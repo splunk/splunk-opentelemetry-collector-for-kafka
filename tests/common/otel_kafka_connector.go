@@ -34,7 +34,7 @@ func StopOTelKafkaConnector(t *testing.T, cmd *exec.Cmd) {
 
 func StartOTelKafkaConnector(t *testing.T, configName string, configFilesDir string) *exec.Cmd {
 	// Start the process
-	cmd := exec.Command(fmt.Sprintf("./%s", GetConfigVariable("OTEL_BINARY_FILE")), "--config", fmt.Sprintf("%s/%s", configFilesDir, configName))
+	cmd := exec.Command(fmt.Sprintf("../%s", GetConfigVariable("OTEL_BINARY_FILE")), "--config", fmt.Sprintf("%s/%s", configFilesDir, configName))
 
 	err := cmd.Start()
 	require.NoError(t, err)
