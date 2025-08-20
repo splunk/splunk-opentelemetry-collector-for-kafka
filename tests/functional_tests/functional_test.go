@@ -1,20 +1,14 @@
-package tests
+package functional_tests
 
 import (
 	"fmt"
 	"testing"
+	"tests/common"
 	"time"
 
 	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-)
-
-const (
-	eventSearchQueryString = "| search "
-	configFilesDir         = "testdata/configs"
-	testCaseDuration       = 30 * time.Second
-	testCaseTick           = 5 * time.Second
 )
 
 func Test_Functions(t *testing.T) {
@@ -35,26 +29,26 @@ func testBasicScenarioWithSingleTopic(t *testing.T) {
 	configFileTemplate := "basic_test.yaml.tmpl"
 
 	replacements := map[string]any{
-		"KafkaBrokerAddress": GetConfigVariable("KAFKA_BROKER_ADDRESS"),
+		"KafkaBrokerAddress": common.GetConfigVariable("KAFKA_BROKER_ADDRESS"),
 		"KafkaTopicName":     topicName,
-		"SplunkHECToken":     GetConfigVariable("HEC_TOKEN"),
-		"SplunkHECEndpoint":  fmt.Sprintf("https://%s:8088/services/collector", GetConfigVariable("HOST")),
+		"SplunkHECToken":     common.GetConfigVariable("HEC_TOKEN"),
+		"SplunkHECEndpoint":  fmt.Sprintf("https://%s:8088/services/collector", common.GetConfigVariable("HOST")),
 		"Source":             source,
 		"Index":              index,
 		"Sourcetype":         sourcetype,
 	}
 
-	configFileName := prepareConfigFile(t, configFileTemplate, replacements, configFilesDir)
-	connectorHandler := startOTelKafkaConnector(t, configFileName, configFilesDir)
+	configFileName := common.PrepareConfigFile(t, configFileTemplate, replacements, common.ConfigFilesDir)
+	connectorHandler := common.StartOTelKafkaConnector(t, configFileName, common.ConfigFilesDir)
 
-	addKafkaTopic(t, topicName, 1, 1)
-	sendMessageToKafkaTopic(topicName, event)
+	common.AddKafkaTopic(t, topicName, 1, 1)
+	common.SendMessageToKafkaTopic(topicName, event)
 
 	// check events in Splunk
-	searchQuery := eventSearchQueryString + "index=" + index + " sourcetype=" + sourcetype + " source=" + source
+	searchQuery := common.EventSearchQueryString + "index=" + index + " sourcetype=" + sourcetype + " source=" + source
 	startTime := "-1m@m"
 	require.Eventually(t, func() bool {
-		events := checkEventsFromSplunk[any](t, searchQuery, startTime)
+		events := common.CheckEventsFromSplunk[any](t, searchQuery, startTime)
 		if len(events) < 1 {
 			return false
 		}
@@ -62,8 +56,8 @@ func testBasicScenarioWithSingleTopic(t *testing.T) {
 		assert.Equal(t, 1, len(events), "Expected one event for topic %s, but got %d", topicName, len(events))
 		assert.Equal(t, event, events[0].(map[string]interface{})["_raw"], "Expected event body does not match")
 		return true
-	}, testCaseDuration, testCaseTick, "Search query: \n\"%s\"\n returned NO events for topic %s", searchQuery, topicName)
-	defer stopOTelKafkaConnector(t, connectorHandler)
+	}, common.TestCaseDuration, common.TestCaseTick, "Search query: \n\"%s\"\n returned NO events for topic %s", searchQuery, topicName)
+	defer common.StopOTelKafkaConnector(t, connectorHandler)
 }
 
 func testScenarioWithMultipleTopic(t *testing.T) {
@@ -79,30 +73,30 @@ func testScenarioWithMultipleTopic(t *testing.T) {
 	configFileTemplate := "multiple_topics_test.yaml.tmpl"
 
 	replacements := map[string]any{
-		"KafkaBrokerAddress": GetConfigVariable("KAFKA_BROKER_ADDRESS"),
+		"KafkaBrokerAddress": common.GetConfigVariable("KAFKA_BROKER_ADDRESS"),
 		"KafkaTopicName1":    topicName1,
 		"KafkaTopicName2":    topicName2,
-		"SplunkHECToken":     GetConfigVariable("HEC_TOKEN"),
-		"SplunkHECEndpoint":  fmt.Sprintf("https://%s:8088/services/collector", GetConfigVariable("HOST")),
+		"SplunkHECToken":     common.GetConfigVariable("HEC_TOKEN"),
+		"SplunkHECEndpoint":  fmt.Sprintf("https://%s:8088/services/collector", common.GetConfigVariable("HOST")),
 		"Source1":            source1,
 		"Source2":            source2,
 		"Index":              index,
 		"Sourcetype":         sourcetype,
 	}
 
-	configFileName := prepareConfigFile(t, configFileTemplate, replacements, configFilesDir)
-	connectorHandler := startOTelKafkaConnector(t, configFileName, configFilesDir)
-	defer stopOTelKafkaConnector(t, connectorHandler)
+	configFileName := common.PrepareConfigFile(t, configFileTemplate, replacements, common.ConfigFilesDir)
+	connectorHandler := common.StartOTelKafkaConnector(t, configFileName, common.ConfigFilesDir)
+	defer common.StopOTelKafkaConnector(t, connectorHandler)
 
-	addKafkaTopic(t, topicName1, 1, 1)
-	addKafkaTopic(t, topicName2, 1, 1)
-	sendMessageToKafkaTopic(topicName1, event+topicName1)
-	sendMessageToKafkaTopic(topicName2, event+topicName2)
+	common.AddKafkaTopic(t, topicName1, 1, 1)
+	common.AddKafkaTopic(t, topicName2, 1, 1)
+	common.SendMessageToKafkaTopic(topicName1, event+topicName1)
+	common.SendMessageToKafkaTopic(topicName2, event+topicName2)
 
-	searchQuery := eventSearchQueryString + "index=" + index + " sourcetype=" + sourcetype + " source=" + sourceSuf + "*"
+	searchQuery := common.EventSearchQueryString + "index=" + index + " sourcetype=" + sourcetype + " source=" + sourceSuf + "*"
 	startTime := "-1m@m"
 	require.Eventually(t, func() bool {
-		events := checkEventsFromSplunk[any](t, searchQuery, startTime)
+		events := common.CheckEventsFromSplunk[any](t, searchQuery, startTime)
 		if len(events) < 1 {
 			return false
 		}
@@ -136,7 +130,7 @@ func testScenarioWithMultipleTopic(t *testing.T) {
 		)
 
 		return true
-	}, testCaseDuration, testCaseTick, "Search query: \n\"%s\"\n returned NO events for topics %s, %s", searchQuery, topicName1, topicName2)
+	}, common.TestCaseDuration, common.TestCaseTick, "Search query: \n\"%s\"\n returned NO events for topics %s, %s", searchQuery, topicName1, topicName2)
 }
 
 func testScenarioWithCustomHeaders(t *testing.T) {
@@ -157,21 +151,21 @@ func testScenarioWithCustomHeaders(t *testing.T) {
 	hostHeaderVal := "host-value-from-header"
 
 	replacements := map[string]any{
-		"KafkaBrokerAddress": GetConfigVariable("KAFKA_BROKER_ADDRESS"),
+		"KafkaBrokerAddress": common.GetConfigVariable("KAFKA_BROKER_ADDRESS"),
 		"KafkaTopicName":     topicName,
-		"SplunkHECToken":     GetConfigVariable("HEC_TOKEN"),
-		"SplunkHECEndpoint":  fmt.Sprintf("https://%s:8088/services/collector", GetConfigVariable("HOST")),
+		"SplunkHECToken":     common.GetConfigVariable("HEC_TOKEN"),
+		"SplunkHECEndpoint":  fmt.Sprintf("https://%s:8088/services/collector", common.GetConfigVariable("HOST")),
 		"Source":             source,
 		"Index":              index,
 		"Sourcetype":         sourcetype,
 		"CustomHeader":       headerKey,
 	}
 
-	configFileName := prepareConfigFile(t, configFileTemplate, replacements, configFilesDir)
-	connectorHandler := startOTelKafkaConnector(t, configFileName, configFilesDir)
+	configFileName := common.PrepareConfigFile(t, configFileTemplate, replacements, common.ConfigFilesDir)
+	connectorHandler := common.StartOTelKafkaConnector(t, configFileName, common.ConfigFilesDir)
 
-	addKafkaTopic(t, topicName, 1, 1)
-	sendMessageToKafkaTopic(topicName, event,
+	common.AddKafkaTopic(t, topicName, 1, 1)
+	common.SendMessageToKafkaTopic(topicName, event,
 		kafka.Header{
 			Key:   headerKey,
 			Value: []byte(headerVal),
@@ -193,11 +187,11 @@ func testScenarioWithCustomHeaders(t *testing.T) {
 			Value: []byte(hostHeaderVal),
 		})
 
-	searchQuery := eventSearchQueryString + "index=" + indexHeaderVal + " sourcetype=" + sourcetypeHeaderVal + " source=" +
+	searchQuery := common.EventSearchQueryString + "index=" + indexHeaderVal + " sourcetype=" + sourcetypeHeaderVal + " source=" +
 		sourceHeaderVal + " host=" + hostHeaderVal + " kafka.header." + headerKey + "=" + headerVal
 	startTime := "-1m@m"
 	require.Eventually(t, func() bool {
-		events := checkEventsFromSplunk[any](t, searchQuery, startTime)
+		events := common.CheckEventsFromSplunk[any](t, searchQuery, startTime)
 		if len(events) < 1 {
 			return false
 		}
@@ -206,14 +200,14 @@ func testScenarioWithCustomHeaders(t *testing.T) {
 		assert.Equal(t, event, events[0].(map[string]interface{})["_raw"], "Expected event body does not match")
 		assert.Equal(t, headerVal, events[0].(map[string]interface{})["kafka.header."+headerKey], "Expected header value does not match")
 		return true
-	}, testCaseDuration, testCaseTick, "Search query: \n\"%s\"\n returned NO events for topic %s", searchQuery, topicName)
+	}, common.TestCaseDuration, common.TestCaseTick, "Search query: \n\"%s\"\n returned NO events for topic %s", searchQuery, topicName)
 
 	// Check if there are no events with the original source, index, and sourcetype
-	searchQuery = eventSearchQueryString + "index=" + index + " sourcetype=" + sourcetype + " source=" + source
-	events := checkEventsFromSplunk[any](t, searchQuery, startTime)
+	searchQuery = common.EventSearchQueryString + "index=" + index + " sourcetype=" + sourcetype + " source=" + source
+	events := common.CheckEventsFromSplunk[any](t, searchQuery, startTime)
 	assert.Equal(t, 0, len(events), "Expected zero events for topic %s but got %d", topicName, len(events))
 
-	defer stopOTelKafkaConnector(t, connectorHandler)
+	defer common.StopOTelKafkaConnector(t, connectorHandler)
 }
 
 func testScenarioTimestampExtraction(t *testing.T) {
@@ -231,10 +225,10 @@ func testScenarioTimestampExtraction(t *testing.T) {
 	require.NoError(t, err, "Error parsing timestamp")
 	event := "[" + timestampStr + "]" + " This event should have a custom timestamp!"
 	replacements := map[string]any{
-		"KafkaBrokerAddress": GetConfigVariable("KAFKA_BROKER_ADDRESS"),
+		"KafkaBrokerAddress": common.GetConfigVariable("KAFKA_BROKER_ADDRESS"),
 		"KafkaTopicName":     topicName,
-		"SplunkHECToken":     GetConfigVariable("HEC_TOKEN"),
-		"SplunkHECEndpoint":  fmt.Sprintf("https://%s:8088/services/collector", GetConfigVariable("HOST")),
+		"SplunkHECToken":     common.GetConfigVariable("HEC_TOKEN"),
+		"SplunkHECEndpoint":  fmt.Sprintf("https://%s:8088/services/collector", common.GetConfigVariable("HOST")),
 		"Source":             source,
 		"Index":              index,
 		"Sourcetype":         sourcetype,
@@ -242,18 +236,18 @@ func testScenarioTimestampExtraction(t *testing.T) {
 		"FormatStr":          formatStr,
 	}
 
-	configFileName := prepareConfigFile(t, configFileTemplate, replacements, configFilesDir)
-	connectorHandler := startOTelKafkaConnector(t, configFileName, configFilesDir)
+	configFileName := common.PrepareConfigFile(t, configFileTemplate, replacements, common.ConfigFilesDir)
+	connectorHandler := common.StartOTelKafkaConnector(t, configFileName, common.ConfigFilesDir)
 
-	addKafkaTopic(t, topicName, 1, 1)
-	sendMessageToKafkaTopic(topicName, event)
+	common.AddKafkaTopic(t, topicName, 1, 1)
+	common.SendMessageToKafkaTopic(topicName, event)
 
-	searchQuery := eventSearchQueryString + "index=" + index + " sourcetype=" + sourcetype + " source=" +
+	searchQuery := common.EventSearchQueryString + "index=" + index + " sourcetype=" + sourcetype + " source=" +
 		source
 	startTime := "2020-01-01T11:55:00"
 	endTime := "2020-01-01T12:05:00"
 	require.Eventually(t, func() bool {
-		events := checkEventsFromSplunk[any](t, searchQuery, startTime, endTime)
+		events := common.CheckEventsFromSplunk[any](t, searchQuery, startTime, endTime)
 		if len(events) < 1 {
 			return false
 		}
@@ -268,6 +262,6 @@ func testScenarioTimestampExtraction(t *testing.T) {
 		assert.Equal(t, timestamp, eventTime, "Event time does not match timestamp in the event body")
 
 		return true
-	}, testCaseDuration, testCaseTick, "Search query: \n\"%s\"\n returned NO events for topic %s", searchQuery, topicName)
-	defer stopOTelKafkaConnector(t, connectorHandler)
+	}, common.TestCaseDuration, common.TestCaseTick, "Search query: \n\"%s\"\n returned NO events for topic %s", searchQuery, topicName)
+	defer common.StopOTelKafkaConnector(t, connectorHandler)
 }

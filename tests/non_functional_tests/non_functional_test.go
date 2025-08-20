@@ -1,10 +1,11 @@
-package tests
+package non_functional_tests
 
 import (
 	"fmt"
 	"log"
 	"strconv"
 	"testing"
+	"tests/common"
 	"time"
 
 	"github.com/stretchr/testify/assert"
@@ -33,32 +34,32 @@ func TestNonFunctional(t *testing.T) {
 	msgSize := 100
 
 	replacements := map[string]any{
-		"KafkaBrokerAddress": GetConfigVariable("KAFKA_BROKER_ADDRESS"),
+		"KafkaBrokerAddress": common.GetConfigVariable("KAFKA_BROKER_ADDRESS"),
 		"KafkaTopicName":     topicName,
-		"SplunkHECToken":     GetConfigVariable("HEC_TOKEN"),
-		"SplunkHECEndpoint":  fmt.Sprintf("https://%s:8088/services/collector", GetConfigVariable("HOST")),
+		"SplunkHECToken":     common.GetConfigVariable("HEC_TOKEN"),
+		"SplunkHECEndpoint":  fmt.Sprintf("https://%s:8088/services/collector", common.GetConfigVariable("HOST")),
 		"Source":             source,
 		"Index":              index,
 		"Sourcetype":         sourcetype,
 	}
 
-	configFileName := prepareConfigFile(t, configFileTemplate, replacements, configFilesDir)
-	connectorHandler := startOTelKafkaConnector(t, configFileName, configFilesDir)
-	defer stopOTelKafkaConnector(t, connectorHandler)
+	configFileName := common.PrepareConfigFile(t, configFileTemplate, replacements, common.ConfigFilesDir)
+	connectorHandler := common.StartOTelKafkaConnector(t, configFileName, common.ConfigFilesDir)
+	defer common.StopOTelKafkaConnector(t, connectorHandler)
 
-	addKafkaTopic(t, topicName, 1, 1)
-	firstMsgSendTime, lstMsgSendTime := sendRandomizedMessages(topicName, numOfMsg, msgSize)
+	common.AddKafkaTopic(t, topicName, 1, 1)
+	firstMsgSendTime, lstMsgSendTime := common.SendRandomizedMessages(topicName, numOfMsg, msgSize)
 	fmt.Printf("It took kafka client %f seconds to send all events\n", lstMsgSendTime.Sub(firstMsgSendTime).Seconds())
 
 	fmt.Printf("Waiting %f seconds for splunk to ingest all data\n", splunkWaitTime.Seconds())
 	time.Sleep(splunkWaitTime)
 	fmt.Printf("Finished waiting\n")
 
-	searchQuery := eventSearchQueryString + "index=" + index + " source=" + source + " sourcetype=" + sourcetype +
+	searchQuery := common.EventSearchQueryString + "index=" + index + " source=" + source + " sourcetype=" + sourcetype +
 		" | stats earliest(_time) as earliest_time, latest(_time) as latest_time, count as total_events"
 	startTime := "-2m@m"
 	require.Eventually(t, func() bool {
-		statistics := checkStatisticsFromSplunk[Statistic](t, searchQuery, startTime)
+		statistics := common.CheckStatisticsFromSplunk[Statistic](t, searchQuery, startTime)
 		if len(statistics) != 1 {
 			return false
 		}
@@ -85,5 +86,5 @@ func TestNonFunctional(t *testing.T) {
 		fmt.Printf("Ingest lag: %f\n", ingestLag)
 		assert.LessOrEqual(t, ingestLag, float64(minIngestLag), "Ingest lag of %f seconds exceeded maximum value of %d second\n", ingestLag, minIngestLag)
 		return true
-	}, testCaseDuration, testCaseTick, "Search query: \n\"%s\"\n returned NO events", searchQuery)
+	}, common.TestCaseDuration, common.TestCaseTick, "Search query: \n\"%s\"\n returned NO events", searchQuery)
 }

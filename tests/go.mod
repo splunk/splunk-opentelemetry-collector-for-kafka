@@ -1,4 +1,4 @@
-module functional_tests
+module tests
 
 go 1.24.2
 

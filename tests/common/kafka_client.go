@@ -1,4 +1,4 @@
-package tests
+package common
 
 import (
 	"context"
@@ -12,7 +12,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func addKafkaTopic(t *testing.T, topicName string, numberOfPartitions int, replicationFactor int) {
+func AddKafkaTopic(t *testing.T, topicName string, numberOfPartitions int, replicationFactor int) {
 	fmt.Printf("Adding Kafka topic: %s\n", topicName)
 
 	// Check if the topic already exists
@@ -101,7 +101,7 @@ func checkKafkaTopicExists(topicName string) bool {
 	return false
 }
 
-func sendRandomizedMessages(topicName string, numOfMsg int, msgSize int) (time.Time, time.Time) {
+func SendRandomizedMessages(topicName string, numOfMsg int, msgSize int) (time.Time, time.Time) {
 	fmt.Printf("Sending randomized messages to kafka topic: %s\n", topicName)
 	producer, err := kafka.NewProducer(&kafka.ConfigMap{
 		"bootstrap.servers": GetConfigVariable("KAFKA_BROKER_ADDRESS"),
@@ -145,7 +145,7 @@ func sendRandomizedMessages(topicName string, numOfMsg int, msgSize int) (time.T
 	return firstMsgTime, lastMsgTime
 }
 
-func sendMessageToKafkaTopic(topicName string, message string, headers ...kafka.Header) {
+func SendMessageToKafkaTopic(topicName string, message string, headers ...kafka.Header) {
 	fmt.Printf("Adding message to Kafka topic: %s\n", topicName)
 	// Create a new producer
 	producer, err := kafka.NewProducer(&kafka.ConfigMap{

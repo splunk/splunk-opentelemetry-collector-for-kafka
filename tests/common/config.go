@@ -1,4 +1,4 @@
-package tests
+package common
 
 import (
 	"bytes"
@@ -9,6 +9,7 @@ import (
 	"strings"
 	"testing"
 	"text/template"
+	"time"
 )
 
 const (
@@ -19,6 +20,13 @@ const (
 	ManagementPortEnvVar     = "CI_SPLUNK_MGMT_PORT"
 	KafkaBrokerAddressEnvVar = "CI_KAFKA_BROKER_ADDRESS"
 	OTel_Binary              = "CI_OTEL_BINARY_FILE"
+)
+
+const (
+	EventSearchQueryString = "| search "
+	ConfigFilesDir         = "testdata/configs"
+	TestCaseDuration       = 30 * time.Second
+	TestCaseTick           = 5 * time.Second
 )
 
 // GetConfigVariable returns the value of the environment variable with the given name.
@@ -48,7 +56,7 @@ func GetConfigVariable(variableName string) string {
 	panic(envVariableName + " environment variable is not set")
 }
 
-func prepareConfigFile(t *testing.T, configTemplateFile string, replacements map[string]any, configFilesDir string) string {
+func PrepareConfigFile(t *testing.T, configTemplateFile string, replacements map[string]any, configFilesDir string) string {
 	cfgBytes, err := os.ReadFile(fmt.Sprintf("%s/%s", configFilesDir, configTemplateFile))
 	require.NoError(t, err)
 	tmpl, err := template.New("").Parse(string(cfgBytes))

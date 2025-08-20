@@ -1,4 +1,4 @@
-package tests
+package common
 
 import (
 	"crypto/tls"
@@ -21,15 +21,15 @@ const (
 	MAX_SEARCH_RETRIES = 20 // maximum number of retries for checking search status
 )
 
-func checkEventsFromSplunk[V any](t *testing.T, searchQuery string, startTime string, endTimeOptional ...string) []V {
-	return getDataFromSplunk[V](t, searchQuery, startTime, "events", endTimeOptional...)
+func CheckEventsFromSplunk[V any](t *testing.T, searchQuery string, startTime string, endTimeOptional ...string) []V {
+	return GetDataFromSplunk[V](t, searchQuery, startTime, "events", endTimeOptional...)
 }
 
-func checkStatisticsFromSplunk[V any](t *testing.T, searchQuery string, startTime string, endTimeOptional ...string) []V {
-	return getDataFromSplunk[V](t, searchQuery, startTime, "results", endTimeOptional...)
+func CheckStatisticsFromSplunk[V any](t *testing.T, searchQuery string, startTime string, endTimeOptional ...string) []V {
+	return GetDataFromSplunk[V](t, searchQuery, startTime, "results", endTimeOptional...)
 }
 
-func getDataFromSplunk[V any](t *testing.T, searchQuery string, startTime string, dataType string, endTimeOptional ...string) []V {
+func GetDataFromSplunk[V any](t *testing.T, searchQuery string, startTime string, dataType string, endTimeOptional ...string) []V {
 	logger := log.New(os.Stdout, "", log.LstdFlags)
 	logger.Println("-->> Splunk Search: checking events in Splunk --")
 	user := GetConfigVariable("USER")

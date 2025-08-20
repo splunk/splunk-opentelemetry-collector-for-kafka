@@ -1,4 +1,4 @@
-package tests
+package common
 
 import (
 	"fmt"
@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func stopOTelKafkaConnector(t *testing.T, cmd *exec.Cmd) {
+func StopOTelKafkaConnector(t *testing.T, cmd *exec.Cmd) {
 	// Kill the process
 	err := cmd.Process.Signal(syscall.SIGTERM)
 
@@ -32,7 +32,7 @@ func stopOTelKafkaConnector(t *testing.T, cmd *exec.Cmd) {
 	}
 }
 
-func startOTelKafkaConnector(t *testing.T, configName string, configFilesDir string) *exec.Cmd {
+func StartOTelKafkaConnector(t *testing.T, configName string, configFilesDir string) *exec.Cmd {
 	// Start the process
 	cmd := exec.Command(fmt.Sprintf("./%s", GetConfigVariable("OTEL_BINARY_FILE")), "--config", fmt.Sprintf("%s/%s", configFilesDir, configName))
 
