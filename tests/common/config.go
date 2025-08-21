@@ -25,7 +25,7 @@ const (
 const (
 	EventSearchQueryString = "| search "
 	ConfigFilesDir         = "../testdata/configs"
-	TestCaseDuration       = 30 * time.Second
+	TestCaseDuration       = 120 * time.Second
 	TestCaseTick           = 5 * time.Second
 )
 

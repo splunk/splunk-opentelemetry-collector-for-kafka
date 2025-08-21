@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"os/exec"
 	"testing"
 	"time"
 
@@ -132,4 +133,24 @@ func SendMessageToKafkaTopic(topicName string, message string, headers ...kafka.
 		fmt.Printf("Message delivered to %s [%d] at offset %d\n", *m.TopicPartition.Topic, m.TopicPartition.Partition, m.TopicPartition.Offset)
 	}
 	close(deliveryChan)
+}
+
+func StartKafkaPerfScript(topicName string, numMsg int, recordSize int) error {
+	cmd := exec.Command(
+		"docker", "exec", "-i", "cp-kafka-container", "/bin/kafka-producer-perf-test",
+		"--topic", topicName,
+		"--num-records", fmt.Sprintf("%d", numMsg),
+		"--record-size", fmt.Sprintf("%d", recordSize),
+		"--throughput", "-1",
+		"--producer-props", "bootstrap.servers=localhost:9092",
+	)
+
+	err := cmd.Run()
+	if err != nil {
+		return fmt.Errorf("process exited with error: %w", err)
+	}
+
+	// For good measure, wait for a while to ensure the messages are processed
+	time.Sleep(30)
+	return nil
 }

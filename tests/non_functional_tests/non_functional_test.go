@@ -56,6 +56,10 @@ func TestNonFunctional(t *testing.T) {
 
 	configFileName := common.PrepareConfigFile(t, configFileTemplate, replacements, common.ConfigFilesDir)
 	connectorHandler := common.StartOTelKafkaConnector(t, configFileName, common.ConfigFilesDir)
+	err = common.StartKafkaPerfScript(topicName, numMsg, recordSize)
+	if err != nil {
+		t.Fatalf("Couldn't start Kafka performance script: %s", err.Error())
+	}
 	defer common.StopOTelKafkaConnector(t, connectorHandler)
 
 	searchQuery := common.EventSearchQueryString + "index=*" +
@@ -68,6 +72,9 @@ func TestNonFunctional(t *testing.T) {
 		}
 		stats := statistics[0]
 		totalEvents, err := strconv.Atoi(stats.TotalEvents)
+		if totalEvents != numMsg {
+			return false
+		}
 		assert.Equal(t, numMsg, totalEvents, "Expected %d events, but got %d", numMsg, totalEvents)
 
 		// time
@@ -83,6 +90,10 @@ func TestNonFunctional(t *testing.T) {
 		dataVolumeMb := float64((numMsg * recordSize) / (1024 * 1024))
 		ingestionRateMb := dataVolumeMb / ingestionTime
 		fmt.Printf("Splunk igested %d events of size %d in %f seconds. Which results in %f mb/s ingestion rate\n", totalEvents, recordSize, ingestionTime, ingestionRateMb)
+		fmt.Printf("ingestionRateMb: %f", ingestionRateMb)
+		fmt.Printf("min-ingestionRateMb: %f", float64(minIngestRateMb))
+		compare := ingestionRateMb >= float64(minIngestRateMb)
+		fmt.Printf("compare: %t", compare)
 		assert.GreaterOrEqual(t, ingestionRateMb, float64(minIngestRateMb), "Splunk ingestion rate of %f didn't satisfied minimum requirement of %d", ingestionRateMb, minIngestRateMb)
 
 		return true

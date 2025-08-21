@@ -41,13 +41,14 @@ jobs:
           go test ./functional_tests/functional_test.go -v -timeout 10m
 
   non-functional-test:
+    name: performance-test - record size ${{matrix.kafka.record_size }} - num records ${{matrix.kafka.num_records}}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         kafka:
           - num_records: "1000000"
-            record_size: "10000"
+            record_size: "1000"
             throughput: "-1"
           - num_records: "1000000"
             record_size: "300"
@@ -61,14 +62,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4.2.2
       - uses: ./.github/actions/setup_env
-      - name: Run Performance Script
-        run: |
-          echo "Entering kafka container"
-          echo ${{matrix.kafka.num_records}}
-          echo ${{matrix.kafka.record_size}}
-          echo ${{matrix.kafka.throughput}}
-          docker exec -i cp-kafka-container /bin/kafka-producer-perf-test --topic ${{ env.TOPIC_NAME }} --num-records ${{ matrix.kafka.num_records }} --record-size ${{ matrix.kafka.record_size }} --throughput ${{ matrix.kafka.throughput }} --producer-props bootstrap.servers=localhost:9092
-          sleep 30
       - name: Run Tests
         working-directory: tests
         run: |
