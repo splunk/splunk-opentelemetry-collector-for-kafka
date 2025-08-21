@@ -46,12 +46,16 @@ jobs:
       fail-fast: false
       matrix:
         kafka:
-          - num_records: "1000"
-            record_size: "1000"
-            throughput: "1000"
-          - num_records: "2000"
-            record_size: "2000"
-            throughput: "2000"
+          - num_records: "1000000"
+            record_size: "10000"
+            throughput: "-1"
+          - num_records: "1000000"
+            record_size: "300"
+            throughput: "-1"
+    env:
+      NUM_MSG: ${{matrix.kafka.num_records}}
+      RECORD_SIZE: ${{matrix.kafka.record_size}}
+      TOPIC_NAME: "kafka-perf-test"
 
     steps:
       - name: Checkout
@@ -63,7 +67,8 @@ jobs:
           echo ${{matrix.kafka.num_records}}
           echo ${{matrix.kafka.record_size}}
           echo ${{matrix.kafka.throughput}}
-          docker exec -i cp-kafka-container /bin/kafka-producer-perf-test --topic test --num-records ${{ matrix.kafka.num_records }} --record-size ${{ matrix.kafka.record_size }} --throughput ${{ matrix.kafka.throughput }} --producer-props bootstrap.servers=localhost:9092
+          docker exec -i cp-kafka-container /bin/kafka-producer-perf-test --topic ${{ env.TOPIC_NAME }} --num-records ${{ matrix.kafka.num_records }} --record-size ${{ matrix.kafka.record_size }} --throughput ${{ matrix.kafka.throughput }} --producer-props bootstrap.servers=localhost:9092
+          sleep 30
       - name: Run Tests
         working-directory: tests
         run: |

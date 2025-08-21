@@ -2,7 +2,6 @@ package common
 
 import (
 	"context"
-	"crypto/rand"
 	"fmt"
 	"log"
 	"testing"
@@ -99,50 +98,6 @@ func checkKafkaTopicExists(topicName string) bool {
 	}
 	fmt.Printf("Kafka topic '%s' does not exist.\n", topicName)
 	return false
-}
-
-func SendRandomizedMessages(topicName string, numOfMsg int, msgSize int) (time.Time, time.Time) {
-	fmt.Printf("Sending randomized messages to kafka topic: %s\n", topicName)
-	producer, err := kafka.NewProducer(&kafka.ConfigMap{
-		"bootstrap.servers": GetConfigVariable("KAFKA_BROKER_ADDRESS"),
-	})
-	if err != nil {
-		log.Fatalf("Failed to create Kafka producer: %s\n", err)
-	}
-	defer producer.Close()
-	var firstMsgTime time.Time
-	var lastMsgTime time.Time
-	deliveryChan := make(chan kafka.Event, numOfMsg)
-	for i := 0; i < numOfMsg; i++ {
-		randomBytes := make([]byte, msgSize)
-		_, err := rand.Read(randomBytes)
-		if err != nil {
-			log.Fatalf("Couldn't generate random message!")
-		}
-		kafkaMsg := kafka.Message{
-			TopicPartition: kafka.TopicPartition{Topic: &topicName, Partition: kafka.PartitionAny},
-			Value:          randomBytes,
-		}
-		if i == 0 {
-			firstMsgTime = time.Now()
-		}
-		if i == numOfMsg-1 {
-			lastMsgTime = time.Now()
-		}
-		if i%int(0.1*float32(numOfMsg)) == 0 {
-			log.Printf("Sending %d message \n", i)
-		}
-		err = producer.Produce(&kafkaMsg, deliveryChan)
-		if err != nil {
-			log.Fatalf("Failed to send all messages to Kafka broker!")
-		}
-	}
-	unFlushed := producer.Flush(10000)
-	if unFlushed != 0 {
-		log.Fatalf("Failed to send all messages to Kafka broker!")
-	}
-	close(deliveryChan)
-	return firstMsgTime, lastMsgTime
 }
 
 func SendMessageToKafkaTopic(topicName string, message string, headers ...kafka.Header) {

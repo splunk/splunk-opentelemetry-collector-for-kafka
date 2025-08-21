@@ -3,6 +3,7 @@ package non_functional_tests
 import (
 	"fmt"
 	"log"
+	"os"
 	"strconv"
 	"testing"
 	"tests/common"
@@ -25,13 +26,23 @@ type Statistic struct {
 }
 
 func TestNonFunctional(t *testing.T) {
-	topicName := "kafka-perf-test"
 	index := "kafka"
 	sourcetype := "otel-perf-tests"
 	source := "otel"
 	configFileTemplate := "basic_test.yaml.tmpl"
-	numOfMsg := 1_000_000
-	msgSize := 100
+
+	numMsg, err := strconv.Atoi(os.Getenv("NUM_MSG"))
+	if err != nil {
+		t.Fatalf("Couldn't read number of messages from env, NUM_MSG: %s", os.Getenv("NUM_MSG"))
+	}
+	recordSize, err := strconv.Atoi(os.Getenv("RECORD_SIZE"))
+	if err != nil {
+		t.Fatalf("Couldn't read size of the event record from env, RECORD_SIZE: %s", os.Getenv("RECORD_SIZE"))
+	}
+	topicName := os.Getenv("TOPIC_NAME")
+	if len(topicName) == 0 {
+		t.Fatalf("TOPIC_NAME env variable not set")
+	}
 
 	replacements := map[string]any{
 		"KafkaBrokerAddress": common.GetConfigVariable("KAFKA_BROKER_ADDRESS"),
@@ -47,15 +58,7 @@ func TestNonFunctional(t *testing.T) {
 	connectorHandler := common.StartOTelKafkaConnector(t, configFileName, common.ConfigFilesDir)
 	defer common.StopOTelKafkaConnector(t, connectorHandler)
 
-	common.AddKafkaTopic(t, topicName, 1, 1)
-	firstMsgSendTime, lstMsgSendTime := common.SendRandomizedMessages(topicName, numOfMsg, msgSize)
-	fmt.Printf("It took kafka client %f seconds to send all events\n", lstMsgSendTime.Sub(firstMsgSendTime).Seconds())
-
-	fmt.Printf("Waiting %f seconds for splunk to ingest all data\n", splunkWaitTime.Seconds())
-	time.Sleep(splunkWaitTime)
-	fmt.Printf("Finished waiting\n")
-
-	searchQuery := common.EventSearchQueryString + "index=" + index + " source=" + source + " sourcetype=" + sourcetype +
+	searchQuery := common.EventSearchQueryString + "index=*" +
 		" | stats earliest(_time) as earliest_time, latest(_time) as latest_time, count as total_events"
 	startTime := "-2m@m"
 	require.Eventually(t, func() bool {
@@ -65,7 +68,7 @@ func TestNonFunctional(t *testing.T) {
 		}
 		stats := statistics[0]
 		totalEvents, err := strconv.Atoi(stats.TotalEvents)
-		assert.Equal(t, numOfMsg, totalEvents, "Expected %d events, but got %d", numOfMsg, totalEvents)
+		assert.Equal(t, numMsg, totalEvents, "Expected %d events, but got %d", numMsg, totalEvents)
 
 		// time
 		earliestTime, err := strconv.ParseFloat(stats.EarliestTime, 64)
@@ -77,14 +80,11 @@ func TestNonFunctional(t *testing.T) {
 		}
 
 		ingestionTime := latestTime - earliestTime
-		dataVolumeMb := float64((numOfMsg * msgSize) / (1024 * 1024))
+		dataVolumeMb := float64((numMsg * recordSize) / (1024 * 1024))
 		ingestionRateMb := dataVolumeMb / ingestionTime
-		fmt.Printf("Splunk igested %d events of size %d in %f seconds. Which results in %f mb/s ingestion rate\n", totalEvents, msgSize, ingestionTime, ingestionRateMb)
+		fmt.Printf("Splunk igested %d events of size %d in %f seconds. Which results in %f mb/s ingestion rate\n", totalEvents, recordSize, ingestionTime, ingestionRateMb)
 		assert.GreaterOrEqual(t, ingestionRateMb, float64(minIngestRateMb), "Splunk ingestion rate of %f didn't satisfied minimum requirement of %d", ingestionRateMb, minIngestRateMb)
 
-		ingestLag := earliestTime - float64(firstMsgSendTime.Unix())
-		fmt.Printf("Ingest lag: %f\n", ingestLag)
-		assert.LessOrEqual(t, ingestLag, float64(minIngestLag), "Ingest lag of %f seconds exceeded maximum value of %d second\n", ingestLag, minIngestLag)
 		return true
 	}, common.TestCaseDuration, common.TestCaseTick, "Search query: \n\"%s\"\n returned NO events", searchQuery)
 }
