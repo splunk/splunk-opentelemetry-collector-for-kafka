@@ -40,8 +40,8 @@ jobs:
         run: |
           go test ./functional_tests/functional_test.go -v -timeout 10m
 
-  non-functional-test:
-    name: performance-test - record size ${{matrix.kafka.record_size }} - num records ${{matrix.kafka.num_records}}
+  performance-test:
+    name: perf test (record size:${{matrix.kafka.record_size }}, num records:${{matrix.kafka.num_records}})
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -52,6 +52,18 @@ jobs:
             throughput: "-1"
           - num_records: "1000000"
             record_size: "300"
+            throughput: "-1"
+          - num_records: "1000000"
+            record_size: "600"
+            throughput: "-1"
+          - num_records: "10000"
+            record_size: "100000"
+            throughput: "-1"
+          - num_records: "10000000"
+            record_size: "100"
+            throughput: "-1"
+          - num_records: "10000000"
+            record_size: "10"
             throughput: "-1"
     env:
       NUM_MSG: ${{matrix.kafka.num_records}}
@@ -65,4 +77,4 @@ jobs:
       - name: Run Tests
         working-directory: tests
         run: |
-          go test ./non_functional_tests/non_functional_test.go -v -timeout 10m
+          go test ./performance_tests/performance_test.go -v -timeout 10m

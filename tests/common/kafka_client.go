@@ -3,7 +3,6 @@ package common
 import (
 	"context"
 	"fmt"
-	"log"
 	"os/exec"
 	"testing"
 	"time"
@@ -13,13 +12,13 @@ import (
 )
 
 func AddKafkaTopic(t *testing.T, topicName string, numberOfPartitions int, replicationFactor int) {
-	fmt.Printf("Adding Kafka topic: %s\n", topicName)
+	t.Logf("Adding Kafka topic: %s\n", topicName)
 
 	// Check if the topic already exists
-	if checkKafkaTopicExists(topicName) {
+	if checkKafkaTopicExists(t, topicName) {
 		// Log a warning message and return
-		log.Printf("WARN: Kafka topic '%s' already exists, skipping creation.\n", topicName)
-		log.Printf("WARN: This may lead to test failures if the topic is expected to be created fresh for each test run.\n")
+		t.Logf("WARN: Kafka topic '%s' already exists, skipping creation.\n", topicName)
+		t.Logf("WARN: This may lead to test failures if the topic is expected to be created fresh for each test run.\n")
 		return
 	}
 
@@ -27,9 +26,7 @@ func AddKafkaTopic(t *testing.T, topicName string, numberOfPartitions int, repli
 	adminClient, err := kafka.NewAdminClient(&kafka.ConfigMap{
 		"bootstrap.servers": GetConfigVariable("KAFKA_BROKER_ADDRESS"),
 	})
-	if err != nil {
-		log.Fatalf("Failed to create Kafka admin client: %s\n", err)
-	}
+	require.NoError(t, err, "Failed to create Kafka admin client")
 	defer adminClient.Close()
 
 	// Create the topic
@@ -48,37 +45,32 @@ func AddKafkaTopic(t *testing.T, topicName string, numberOfPartitions int, repli
 		kafka.SetAdminOperationTimeout(10*time.Second),
 	)
 
-	if err != nil {
-		log.Fatalf("Failed to create topic: %s\n", err)
-	}
+	require.NoError(t, err, "Failed to create topic")
 
 	// Handle the results of the topic creation
 	for _, result := range results {
 		if result.Error.Code() == kafka.ErrNoError {
-			fmt.Printf("Topic '%s' created successfully.\n", result.Topic)
+			t.Logf("Topic '%s' created successfully.\n", result.Topic)
 		} else {
-			fmt.Printf("Failed to create topic '%s': %v\n", result.Topic, result.Error)
+			t.Logf("Failed to create topic '%s': %v\n", result.Topic, result.Error)
 		}
 	}
-	require.Eventually(t, func() bool { return checkKafkaTopicExists(topicName) }, 30*time.Second, 5*time.Second, "Expected at least one result from topic creation")
+	require.Eventually(t, func() bool { return checkKafkaTopicExists(t, topicName) }, 30*time.Second, 5*time.Second, "Expected at least one result from topic creation")
 }
 
-func getKafkaTopicsList() []string {
+func getKafkaTopicsList(t *testing.T) []string {
 	// Create a new admin client
 	adminClient, err := kafka.NewAdminClient(&kafka.ConfigMap{
 		"bootstrap.servers": GetConfigVariable("KAFKA_BROKER_ADDRESS"),
 	})
-	if err != nil {
-		log.Fatalf("Failed to create Kafka admin client: %s\n", err)
+	require.NoError(t, err, "Failed to create Kafka admin client")
 
-	}
 	defer adminClient.Close()
+
 	// List topics
 	metadata, err := adminClient.GetMetadata(nil, true, 5000)
-	if err != nil {
-		log.Fatalf("Failed to list Kafka topics: %s\n", err)
+	require.NoError(t, err, "Failed to list Kafka topics")
 
-	}
 	// Extract topic names
 	var topics []string
 	for topicName := range metadata.Topics {
@@ -88,28 +80,26 @@ func getKafkaTopicsList() []string {
 	return topics
 }
 
-func checkKafkaTopicExists(topicName string) bool {
-	fmt.Printf("Checking if Kafka topic exists: %s\n", topicName)
-	topics := getKafkaTopicsList()
+func checkKafkaTopicExists(t *testing.T, topicName string) bool {
+	t.Logf("Checking if Kafka topic exists: %s\n", topicName)
+	topics := getKafkaTopicsList(t)
 	for _, topic := range topics {
 		if topic == topicName {
-			fmt.Printf("Kafka topic '%s' exists.\n", topicName)
+			t.Logf("Kafka topic '%s' exists.\n", topicName)
 			return true
 		}
 	}
-	fmt.Printf("Kafka topic '%s' does not exist.\n", topicName)
+	t.Logf("Kafka topic '%s' does not exist.\n", topicName)
 	return false
 }
 
-func SendMessageToKafkaTopic(topicName string, message string, headers ...kafka.Header) {
-	fmt.Printf("Adding message to Kafka topic: %s\n", topicName)
+func SendMessageToKafkaTopic(t *testing.T, topicName string, message string, headers ...kafka.Header) {
+	t.Logf("Adding message to Kafka topic: %s\n", topicName)
 	// Create a new producer
 	producer, err := kafka.NewProducer(&kafka.ConfigMap{
 		"bootstrap.servers": GetConfigVariable("KAFKA_BROKER_ADDRESS"),
 	})
-	if err != nil {
-		log.Fatalf("Failed to create Kafka producer: %s\n", err)
-	}
+	require.NoError(t, err, "Failed to create Kafka producer")
 	defer producer.Close()
 
 	// Produce a message to the topic
@@ -120,17 +110,15 @@ func SendMessageToKafkaTopic(topicName string, message string, headers ...kafka.
 		Headers:        headers,
 	}, deliveryChan)
 
-	if err != nil {
-		log.Fatalf("Failed to produce message: %s\n", err)
-	}
+	require.NoError(t, err, "Failed to produce message")
 
 	// Wait for the delivery report
 	e := <-deliveryChan
 	m := e.(*kafka.Message)
 	if m.TopicPartition.Error != nil {
-		log.Printf("Failed to deliver message: %v\n", m.TopicPartition.Error)
+		t.Logf("Failed to deliver message: %v\n", m.TopicPartition.Error)
 	} else {
-		fmt.Printf("Message delivered to %s [%d] at offset %d\n", *m.TopicPartition.Topic, m.TopicPartition.Partition, m.TopicPartition.Offset)
+		t.Logf("Message delivered to %s [%d] at offset %d\n", *m.TopicPartition.Topic, m.TopicPartition.Partition, m.TopicPartition.Offset)
 	}
 	close(deliveryChan)
 }
@@ -146,11 +134,5 @@ func StartKafkaPerfScript(topicName string, numMsg int, recordSize int) error {
 	)
 
 	err := cmd.Run()
-	if err != nil {
-		return fmt.Errorf("process exited with error: %w", err)
-	}
-
-	// For good measure, wait for a while to ensure the messages are processed
-	time.Sleep(30)
-	return nil
+	return err
 }

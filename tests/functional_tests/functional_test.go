@@ -20,7 +20,7 @@ func Test_Functions(t *testing.T) {
 }
 
 func testBasicScenarioWithSingleTopic(t *testing.T) {
-	fmt.Println("Running basic scenario with single topic test")
+	t.Logf("Running basic scenario with single topic test")
 	topicName := "kafka-test-topic"
 	event := "Hello, Kafka!"
 	index := "kafka"
@@ -42,17 +42,17 @@ func testBasicScenarioWithSingleTopic(t *testing.T) {
 	connectorHandler := common.StartOTelKafkaConnector(t, configFileName, common.ConfigFilesDir)
 
 	common.AddKafkaTopic(t, topicName, 1, 1)
-	common.SendMessageToKafkaTopic(topicName, event)
+	common.SendMessageToKafkaTopic(t, topicName, event)
 
 	// check events in Splunk
 	searchQuery := common.EventSearchQueryString + "index=" + index + " sourcetype=" + sourcetype + " source=" + source
 	startTime := "-1m@m"
 	require.Eventually(t, func() bool {
-		events := common.CheckEventsFromSplunk[any](t, searchQuery, startTime)
+		events := common.GetEventsFromSplunk(t, searchQuery, startTime)
 		if len(events) < 1 {
 			return false
 		}
-		fmt.Println(" =========>  Events received: ", len(events))
+		t.Logf(" =========>  Events received: %d", len(events))
 		assert.Equal(t, 1, len(events), "Expected one event for topic %s, but got %d", topicName, len(events))
 		assert.Equal(t, event, events[0].(map[string]interface{})["_raw"], "Expected event body does not match")
 		return true
@@ -61,7 +61,7 @@ func testBasicScenarioWithSingleTopic(t *testing.T) {
 }
 
 func testScenarioWithMultipleTopic(t *testing.T) {
-	fmt.Println("Running scenario with multiple topics")
+	t.Logf("Running scenario with multiple topics")
 	topicName1 := "kafka-test-topic-1"
 	topicName2 := "kafka-test-topic-2"
 	event := "Hello "
@@ -90,17 +90,17 @@ func testScenarioWithMultipleTopic(t *testing.T) {
 
 	common.AddKafkaTopic(t, topicName1, 1, 1)
 	common.AddKafkaTopic(t, topicName2, 1, 1)
-	common.SendMessageToKafkaTopic(topicName1, event+topicName1)
-	common.SendMessageToKafkaTopic(topicName2, event+topicName2)
+	common.SendMessageToKafkaTopic(t, topicName1, event+topicName1)
+	common.SendMessageToKafkaTopic(t, topicName2, event+topicName2)
 
 	searchQuery := common.EventSearchQueryString + "index=" + index + " sourcetype=" + sourcetype + " source=" + sourceSuf + "*"
 	startTime := "-1m@m"
 	require.Eventually(t, func() bool {
-		events := common.CheckEventsFromSplunk[any](t, searchQuery, startTime)
+		events := common.GetEventsFromSplunk(t, searchQuery, startTime)
 		if len(events) < 1 {
 			return false
 		}
-		fmt.Println(" =========>  Events received: ", len(events))
+		t.Logf(" =========>  Events received: %d", len(events))
 		assert.Equal(t, 2, len(events), "Expected two events, but got %d", len(events))
 
 		assert.ElementsMatch(
@@ -134,7 +134,7 @@ func testScenarioWithMultipleTopic(t *testing.T) {
 }
 
 func testScenarioWithCustomHeaders(t *testing.T) {
-	fmt.Println("Running tests for custom headers")
+	t.Logf("Running tests for custom headers")
 	topicName := "kafka-custom-headers-test"
 	event := "This event should have extra headers!"
 	index := "kafka"
@@ -165,7 +165,7 @@ func testScenarioWithCustomHeaders(t *testing.T) {
 	connectorHandler := common.StartOTelKafkaConnector(t, configFileName, common.ConfigFilesDir)
 
 	common.AddKafkaTopic(t, topicName, 1, 1)
-	common.SendMessageToKafkaTopic(topicName, event,
+	common.SendMessageToKafkaTopic(t, topicName, event,
 		kafka.Header{
 			Key:   headerKey,
 			Value: []byte(headerVal),
@@ -191,11 +191,11 @@ func testScenarioWithCustomHeaders(t *testing.T) {
 		sourceHeaderVal + " host=" + hostHeaderVal + " kafka.header." + headerKey + "=" + headerVal
 	startTime := "-1m@m"
 	require.Eventually(t, func() bool {
-		events := common.CheckEventsFromSplunk[any](t, searchQuery, startTime)
+		events := common.GetEventsFromSplunk(t, searchQuery, startTime)
 		if len(events) < 1 {
 			return false
 		}
-		fmt.Println(" =========>  Events received: ", len(events))
+		t.Logf(" =========>  Events received: %d", len(events))
 		assert.Equal(t, 1, len(events), "Expected one event for topic %s, but got %d", topicName, len(events))
 		assert.Equal(t, event, events[0].(map[string]interface{})["_raw"], "Expected event body does not match")
 		assert.Equal(t, headerVal, events[0].(map[string]interface{})["kafka.header."+headerKey], "Expected header value does not match")
@@ -204,14 +204,14 @@ func testScenarioWithCustomHeaders(t *testing.T) {
 
 	// Check if there are no events with the original source, index, and sourcetype
 	searchQuery = common.EventSearchQueryString + "index=" + index + " sourcetype=" + sourcetype + " source=" + source
-	events := common.CheckEventsFromSplunk[any](t, searchQuery, startTime)
+	events := common.GetEventsFromSplunk(t, searchQuery, startTime)
 	assert.Equal(t, 0, len(events), "Expected zero events for topic %s but got %d", topicName, len(events))
 
 	defer common.StopOTelKafkaConnector(t, connectorHandler)
 }
 
 func testScenarioTimestampExtraction(t *testing.T) {
-	fmt.Println("Running tests for timestamp extraction")
+	t.Logf("Running tests for timestamp extraction")
 	sourceTimestamp := time.Now().Format("20060102150405")
 	topicName := "kafka-timestamp-extraction"
 	index := "kafka"
@@ -240,18 +240,18 @@ func testScenarioTimestampExtraction(t *testing.T) {
 	connectorHandler := common.StartOTelKafkaConnector(t, configFileName, common.ConfigFilesDir)
 
 	common.AddKafkaTopic(t, topicName, 1, 1)
-	common.SendMessageToKafkaTopic(topicName, event)
+	common.SendMessageToKafkaTopic(t, topicName, event)
 
 	searchQuery := common.EventSearchQueryString + "index=" + index + " sourcetype=" + sourcetype + " source=" +
 		source
 	startTime := "2020-01-01T11:55:00"
 	endTime := "2020-01-01T12:05:00"
 	require.Eventually(t, func() bool {
-		events := common.CheckEventsFromSplunk[any](t, searchQuery, startTime, endTime)
+		events := common.GetEventsFromSplunk(t, searchQuery, startTime, endTime)
 		if len(events) < 1 {
 			return false
 		}
-		fmt.Println(" =========>  Events received: ", len(events))
+		t.Logf(" =========>  Events received: %d", len(events))
 		assert.Equal(t, 1, len(events), "Expected one event for topic %s, but got %d", topicName, len(events))
 		rawEvent := events[0].(map[string]interface{})["_raw"].(string)
 		assert.Equal(t, event, rawEvent, "Expected event body does not match")
