@@ -31,13 +31,13 @@ const (
 )
 
 const (
-	minIngestRate_num_1000000_bytes_600   = 13.829119
-	minIngestRate_num_10000000_bytes_10   = 0.612903
-	minIngestRate_num_10000000_bytes_100  = 5.324022
-	minIngestRate_num_1000000_bytes_10000 = 37.327171
-	minIngestRate_num_1000000_bytes_1000  = 18.374272
-	minIngestRate_num_1000000_bytes_300   = 9.335118
-	minIngestRateThreshold                = 0.9
+	minIngestRate_num_1000000_bytes_600  = 13.829119
+	minIngestRate_num_10000000_bytes_10  = 0.612903
+	minIngestRate_num_10000000_bytes_100 = 5.324022
+	minIngestRate_num_10000_bytes_100000 = 37.327171
+	minIngestRate_num_1000000_bytes_1000 = 18.374272
+	minIngestRate_num_1000000_bytes_300  = 9.335118
+	minIngestRateThreshold               = 0.9
 )
 
 // GetConfigVariable returns the value of the environment variable with the given name.
@@ -101,8 +101,8 @@ func GetMinimumIngestRate() (float64, error) {
 		return minIngestRateThreshold * minIngestRate_num_10000000_bytes_10, nil
 	case numMsg == "10000000" && recordSize == "100":
 		return minIngestRateThreshold * minIngestRate_num_10000000_bytes_100, nil
-	case numMsg == "1000000" && recordSize == "10000":
-		return minIngestRateThreshold * minIngestRate_num_1000000_bytes_10000, nil
+	case numMsg == "10000" && recordSize == "100000":
+		return minIngestRateThreshold * minIngestRate_num_10000_bytes_100000, nil
 	case numMsg == "1000000" && recordSize == "1000":
 		return minIngestRateThreshold * minIngestRate_num_1000000_bytes_1000, nil
 	case numMsg == "1000000" && recordSize == "300":
