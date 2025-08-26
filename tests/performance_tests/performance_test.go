@@ -65,16 +65,16 @@ func TestPerformance(t *testing.T) {
 		require.NoError(t, err, "Couldn't parse latest time from job request")
 
 		ingestionTime := latestTime - earliestTime
-		dataVolumeMb := float64((numMsg * recordSize) / (1024 * 1024))
-		ingestionRateMb := dataVolumeMb / ingestionTime
-		minIngestRateMb, err := common.GetMinimumIngestRate()
+		dataVolumeMB := float64((numMsg * recordSize) / (1024 * 1024))
+		ingestionRateMB := dataVolumeMB / ingestionTime
+		minIngestRateMB, err := common.GetMinimumIngestRate()
 		require.NoError(t, err, "Couldn't get min ingest rate for this test")
 
-		t.Logf("Splunk igested %d events of size %d in %f seconds. Which results in %f mb/s ingestion rate\n", totalEvents, recordSize, ingestionTime, ingestionRateMb)
-		t.Logf("Ingestion Rate [mb/s]: %f", ingestionRateMb)
-		t.Logf("Minimum requried ingestion rate [mb/s]: %f", float64(minIngestRateMb))
+		t.Logf("Splunk igested %d events of size %d in %f seconds. Which results in %f MB/s ingestion rate\n", totalEvents, recordSize, ingestionTime, ingestionRateMB)
+		t.Logf("Ingestion Rate [mb/s]: %f", ingestionRateMB)
+		t.Logf("Minimum requried ingestion rate [MB/s]: %f", float64(minIngestRateMB))
 
-		require.GreaterOrEqual(t, ingestionRateMb, float64(minIngestRateMb), "Splunk ingestion rate of %f didn't satisfied minimum requirement of %d", ingestionRateMb, minIngestRateMb)
+		require.GreaterOrEqual(t, ingestionRateMB, float64(minIngestRateMB), "Splunk ingestion rate of %f didn't satisfied minimum requirement of %d", ingestionRateMB, minIngestRateMB)
 	}, common.PerfTestCaseDuration, common.TestCaseTick, "Test with search query: \n%s\n failed", searchQuery)
 
 }
