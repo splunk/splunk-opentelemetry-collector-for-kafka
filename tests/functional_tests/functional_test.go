@@ -17,7 +17,7 @@ func Test_Functions(t *testing.T) {
 	t.Run("scenario with multiple topics", testScenarioWithMultipleTopic)
 	t.Run("scenario with custom headers", testScenarioWithCustomHeaders)
 	t.Run("scenario with timestamp extraction", testScenarioTimestampExtraction)
-	t.Run("scenario with regex topics", testScenarioWithFranzRegex)
+	t.Run("scenario with regex topics", testScenarioRegexTopicMatchingUsingFranzGoFeatureGate)
 }
 
 func testBasicScenarioWithSingleTopic(t *testing.T) {
@@ -267,7 +267,7 @@ func testScenarioTimestampExtraction(t *testing.T) {
 	defer common.StopOTelKafkaConnector(t, connectorHandler)
 }
 
-func testScenarioWithFranzRegex(t *testing.T) {
+func testScenarioRegexTopicMatchingUsingFranzGoFeatureGate(t *testing.T) {
 	t.Logf("Running tests for regex matching")
 	regexTopic1 := "regex-topic1"
 	regexTopic2 := "regex-topic2"
