@@ -1,12 +1,11 @@
 ## Config mapping between SC4Kafka and SOC4Kafka
 
-In the OpenTelemetry (OTel) Collector, parameters are configured individually per exporter (data sink) or per receiver 
-(data source), rather than being specified in a single consolidated table. This modular approach allows greater 
+In the OpenTelemetry (OTel) Collector, parameters are configured individually per exporter (data sink) or per receiver
+(data source), rather than being specified in a single consolidated table. This modular approach allows greater
 flexibility and customization for defining pipelines, but it differs fundamentally from the configuration style used in
 tools like the Splunk Kafka Connector.
 
 ### Fields supported by SOC4Kafka
-
 
 | **Field**                                    | **SOC4Kafka Field**                                          | **Comments**                                                                                                                                                                   |
 |----------------------------------------------|--------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -35,10 +34,7 @@ tools like the Splunk Kafka Connector.
 | `timestamp.format`                           | `processors.timestamp.format`                                | Defines the format for extracted timestamps.                                                                                                                                   |
 | `timestamp.timezone`                         | `processors.timestamp.timezone`                              | Specifies the timezone for extracted timestamps.                                                                                                                               |
 
-
 ### Fields not supported by SOC4Kafka
-
-
 
 | **Field**                             | **Comments**                                                                                                                                                                                                                                                                      |
 |---------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -59,7 +55,7 @@ tools like the Splunk Kafka Connector.
 | `splunk.hec.total.channels`           | The concept of "channels" is not used in SOC4Kafka.                                                                                                                                                                                                                               |
 | `splunk.hec.threads`                  | Threading is managed differently in SOC4Kafka and does not require explicit configuration.                                                                                                                                                                                        |
 | `splunk.hec.track.data`               | Data tracking and debugging must be handled through custom processors or external monitoring tools.                                                                                                                                                                               |
-| `splunk.hec.json.event.formatted`     | Event formatting should be handled through custom processors.                                                                                                                                                                                                                     |
+| `splunk.hec.json.event.formatted`     | Events that are already in HEC format must be sent using the `exporters.splunk_hec.export_raw` option.                                                                                                                                                                            |
 | `splunk.hec.ssl.trust.store.path`     | Trust store configuration is not supported in SOC4Kafka.                                                                                                                                                                                                                          |
 | `splunk.hec.ssl.trust.store.password` |                                                                                                                                                                                                                                                                                   |
 | `kerberos.user.principal`             | Kerberos authentication is supported by the Kafka receiver in SOC4Kafka. Configuration details can be found [here](https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/f1d708538c1038aacf60f6659ed23189481358e4/receiver/kafkareceiver/README.md?plain=1#L72). |

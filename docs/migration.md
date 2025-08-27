@@ -272,7 +272,7 @@ curl localhost:8083/connectors -X POST -H "Content-Type: application/json" -d '{
 
 #### SOC4Kafka
 
-```
+```yaml
 receivers:
   kafka/1:
     brokers: ["kafka-broker:9092"]
@@ -329,6 +329,82 @@ While the events from SOC4Kafka are:
 ![sock4kafka-three-pat.png](images/migration/sock4kafka-three-pat.png)
 
 Mind that SOC4Kafka allows you to configure a unique sourcetype and source for each individual topic. This flexibility simplifies filtering and organizing data within Splunk, ensuring better control over your event categorization and search results.
+
+### Sending events that are already in HEC format
+
+In SC4Kafka you can collect events that are already formatted in HEC format, by setting `splunk.hec.json.event.formatted` option to `true`.
+
+#### SC4Kafka config
+
+```
+curl localhost:8083/connectors -X POST -H "Content-Type: application/json" -d' {
+    "name": "splunk-prod-financial",
+      "config": {
+        "connector.class": "com.splunk.kafka.connect.SplunkSinkConnector",
+        "tasks.max": "20",
+        "topics": "t1",
+        "splunk.hec.uri": "https://idx1:8088,https://idx2:8088,https://idx3:8088",
+        "splunk.hec.token": "your-splunk-hec-token",
+        "splunk.hec.json.event.formatted": "true",
+        "key.converter": "org.apache.kafka.connect.storage.StringConverter",
+        "key.converter.schemas.enable": "false",
+        "value.converter": "org.apache.kafka.connect.storage.StringConverter",
+        "value.converter.schemas.enable": "false"
+ }
+ }'
+```
+
+#### SOC4Kafka
+
+To achieve the same result in SOC4Kafka use `export_raw` option in exporter configuration:
+
+```yaml
+receivers:
+ kafka:
+   brokers: ["kafka-broker:9092"]
+   topic: "topic"
+   encoding: "text"
+
+exporters:
+  splunk_hec:
+    token: "your-splunk-hec-token"
+    endpoint: "https://splunk-hec-endpoint:8088/services/collector"
+    source: otel
+    sourcetype: otel
+    index: test
+    export_raw: true
+
+service:
+  pipelines:
+    logs:
+      receivers: [kafka]
+      exporters: [splunk_hec]
+```
+
+Example of event in this format:
+
+```json
+{
+  "index":"test",
+  "host":"localhost",
+  "sourcetype":"sourcetype",
+  "source":"source",
+  "event":"This is already formatted event!",
+  "fields":
+  {
+    "extra_field":"extra-field-1",
+    "extra_fields_arr":
+    [
+      "extra-field-2",
+      "extra-field-3"
+    ]
+  }
+}
+```
+
+The example message appears like this in Splunk search results when properly configured:
+
+![formatted-msg.png](images/migration/formatted-msg.png)
 
 ### Additional migration config values
 
