@@ -2,7 +2,6 @@ package common
 
 import (
 	"fmt"
-	"os"
 	"os/exec"
 	"syscall"
 	"testing"
@@ -48,7 +47,6 @@ func StartOTelKafkaConnector(t *testing.T, configName string, configFilesDir str
 		fmt.Sprintf("../%s", GetConfigVariable("OTEL_BINARY_FILE")),
 		args...,
 	)
-	cmd.Stderr = os.Stderr
 	err := cmd.Start()
 	require.NoError(t, err)
 
