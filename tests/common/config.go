@@ -1,4 +1,4 @@
-package functional_tests
+package common
 
 import (
 	"bytes"
@@ -9,6 +9,7 @@ import (
 	"strings"
 	"testing"
 	"text/template"
+	"time"
 )
 
 const (
@@ -19,6 +20,24 @@ const (
 	ManagementPortEnvVar     = "CI_SPLUNK_MGMT_PORT"
 	KafkaBrokerAddressEnvVar = "CI_KAFKA_BROKER_ADDRESS"
 	OTel_Binary              = "CI_OTEL_BINARY_FILE"
+)
+
+const (
+	EventSearchQueryString = "| search "
+	ConfigFilesDir         = "./testdata/configs"
+	TestCaseDuration       = 60 * time.Second
+	PerfTestCaseDuration   = 10 * time.Minute
+	TestCaseTick           = 5 * time.Second
+)
+
+const (
+	minIngestRate_num_1000000_bytes_600  = 13.829119
+	minIngestRate_num_10000000_bytes_10  = 0.612903
+	minIngestRate_num_10000000_bytes_100 = 5.324022
+	minIngestRate_num_10000_bytes_100000 = 37.327171
+	minIngestRate_num_1000000_bytes_1000 = 18.374272
+	minIngestRate_num_1000000_bytes_300  = 9.335118
+	minIngestRateThreshold               = 0.9
 )
 
 // GetConfigVariable returns the value of the environment variable with the given name.
@@ -48,7 +67,7 @@ func GetConfigVariable(variableName string) string {
 	panic(envVariableName + " environment variable is not set")
 }
 
-func prepareConfigFile(t *testing.T, configTemplateFile string, replacements map[string]any, configFilesDir string) string {
+func PrepareConfigFile(t *testing.T, configTemplateFile string, replacements map[string]any, configFilesDir string) string {
 	cfgBytes, err := os.ReadFile(fmt.Sprintf("%s/%s", configFilesDir, configTemplateFile))
 	require.NoError(t, err)
 	tmpl, err := template.New("").Parse(string(cfgBytes))
@@ -67,6 +86,28 @@ func prepareConfigFile(t *testing.T, configTemplateFile string, replacements map
 	err = os.WriteFile(configFilePath, buf.Bytes(), 0644)
 	require.NoError(t, err, "Failed to write config file")
 	// Print the path of the config file
-	fmt.Printf("Config file created: %s\n", configFilePath)
+	t.Logf("Config file created: %s\n", configFilePath)
 	return trimmedFileName
+}
+
+func GetMinimumIngestRate() (float64, error) {
+	numMsg := os.Getenv("NUM_MSG")
+	recordSize := os.Getenv("RECORD_SIZE")
+
+	switch {
+	case numMsg == "1000000" && recordSize == "600":
+		return minIngestRateThreshold * minIngestRate_num_1000000_bytes_600, nil
+	case numMsg == "10000000" && recordSize == "10":
+		return minIngestRateThreshold * minIngestRate_num_10000000_bytes_10, nil
+	case numMsg == "10000000" && recordSize == "100":
+		return minIngestRateThreshold * minIngestRate_num_10000000_bytes_100, nil
+	case numMsg == "10000" && recordSize == "100000":
+		return minIngestRateThreshold * minIngestRate_num_10000_bytes_100000, nil
+	case numMsg == "1000000" && recordSize == "1000":
+		return minIngestRateThreshold * minIngestRate_num_1000000_bytes_1000, nil
+	case numMsg == "1000000" && recordSize == "300":
+		return minIngestRateThreshold * minIngestRate_num_1000000_bytes_300, nil
+	default:
+		return 0, fmt.Errorf("unknown NUM_MSG (%s) and RECORD_SIZE (%s) combination", numMsg, recordSize)
+	}
 }

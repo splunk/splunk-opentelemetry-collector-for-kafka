@@ -1,0 +1,96 @@
+name: "Setup Enviroment"
+description: "Setup Env"
+
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/setup-go@v5
+      with:
+        go-version: ${{ env.GO_VERSION }}
+        cache-dependency-path: '**/go.sum'
+
+    - name: Start Kafka
+      uses: hoverkraft-tech/compose-action@v2.0.1
+      with:
+        compose-file: "./.github/docker_files/kafka_docker_compose.yaml"
+
+    - name: Wait for Kafka Initialization
+      shell: bash
+      run: |
+        #Wait for Kafka to Be Ready
+        for i in {1..30}; do
+          nc -z localhost 9092 && echo "Kafka is ready!" && exit 0
+          echo "Waiting for Kafka to be ready..."
+          sleep 5
+        done
+        echo "Kafka did not start in time!" && exit 1
+
+    - name: Start Splunk in docker
+      shell: bash
+      run: |
+        # Start Splunk in Docker
+        docker run -d \
+        --name splunk \
+        --platform linux/amd64 \
+        -e SPLUNK_START_ARGS="--accept-license" \
+        -e SPLUNK_PASSWORD=${CI_SPLUNK_PASSWORD} \
+        -p 8000:8000 \
+        -p 8088:8088 \
+        -p 8089:8089 \
+        splunk/splunk:${CI_SPLUNK_VERSION} \
+
+    - name: Wait for Splunk Initialization
+      shell: bash
+      run: |
+        echo "Waiting for Splunk to initialize..."
+        timeout_seconds=120 # Set your timeout in seconds 
+        start_time=$(date +%s)
+
+        # Loop to check the Splunk container's health status
+        while true; do
+          current_time=$(date +%s)
+          elapsed_time=$((current_time - start_time))
+
+          STATUS=$(sudo docker inspect --format='{{.State.Health.Status}}' splunk)
+          echo "Current Splunk health status: $STATUS (Elapsed time: ${elapsed_time}s)"
+
+          if [ "$STATUS" == "healthy" ]; then
+            echo "Splunk is fully initialized and healthy!"
+            break
+          fi
+
+          if [ "$elapsed_time" -ge "$timeout_seconds" ]; then
+            echo "Error: Splunk initialization timed out after $timeout_seconds seconds."
+            exit 1 # Exit with an error code
+          fi
+
+          sleep 5
+        done
+
+    - name: Configure Splunk
+      shell: bash
+      run: |
+        # configure indexes
+        curl -u ${CI_SPLUNK_USERNAME}:${CI_SPLUNK_PASSWORD} -k \
+        https://${CI_SPLUNK_HOST}:${CI_SPLUNK_MGMT_PORT}/services/data/indexes \
+        -d name=${CI_SPLUNK_INDEX} \
+        -d datatype=event
+        curl -u ${CI_SPLUNK_USERNAME}:${CI_SPLUNK_PASSWORD} -k \
+        https://${CI_SPLUNK_HOST}:${CI_SPLUNK_MGMT_PORT}/services/data/indexes \
+        -d name=${CI_SPLUNK_HEADER_TEST_INDEX} \
+        -d datatype=event
+
+        # configure HEC
+        curl -u ${CI_SPLUNK_USERNAME}:${CI_SPLUNK_PASSWORD} -k \
+          https://${CI_SPLUNK_HOST}:${CI_SPLUNK_MGMT_PORT}/services/data/inputs/http \
+          -d name=my_hec_token \
+          -d index=kafka \
+          -d token=${CI_SPLUNK_HEC_TOKEN}
+
+
+    - name: Download Splunk Otel Collector Binary
+      shell: bash
+      working-directory: tests
+      run: |
+        wget -q https://github.com/signalfx/splunk-otel-collector/releases/latest/download/otelcol_linux_amd64
+        chmod +x otelcol_linux_amd64
