@@ -32,10 +32,21 @@ func StopOTelKafkaConnector(t *testing.T, cmd *exec.Cmd) {
 	}
 }
 
-func StartOTelKafkaConnector(t *testing.T, configName string, configFilesDir string) *exec.Cmd {
+func StartOTelKafkaConnector(t *testing.T, configName string, configFilesDir string, featureGate ...string) *exec.Cmd {
 	// Start the process
-	cmd := exec.Command(fmt.Sprintf("../%s", GetConfigVariable("OTEL_BINARY_FILE")), "--config", fmt.Sprintf("%s/%s", configFilesDir, configName))
+	var featureGatesArgs []string
+	if len(featureGate) > 0 {
+		featureGatesArgs = []string{"--feature-gates=" + featureGate[0]}
+	}
 
+	args := []string{
+		"--config", fmt.Sprintf("%s/%s", configFilesDir, configName),
+	}
+	args = append(args, featureGatesArgs...)
+	cmd := exec.Command(
+		fmt.Sprintf("../%s", GetConfigVariable("OTEL_BINARY_FILE")),
+		args...,
+	)
 	err := cmd.Start()
 	require.NoError(t, err)
 

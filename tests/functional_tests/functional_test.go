@@ -17,6 +17,7 @@ func Test_Functions(t *testing.T) {
 	t.Run("scenario with multiple topics", testScenarioWithMultipleTopic)
 	t.Run("scenario with custom headers", testScenarioWithCustomHeaders)
 	t.Run("scenario with timestamp extraction", testScenarioTimestampExtraction)
+	t.Run("scenario with regex topics", testScenarioRegexTopicMatchingUsingFranzGoFeatureGate)
 }
 
 func testBasicScenarioWithSingleTopic(t *testing.T) {
@@ -263,5 +264,54 @@ func testScenarioTimestampExtraction(t *testing.T) {
 
 		return true
 	}, common.TestCaseDuration, common.TestCaseTick, "Search query: \n\"%s\"\n returned NO events for topic %s", searchQuery, topicName)
+	defer common.StopOTelKafkaConnector(t, connectorHandler)
+}
+
+func testScenarioRegexTopicMatchingUsingFranzGoFeatureGate(t *testing.T) {
+	t.Logf("Running tests for regex matching")
+	regexTopic1 := "regex-topic1"
+	regexTopic2 := "regex-topic2"
+	unmatchedTopic := "regex-topic3"
+	regexExpression := "^regex-topic[0-2]"
+	event := "Hello, Kafka from "
+	index := "kafka"
+	sourcetype := "otel-regex-test"
+	source := "otel"
+	configFileTemplate := "franz_regex_test.yaml.tmpl"
+
+	replacements := map[string]any{
+		"KafkaBrokerAddress":  common.GetConfigVariable("KAFKA_BROKER_ADDRESS"),
+		"KafkaRegexTopicName": regexExpression,
+		"SplunkHECToken":      common.GetConfigVariable("HEC_TOKEN"),
+		"SplunkHECEndpoint":   fmt.Sprintf("https://%s:8088/services/collector", common.GetConfigVariable("HOST")),
+		"Source":              source,
+		"Index":               index,
+		"Sourcetype":          sourcetype,
+	}
+
+	// in this scenario topic have to be created before starting the connector
+	common.AddKafkaTopic(t, unmatchedTopic, 1, 1)
+	common.AddKafkaTopic(t, regexTopic1, 1, 1)
+	common.AddKafkaTopic(t, regexTopic2, 1, 1)
+
+	configFileName := common.PrepareConfigFile(t, configFileTemplate, replacements, common.ConfigFilesDir)
+	connectorHandler := common.StartOTelKafkaConnector(t, configFileName, common.ConfigFilesDir, "receiver.kafkareceiver.UseFranzGo")
+
+	common.SendMessageToKafkaTopic(t, unmatchedTopic, event+unmatchedTopic)
+	common.SendMessageToKafkaTopic(t, regexTopic1, event+regexTopic1)
+	common.SendMessageToKafkaTopic(t, regexTopic2, event+regexTopic2)
+
+	// check events in Splunk
+	searchQuery := common.EventSearchQueryString + "index=" + index + " sourcetype=" + sourcetype + " source=" + source
+	startTime := "-1m@m"
+	require.Eventually(t, func() bool {
+		events := common.GetEventsFromSplunk(t, searchQuery, startTime)
+		t.Logf(" =========>  Events received: %d", len(events))
+		if len(events) == 0 {
+			return false
+		}
+		assert.Equal(t, 2, len(events), "Expected two event, but got %d", len(events))
+		return true
+	}, common.TestCaseDuration, common.TestCaseTick, "Search query: \n\"%s\"\n failed", searchQuery)
 	defer common.StopOTelKafkaConnector(t, connectorHandler)
 }

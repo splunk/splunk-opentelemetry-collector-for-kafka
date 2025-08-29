@@ -1,0 +1,26 @@
+---
+receivers:
+  kafka:
+    brokers: [ {{ .KafkaBrokerAddress }} ]
+    topic: {{ .KafkaRegexTopicName }}
+    encoding: "text"
+
+processors:
+  batch:
+
+exporters:
+  splunk_hec:
+    token: {{ .SplunkHECToken }}
+    endpoint: {{ .SplunkHECEndpoint }}
+    tls:
+      insecure_skip_verify: true
+    source: {{ .Source }}
+    sourcetype: {{ .Sourcetype }}
+    index: {{ .Index }}
+
+service:
+  pipelines:
+    logs:
+      receivers: [ kafka ]
+      processors: [ batch ]
+      exporters: [ splunk_hec ]
