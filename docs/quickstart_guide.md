@@ -12,14 +12,14 @@ Before you begin, ensure you have the following prerequisites in place:
 - Ansible installed on VM where SOC4Kafka will be installed
 
 ### Quickstart Steps
-1. Download Ansible script: [install_sock_kafka.yaml](../quickstart/install_sock_kafka.yaml)
-``wget https://raw.githubusercontent.com/signalfx/splunk-otel-collector/main/quickstart/install_sock_kafka.yaml``
+1. Download Ansible script: [install_soc4kafka_collector.yaml](../quickstart/install_soc4kafka_collector.yaml)
+``wget https://raw.githubusercontent.com/signalfx/splunk-otel-collector/main/quickstart/install_soc4kafka_collector.yaml``
 
 2. Fill in the variables in the Ansible script:
 More information about the variables can be found in the [Variables Description](#variables-description) section below.
 
 3. Run the Ansible playbook:
-``ansible-playbook install_sock_kafka.yaml``
+``ansible-playbook install_soc4kafka_collector.yaml``
 
 4. Verify Ansible script ran successfully, you should see the command which needs to be run to start the collector, something like:
 ``./<otelcol_binary_file_name> --config values.yaml"``
