@@ -7,7 +7,7 @@
 
     # Operating System information
     # Choose from:
-    # linux, windows, darwin (= macOS)
+    # linux, darwin (= macOS)
     operating_system: "linux"
     # Choose from:
     # amd64, arm64
@@ -45,7 +45,7 @@
 
     - name: Set binary destination path
       set_fact:
-        otel_binary_file_name: "otelcol_{{ operating_system | lower }}_{{ architecture | lower }}{{ '.exe' if operating_system | lower == 'windows' else '' }}"
+        otel_binary_file_name: "otelcol_{{ operating_system | lower }}_{{ architecture | lower }}"
 
 
     - name: Remove existing otel collector binary if upgrading SOC4Kafka
