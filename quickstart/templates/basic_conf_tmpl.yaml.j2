@@ -1,8 +1,8 @@
 receivers:
   kafka:
-    brokers: [{{ Brokers }}]
-    topic: {{ Topic }}
-    encoding: {{ Encoding }}
+    brokers: [{{ brokers }}]
+    topic: {{ topic }}
+    encoding: {{ encoding }}
 
 processors:
   resourcedetection:
@@ -13,13 +13,13 @@ processors:
 
 exporters:
   splunk_hec:
-    token: {{ Splunk_HEC_Token }}
-    endpoint: {{ Splunk_HEC_Endpoint }}
-    source: {{ Source }}
-    sourcetype: {{ Sourcetype }}
-    index: {{ Splunk_Index }}
+    token: {{ splunk_hec_token }}
+    endpoint: {{ splunk_hec_endpoint }}
+    source: {{ source }}
+    sourcetype: {{ sourcetype }}
+    index: {{ splunk_index }}
     tls:
-      insecure_skip_verify: {{ Insecure_Skip_Verify | default(false) | lower }}  # Set to true to skip TLS verification (not recommended for production)
+      insecure_skip_verify: {{ insecure_skip_verify | default(false) | lower }}  # Set to true to skip TLS verification (not recommended for production)
 
 service:
   pipelines:

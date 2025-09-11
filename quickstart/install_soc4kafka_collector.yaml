@@ -3,41 +3,41 @@
 
   vars:
     # Set to true to upgrade SOC4Kafka binary if it already exists
-    Upgrade_SOC4Kafka: true
+    upgrade_soc4kafka: true
 
     # Operating System information
     # Choose from:
     # linux, windows, darwin (= macOS)
-    Operating_System: "linux"
+    operating_system: "linux"
     # Choose from:
     # amd64, arm64
-    Architecture: "amd64"
+    architecture: "amd64"
 
     # Kafka and Splunk HEC configuration
-    Brokers: "broker1:port1,broker2:port2"
-    Topic: "example-topic"
-    Encoding: "text"
-    Insecure_Skip_Verify: false  # Set to true to skip TLS verification (not recommended for production)
-    Splunk_HEC_Token: "your-splunk-hec-token"
-    Splunk_HEC_Endpoint: "https://splunk-hec-endpoint:8088/services/collector"
-    Source: "example-source"
-    Sourcetype: "example-sourcetype"
-    Splunk_Index: "example-index"
+    brokers: "broker1:port1,broker2:port2"
+    topic: "example-topic"
+    encoding: "text"
+    insecure_skip_verify: false  # Set to true to skip TLS verification (not recommended for production)
+    splunk_hec_token: "your-splunk-hec-token"
+    splunk_hec_endpoint: "https://splunk-hec-endpoint:8088/services/collector"
+    source: "example-source"
+    sourcetype: "example-sourcetype"
+    splunk_index: "example-index"
 
   tasks:
     - name: Check Splunk HEC connectivity
       uri:
-        url: "{{ Splunk_HEC_Endpoint }}"
+        url: "{{ splunk_hec_endpoint }}"
         method: POST
         headers:
-          Authorization: "Splunk {{ Splunk_HEC_Token }}"
+          Authorization: "Splunk {{ splunk_hec_token }}"
           Content-Type: "application/json"
         body: |
           {
             "event": "Quickstart check. SOC4Kafka to Splunk HEC test event",
-            "sourcetype": "{{ Sourcetype }}",
-            "source": "{{ Source }}",
-            "index": "{{ Splunk_Index }}"
+            "sourcetype": "{{ sourcetype }}",
+            "source": "{{ source }}",
+            "index": "{{ splunk_index }}"
           }
         body_format: json
         status_code: 200,201,202
@@ -45,14 +45,14 @@
 
     - name: Set binary destination path
       set_fact:
-        otel_binary_file_name: "otelcol_{{ Operating_System | lower }}_{{ Architecture | lower }}{{ '.exe' if Operating_System | lower == 'windows' else '' }}"
+        otel_binary_file_name: "otelcol_{{ operating_system | lower }}_{{ architecture | lower }}{{ '.exe' if operating_system | lower == 'windows' else '' }}"
 
 
     - name: Remove existing otel collector binary if upgrading SOC4Kafka
       file:
-        path: "./{{ otel_binary_dest }}"
+        path: "./{{ otel_binary_file_name }}"
         state: absent
-      when: Upgrade_SOC4Kafka
+      when: upgrade_soc4kafka
 
     - name: Set download URL based on OS and architecture
       set_fact:
@@ -68,7 +68,7 @@
     - name: Download SOC4Kafka configuration file
       get_url:
         url: "https://github.com/splunk/splunk-opentelemetry-collector-for-kafka/blob/main/quickstart/templates/basic_conf_tmpl.yaml.j2"
-        dest: "./values.yaml"
+        dest: "./values.yaml.j2"
         mode: '0644'
 
     - name: Generate values.yaml from template
