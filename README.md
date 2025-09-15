@@ -19,6 +19,7 @@ Splunk OTel Connector for Kafka lets you subscribe to a Kafka topic and stream t
 - Confluent Platform
 
 ## How to start with SOC4Kafka?
+Follow the steps below to get started with SOC4Kafka. Or check our [Quickstart Guide](docs/quickstart_guide.md) for an automated installation using Ansible.
 
 ### Download Splunk OTel Collector package
 
