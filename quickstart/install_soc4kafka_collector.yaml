@@ -67,7 +67,7 @@
 
     - name: Download SOC4Kafka configuration file
       get_url:
-        url: "https://github.com/splunk/splunk-opentelemetry-collector-for-kafka/blob/main/quickstart/templates/basic_conf_tmpl.yaml.j2"
+        url: "https://raw.githubusercontent.com/splunk/splunk-opentelemetry-collector-for-kafka/refs/heads/main/quickstart/templates/basic_conf_tmpl.yaml.j2"
         dest: "./values.yaml.j2"
         mode: '0644'
 
