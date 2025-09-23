@@ -31,6 +31,8 @@ exporters:
    source: my-kafka
    sourcetype: kafka-otel
    index: kafka_otel
+   headers:
+     "__splunk_app_name": "soc4kafka"
 
 service:
  pipelines:

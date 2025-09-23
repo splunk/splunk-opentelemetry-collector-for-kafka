@@ -26,6 +26,8 @@ exporters:
    source: my-kafka
    sourcetype: kafka-otel
    index: kafka_otel
+   headers:
+     "__splunk_app_name": "soc4kafka"
    otel_attrs_to_hec_metadata:
      index: kafka.header.index
      host: kafka.header.host
@@ -95,6 +97,8 @@ exporters:
     source: my-kafka
     sourcetype: kafka-otel
     index: kafka_otel
+    headers:
+      "__splunk_app_name": "soc4kafka"
 
 service:
   pipelines:
