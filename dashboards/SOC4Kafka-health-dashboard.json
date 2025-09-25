@@ -925,7 +925,7 @@
     "ds_2wxGyTW1": {
       "name": "refused_receiver_logs",
       "options": {
-        "query": "| mstats range(\"otelcol_receiver_refused_log_records_total\") AS \"Total Failed Log Records\" WHERE \"index\"=\"metrics_test\"\n| fields \"Total Failed Log Records\"",
+        "query": "| mstats range(\"otelcol_receiver_refused_log_records_total\") AS \"Total Failed Log Records\" WHERE index IN ($indexes$)\n| fields \"Total Failed Log Records\"",
         "queryParameters": {
           "earliest": "$global_time_tok.earliest$",
           "latest": "$global_time_tok.latest$"
@@ -1046,7 +1046,7 @@
     "ds_Fi472bHl": {
       "name": "failed_exports",
       "options": {
-        "query": "| mstats range(\"otelcol_exporter_send_failed_log_records_total\") AS \"Total Failed Log Records\" WHERE \"index\"=\"metrics_test\"\n| fields \"Total Failed Log Records\"",
+        "query": "| mstats range(\"otelcol_exporter_send_failed_log_records_total\") AS \"Total Failed Log Records\" WHERE index IN ($indexes$)\n| fields \"Total Failed Log Records\"",
         "queryParameters": {
           "earliest": "$global_time_tok.earliest$",
           "latest": "$global_time_tok.latest$"
