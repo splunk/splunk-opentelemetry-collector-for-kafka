@@ -20,6 +20,8 @@ exporters:
     index: {{ splunk_index }}
     tls:
       insecure_skip_verify: {{ insecure_skip_verify | default(false) | lower }}  # Set to true to skip TLS verification (not recommended for production)
+    headers:
+      "__splunk_app_name": "soc4kafka"
 
 service:
   pipelines:

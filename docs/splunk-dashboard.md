@@ -148,6 +148,8 @@ exporters:
     source: <source>
     sourcetype: <sourcetype>
     index: <metrics-index>
+    headers:
+      "__splunk_app_name": "soc4kafka"
 ```
 
 Make sure you've created a metric type index:

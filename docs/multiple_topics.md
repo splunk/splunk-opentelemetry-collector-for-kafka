@@ -27,12 +27,16 @@ exporters:
    source: my-kafka
    sourcetype: kafka-otel
    index: kafka_otel
+   headers:
+     "__splunk_app_name": "soc4kafka"
  splunk_hec/2:
    token: "your-splunk-hec-token"
    endpoint: "https://splunk-hec-endpoint:8088/services/collector"
    source: my-kafka
    sourcetype: kafka-otel
    index: kafka_otel_another_index
+   headers:
+     "__splunk_app_name": "soc4kafka"
 
 service:
  pipelines:
