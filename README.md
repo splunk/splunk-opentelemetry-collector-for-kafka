@@ -168,3 +168,7 @@ Not supported features which are available in previous version of Splunk Connect
 ## Migration 
 
 Migration from Splunk Connect for Kafka to SOC4Kafka is [described here](docs/migration.md).
+
+## Troubleshooting
+
+For troubleshooting check [this guide](docs/troubleshooting.md).
