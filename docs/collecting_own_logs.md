@@ -10,7 +10,7 @@ The directory is in the same location where the collector binary is executed.
 ```bash
 mkdir -p ./soc4kafka-otel
 ```
-test
+
 Here is the `telemetry` section to be added to your configuration file:
 
 ```yaml
