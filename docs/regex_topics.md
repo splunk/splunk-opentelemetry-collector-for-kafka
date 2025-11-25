@@ -14,8 +14,9 @@ Please Note: Ensure that your regex pattern is valid and correctly formatted to 
 receivers:
   kafka:
     brokers: [<Brokers>]
-    topic: ^<Regex-Topic-Pattern>
-    encoding: <Encoding>
+    logs:
+      topic: ^<Regex-Topic-Pattern>
+      encoding: <Encoding>
 
 processors:
   batch:
