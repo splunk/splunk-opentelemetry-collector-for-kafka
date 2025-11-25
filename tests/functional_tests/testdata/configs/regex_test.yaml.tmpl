@@ -2,8 +2,9 @@
 receivers:
   kafka:
     brokers: [ {{ .KafkaBrokerAddress }} ]
-    topic: {{ .KafkaRegexTopicName }}
-    encoding: "text"
+    logs:
+      topic: {{ .KafkaRegexTopicName }}
+      encoding: "text"
 
 processors:
   batch:
@@ -19,6 +20,15 @@ exporters:
     index: {{ .Index }}
 
 service:
+  telemetry:
+    logs:
+      level: info
+      output_paths:
+        - ../logs/regex-otel-collector.log
+        - stdout
+      error_output_paths:
+        - ../logs/regex-otel-collector-errors.log
+        - stderr
   pipelines:
     logs:
       receivers: [ kafka ]

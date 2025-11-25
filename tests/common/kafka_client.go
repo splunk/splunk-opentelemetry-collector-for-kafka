@@ -56,6 +56,7 @@ func AddKafkaTopic(t *testing.T, topicName string, numberOfPartitions int, repli
 		}
 	}
 	require.Eventually(t, func() bool { return checkKafkaTopicExists(t, topicName) }, 30*time.Second, 5*time.Second, "Expected at least one result from topic creation")
+	time.Sleep(3 * time.Second)
 }
 
 func getKafkaTopicsList(t *testing.T) []string {
@@ -125,7 +126,7 @@ func SendMessageToKafkaTopic(t *testing.T, topicName string, message string, hea
 
 func StartKafkaPerfScript(topicName string, numMsg int, recordSize int) error {
 	cmd := exec.Command(
-		"docker", "exec", "-i", "cp-kafka-container", "/bin/kafka-producer-perf-test",
+		"docker", "exec", "-i", "kafka", "/bin/kafka-producer-perf-test",
 		"--topic", topicName,
 		"--num-records", fmt.Sprintf("%d", numMsg),
 		"--record-size", fmt.Sprintf("%d", recordSize),

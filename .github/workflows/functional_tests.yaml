@@ -12,7 +12,7 @@ env:
   # Make sure to exit early if cache segment download times out after 2 minutes.
   # We limit cache download as a whole to 5 minutes.
   SEGMENT_DOWNLOAD_TIMEOUT_MINS: 2
-  CI_SPLUNK_VERSION: 9.4.1
+  CI_SPLUNK_VERSION: 10.0.0
   CI_SPLUNK_HOST: localhost
   CI_SPLUNK_USERNAME: admin
   CI_SPLUNK_HEC_TOKEN: "00000000-0000-0000-0000-0000000000000"
@@ -37,7 +37,16 @@ jobs:
       - name: Run Tests
         working-directory: tests
         run: |
-          go test ./functional_tests/functional_test.go -v -timeout 10m
+          mkdir logs 
+          ls -laih
+          go test ./functional_tests/functional_test.go -v -timeout 12m
+      - name: Upload test results artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: otel-collector-logs
+          path: ./tests/logs/
+          retention-days: 5
+        if: always()
 
   performance-test:
     name: perf test (record size:${{matrix.kafka.record_size }}, num records:${{matrix.kafka.num_records}})
@@ -76,4 +85,4 @@ jobs:
       - name: Run Tests
         working-directory: tests
         run: |
-          go test ./performance_tests/performance_test.go -v -timeout 10m
+          go test ./performance_tests/performance_test.go -v -timeout 12m

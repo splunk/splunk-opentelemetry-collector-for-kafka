@@ -2,8 +2,9 @@
 receivers:
   kafka:
     brokers: [ {{ .KafkaBrokerAddress }} ]
-    topic: {{ .KafkaTopicName }}
-    encoding: "text"
+    logs:
+      topic: {{ .KafkaTopicName }}
+      encoding: "text"
 
 processors:
   transform:
@@ -25,6 +26,15 @@ exporters:
     index: {{ .Index }}
 
 service:
+  telemetry:
+    logs:
+      level: info
+      output_paths:
+        - ../logs/timestamp-extraction-otel-collector.log
+        - stdout
+      error_output_paths:
+        - ../logs/timestamp-extraction-otel-collector-errors.log
+        - stderr
   pipelines:
     logs:
       receivers: [ kafka ]
