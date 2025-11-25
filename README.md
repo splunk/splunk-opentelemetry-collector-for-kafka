@@ -18,6 +18,13 @@ Splunk OTel Connector for Kafka lets you subscribe to a Kafka topic and stream t
 - Amazon Managed Streaming for Apache Kafka (Amazon MSK)
 - Confluent Platform
 
+## Key differences to Splunk Connect for Kafka
+
+Not supported features which are available in previous version of Splunk Connect for Kafka but are not available in SOC4Kafka connector:
+- Acknowledgment support - Not supported
+- Load balancing - Not supported
+- Protobuf encoding - Not supported
+
 ## How to start with SOC4Kafka?
 Follow the steps below to get started with SOC4Kafka. Or check our [Quickstart Guide](docs/quickstart_guide.md) for an automated installation using Ansible.
 
@@ -157,13 +164,6 @@ You can unlock a range of powerful features by adjusting the configuration, such
 ## Scaling 
 
 For scaling check [this guide](docs/scaling.md).
-
-## Key differences to Splunk Connect for Kafka
-
-Not supported features which are available in previous version of Splunk Connect for Kafka but are not available in SOC4Kafka connector:
-- Acknowledgment support - Not supported
-- Load balancing - Not supported
-- Protobuf encoding - Not supported 
 
 ## Migration 
 
