@@ -24,6 +24,7 @@ func TestPerformance(t *testing.T) {
 
 	topicName := os.Getenv("TOPIC_NAME")
 	require.Greater(t, len(topicName), 0, "TOPIC_NAME env variable is not set")
+	common.AddKafkaTopic(t, topicName, 1, 1)
 
 	replacements := map[string]any{
 		"KafkaBrokerAddress": common.GetConfigVariable("KAFKA_BROKER_ADDRESS"),

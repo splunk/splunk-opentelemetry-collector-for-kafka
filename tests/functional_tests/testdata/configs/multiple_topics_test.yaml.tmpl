@@ -2,12 +2,14 @@
 receivers:
   kafka/{{ .KafkaTopicName1 }}:
     brokers: [ {{ .KafkaBrokerAddress }} ]
-    topic: {{ .KafkaTopicName1 }}
-    encoding: "text"
+    logs:
+      topic: {{ .KafkaTopicName1 }}
+      encoding: "text"
   kafka/{{ .KafkaTopicName2 }}:
     brokers: [ {{ .KafkaBrokerAddress }} ]
-    topic: {{ .KafkaTopicName2 }}
-    encoding: "text"
+    logs:
+      topic: {{ .KafkaTopicName2 }}
+      encoding: "text"
 
 processors:
   batch:
@@ -31,6 +33,15 @@ exporters:
     index: {{ .Index }}
 
 service:
+  telemetry:
+    logs:
+      level: info
+      output_paths:
+        - ../logs/multiple-topics-otel-collector.log
+        - stdout
+      error_output_paths:
+        - ../logs/multiple-topics-otel-collector-errors.log
+        - stderr
   pipelines:
     logs/1:
       receivers: [ kafka/{{ .KafkaTopicName1 }} ]

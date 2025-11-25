@@ -29,6 +29,8 @@ func testBasicScenarioWithSingleTopic(t *testing.T) {
 	source := "otel"
 	configFileTemplate := "basic_test.yaml.tmpl"
 
+	common.AddKafkaTopic(t, topicName, 1, 1)
+
 	replacements := map[string]any{
 		"KafkaBrokerAddress": common.GetConfigVariable("KAFKA_BROKER_ADDRESS"),
 		"KafkaTopicName":     topicName,
@@ -41,8 +43,6 @@ func testBasicScenarioWithSingleTopic(t *testing.T) {
 
 	configFileName := common.PrepareConfigFile(t, configFileTemplate, replacements, common.ConfigFilesDir)
 	connectorHandler := common.StartOTelKafkaConnector(t, configFileName, common.ConfigFilesDir)
-
-	common.AddKafkaTopic(t, topicName, 1, 1)
 	common.SendMessageToKafkaTopic(t, topicName, event)
 
 	// check events in Splunk
@@ -73,6 +73,9 @@ func testScenarioWithMultipleTopic(t *testing.T) {
 	source2 := sourceSuf + "-2"
 	configFileTemplate := "multiple_topics_test.yaml.tmpl"
 
+	common.AddKafkaTopic(t, topicName1, 1, 1)
+	common.AddKafkaTopic(t, topicName2, 1, 1)
+
 	replacements := map[string]any{
 		"KafkaBrokerAddress": common.GetConfigVariable("KAFKA_BROKER_ADDRESS"),
 		"KafkaTopicName1":    topicName1,
@@ -89,8 +92,6 @@ func testScenarioWithMultipleTopic(t *testing.T) {
 	connectorHandler := common.StartOTelKafkaConnector(t, configFileName, common.ConfigFilesDir)
 	defer common.StopOTelKafkaConnector(t, connectorHandler)
 
-	common.AddKafkaTopic(t, topicName1, 1, 1)
-	common.AddKafkaTopic(t, topicName2, 1, 1)
 	common.SendMessageToKafkaTopic(t, topicName1, event+topicName1)
 	common.SendMessageToKafkaTopic(t, topicName2, event+topicName2)
 
@@ -151,6 +152,8 @@ func testScenarioWithCustomHeaders(t *testing.T) {
 	sourcetypeHeaderVal := "sourcetype-value-from-header"
 	hostHeaderVal := "host-value-from-header"
 
+	common.AddKafkaTopic(t, topicName, 1, 1)
+
 	replacements := map[string]any{
 		"KafkaBrokerAddress": common.GetConfigVariable("KAFKA_BROKER_ADDRESS"),
 		"KafkaTopicName":     topicName,
@@ -165,7 +168,6 @@ func testScenarioWithCustomHeaders(t *testing.T) {
 	configFileName := common.PrepareConfigFile(t, configFileTemplate, replacements, common.ConfigFilesDir)
 	connectorHandler := common.StartOTelKafkaConnector(t, configFileName, common.ConfigFilesDir)
 
-	common.AddKafkaTopic(t, topicName, 1, 1)
 	common.SendMessageToKafkaTopic(t, topicName, event,
 		kafka.Header{
 			Key:   headerKey,
@@ -225,6 +227,9 @@ func testScenarioTimestampExtraction(t *testing.T) {
 	timestamp, err := time.Parse(formatStr, timestampStr)
 	require.NoError(t, err, "Error parsing timestamp")
 	event := "[" + timestampStr + "]" + " This event should have a custom timestamp!"
+
+	common.AddKafkaTopic(t, topicName, 1, 1)
+
 	replacements := map[string]any{
 		"KafkaBrokerAddress": common.GetConfigVariable("KAFKA_BROKER_ADDRESS"),
 		"KafkaTopicName":     topicName,
@@ -240,7 +245,6 @@ func testScenarioTimestampExtraction(t *testing.T) {
 	configFileName := common.PrepareConfigFile(t, configFileTemplate, replacements, common.ConfigFilesDir)
 	connectorHandler := common.StartOTelKafkaConnector(t, configFileName, common.ConfigFilesDir)
 
-	common.AddKafkaTopic(t, topicName, 1, 1)
 	common.SendMessageToKafkaTopic(t, topicName, event)
 
 	searchQuery := common.EventSearchQueryString + "index=" + index + " sourcetype=" + sourcetype + " source=" +
@@ -277,7 +281,12 @@ func testScenarioRegexTopicMatchingUsingFranzGoFeatureGate(t *testing.T) {
 	index := "kafka"
 	sourcetype := "otel-regex-test"
 	source := "otel"
-	configFileTemplate := "franz_regex_test.yaml.tmpl"
+	configFileTemplate := "regex_test.yaml.tmpl"
+
+	// in this scenario topic have to be created before starting the connector
+	common.AddKafkaTopic(t, unmatchedTopic, 1, 1)
+	common.AddKafkaTopic(t, regexTopic1, 1, 1)
+	common.AddKafkaTopic(t, regexTopic2, 1, 1)
 
 	replacements := map[string]any{
 		"KafkaBrokerAddress":  common.GetConfigVariable("KAFKA_BROKER_ADDRESS"),
@@ -289,13 +298,8 @@ func testScenarioRegexTopicMatchingUsingFranzGoFeatureGate(t *testing.T) {
 		"Sourcetype":          sourcetype,
 	}
 
-	// in this scenario topic have to be created before starting the connector
-	common.AddKafkaTopic(t, unmatchedTopic, 1, 1)
-	common.AddKafkaTopic(t, regexTopic1, 1, 1)
-	common.AddKafkaTopic(t, regexTopic2, 1, 1)
-
 	configFileName := common.PrepareConfigFile(t, configFileTemplate, replacements, common.ConfigFilesDir)
-	connectorHandler := common.StartOTelKafkaConnector(t, configFileName, common.ConfigFilesDir, "receiver.kafkareceiver.UseFranzGo")
+	connectorHandler := common.StartOTelKafkaConnector(t, configFileName, common.ConfigFilesDir)
 
 	common.SendMessageToKafkaTopic(t, unmatchedTopic, event+unmatchedTopic)
 	common.SendMessageToKafkaTopic(t, regexTopic1, event+regexTopic1)

@@ -33,6 +33,7 @@ runs:
         --name splunk \
         --platform linux/amd64 \
         -e SPLUNK_START_ARGS="--accept-license" \
+        -e SPLUNK_GENERAL_TERMS='--accept-sgt-current-at-splunk-com' \
         -e SPLUNK_PASSWORD=${CI_SPLUNK_PASSWORD} \
         -p 8000:8000 \
         -p 8088:8088 \

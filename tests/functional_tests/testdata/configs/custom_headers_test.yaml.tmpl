@@ -2,8 +2,9 @@
 receivers:
   kafka:
     brokers: [ {{ .KafkaBrokerAddress }} ]
-    topic: {{ .KafkaTopicName }}
-    encoding: "text"
+    logs:
+      topic: {{ .KafkaTopicName }}
+      encoding: "text"
     header_extraction:
       extract_headers: true
       headers: [ index, source, sourcetype, host, {{ .CustomHeader }} ]
@@ -27,6 +28,15 @@ exporters:
       host: kafka.header.host
 
 service:
+  telemetry:
+    logs:
+      level: info
+      output_paths:
+        - ../logs/headers-otel-collector.log
+        - stdout
+      error_output_paths:
+        - ../logs/headers-otel-collector-errors.log
+        - stderr
   pipelines:
     logs:
       receivers: [ kafka ]
