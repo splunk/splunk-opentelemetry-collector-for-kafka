@@ -75,6 +75,20 @@ The section contains examples for:
 
 ---
 
+
+## Migration examples:
+
+Following examples demonstrate how to migrate common SC4Kafka configurations to SOC4Kafka.
+The section contains examples for:
+- Basic config for Kafka string messages
+- Timestamp extraction
+- Set host automatically
+- Extract headers
+- Send data from multiple kafka topics to multiple Splunk HEC endpoints
+- Sending events that are already in HEC format
+
+---
+
 ### The basic config for Kafka string messages
 
 #### SC4Kafka config
