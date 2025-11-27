@@ -14,13 +14,44 @@ The biggest difference between SC4Kafka and SOC4Kafka is that:
 | **Integration with Kafka** | Tightly integrated as part of the Kafka ecosystem.                                    | Can run independently and be deployed on an external server, separate from the Kafka cluster.                                                                                                                    |
 | **Scaling**                | Scaling is managed using the `tasks.max` setting and supports multiple HEC endpoints. | Scaling is achieved by deploying multiple SOC4Kafka instances with the same `group_id`. Multiple HEC endpoints are not supported, but you can create multiple Splunk HEC exporters and add them to the pipeline. |
 
+Note:
+- The timestamp behavior differs between the two connectors. SOC4Kafka assigns a timestamp to the event based on when it is indexed, whereas Splunk Connect for Kafka uses the timestamp from when the event was originally produced. 
+- Additionally messages from SOC4Kafka appear in Splunk first, as it forwards events to Splunk immediately. In contrast, Splunk Connect for Kafka processes and forwards events in batches, typically every configured number of seconds.
 
-## Step by step SC4Kafka nad SOC4Kafka
+### SC4kafka to SOC4Kafka mapping of configuration parameters
 
-In case of SC4Kafka the default settings about message format are set in `connect-distributed.properties` file. The key
+The configuration settings for SC4Kafka cannot be directly transferred to SOC4Kafka due to differences in their architecture and design. However, many configuration parameters have equivalent settings in SOC4Kafka.
+A detailed description of the configuration parameter mappings can be found in the following [table](migration_config_values.md), which provides a comparison of the corresponding properties in both connectors.
+
+## Migration process from SC4Kafka to SOC4Kafka
+
+--- 
+### Important Notes:
+- **Migration from the old connector to SOC4Kafka is a manual process.** There is no automated tool available for this migration.
+- Begin with a simple configuration, then gradually add more settings. This approach helps in isolating and troubleshooting potential issues during the migration.
+
+---
+
+Migrating from SC4Kafka to SOC4Kafka involves several steps to ensure a smooth transition. Below are the key steps to follow during the migration process:
+1. **Review Current SC4Kafka Configuration**: Start by thoroughly reviewing your existing SC4Kafka configuration. Document all the settings, including topics, indexes, sourcetypes, and any custom configurations you have in place. 
+    In order to read the existing SC4Kafka configuration you can use REST API calls as described in the [section below](#reading-sc4kafka-existing-configuration).
+2. **Map Configuration Parameters**: Use the [configuration mapping table](migration_config_values.md) to identify equivalent settings in SOC4Kafka. This will help you understand how to translate your SC4Kafka configuration into SOC4Kafka format.
+3. **Create SOC4Kafka Configuration**: Based on the mapped parameters, create a new configuration file for SOC4Kafka. Make sure to include all relevant settings, such as Kafka brokers, topics, Splunk HEC endpoint, and token.
+4. **Set Up SOC4Kafka**: [Install SOC4Kafka](../README.md/#how-to-start-with-soc4kafka) on your desired server. Ensure that you have the necessary permissions and access to both Kafka and Splunk.
+5. **Test the Configuration**: Before fully switching over, test the SOC4Kafka configuration in a controlled environment. Verify that it can successfully connect to Kafka, retrieve messages, and send them to Splunk.
+6. **Monitor and Validate**: Once you have deployed SOC4Kafka, closely monitor its performance and validate that all messages are being correctly forwarded to Splunk. Check for any discrepancies in data or performance issues.
+7. **Decommission SC4Kafka**: After confirming that SOC4Kafka is functioning as expected, you can decommission your SC4Kafka setup. 
+
+
+### Reading SC4Kafka existing configuration
+
+#### Checking logs encoding format
+When migrating from SC4Kafka to SOC4Kafka, it is important to consider the message format used in Kafka topics.
+In case of SC4Kafka the default message format settings are stored in `connect-distributed.properties` file. The key
 and value converter (`org.apache.kafka.connect.json.JsonConverter` or `org.apache.kafka.connect.storage.StringConverter`)
 is a part of Kafka's java ecosystem, in SOC4Kafka it can be handled by setting `receivers.kafka.encoding` to `json` or `text` depending on SC4Kafka configuration.
 
+#### Reading SC4Kafka connector configuration
 When migrating from SC4Kafka to SOC4Kafka following commands may be useful:
 
 **List active connectors**
@@ -38,6 +69,20 @@ curl http://localhost:8083/connectors
 **Get SC4Kafka connector task info**
 
 `curl http://localhost:8083/connectors/<CONNECTOR_NAME>/tasks`
+
+
+## Migration examples:
+
+Following examples demonstrate how to migrate common SC4Kafka configurations to SOC4Kafka.
+The section contains examples for:
+- Basic config for Kafka string messages
+- Timestamp extraction
+- Set host automatically
+- Extract headers
+- Send data from multiple kafka topics to multiple Splunk HEC endpoints
+- Sending events that are already in HEC format
+
+---
 
 ### The basic config for Kafka string messages
 
@@ -88,8 +133,6 @@ service:
 ```
 
 ![1.png](images/migration/basic-message.png)
-
-Note: The timestamp behavior differs between the two connectors. SOC4Kafka assigns a timestamp to the event based on when it is indexed, whereas Splunk Connect for Kafka uses the timestamp from when the event was originally produced. Additionally messages from SOC4Kafka appear in Splunk first, as it forwards events to Splunk immediately. In contrast, Splunk Connect for Kafka processes and forwards events in batches, typically every configured number of seconds.
 
 ### Timestamp extraction
 
@@ -419,7 +462,3 @@ Example of event in this format:
 The example message appears like this in Splunk search results when properly configured:
 
 ![formatted-msg.png](images/migration/formatted-msg.png)
-
-### Additional migration config values
-
-The values in SCK4Kafka do not map directly to SOC4Kafka. However, for reference, [this table](migration_config_values.md) provides a comparison of the corresponding properties in both.
