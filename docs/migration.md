@@ -18,7 +18,7 @@ Note:
 - The timestamp behavior differs between the two connectors. SOC4Kafka assigns a timestamp to the event based on when it is indexed, whereas Splunk Connect for Kafka uses the timestamp from when the event was originally produced. 
 - Additionally messages from SOC4Kafka appear in Splunk first, as it forwards events to Splunk immediately. In contrast, Splunk Connect for Kafka processes and forwards events in batches, typically every configured number of seconds.
 
-### SC4kafka to SOC4Kafka mapping of configuration parameters
+### SC4Kafka to SOC4Kafka mapping of configuration parameters
 
 The configuration settings for SC4Kafka cannot be directly transferred to SOC4Kafka due to differences in their architecture and design. However, many configuration parameters have equivalent settings in SOC4Kafka.
 A detailed description of the configuration parameter mappings can be found in the following [table](migration_config_values.md), which provides a comparison of the corresponding properties in both connectors.
