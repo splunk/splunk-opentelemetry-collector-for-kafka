@@ -54,21 +54,12 @@ is a part of Kafka's java ecosystem, in SOC4Kafka it can be handled by setting `
 #### Reading SC4Kafka connector configuration
 When migrating from SC4Kafka to SOC4Kafka following commands may be useful:
 
-**List active connectors**
-
-curl http://localhost:8083/connectors
-
-**Get SC4Kafka connector info**
-
-`curl http://localhost:8083/connectors/<CONNECTOR_NAME>`
-
-**Get SC4Kafka connector config info**
-
-`curl http://localhost:8083/connectors/<CONNECTOR_NAME>/config`
-
-**Get SC4Kafka connector task info**
-
-`curl http://localhost:8083/connectors/<CONNECTOR_NAME>/tasks`
+| Action | curl Command | Description |
+|--------------------------------|------------------------------------------------------|----------------------------------------------|
+| List active connectors | `curl http://localhost:8083/connectors` | Lists all active connectors |
+| Get SC4Kafka connector info | `curl http://localhost:8083/connectors/<CONNECTOR_NAME>` | Retrieves information about the specified SC4Kafka connector |
+| Get SC4Kafka connector config | `curl http://localhost:8083/connectors/<CONNECTOR_NAME>/config` | Retrieves configuration details of the specified SC4Kafka connector |
+| Get SC4Kafka connector task info | `curl http://localhost:8083/connectors/<CONNECTOR_NAME>/tasks` | Retrieves task information for the specified SC4Kafka connector |
 
 
 ## Migration examples:
