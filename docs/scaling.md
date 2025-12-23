@@ -17,9 +17,10 @@ Configure all SOC4Kafka connectors to use the same `group_id`. Kafka ensures tha
 receivers:
  kafka:
    brokers: ["localhost:9092"]
-   topic: "example-topic"
-   encoding: "text"
-   group_id: <GROUP ID>
+   logs:
+     topic: "example-topic"
+     encoding: "text"
+     group_id: <GROUP ID>
 
 processors:
  batch:

@@ -8,14 +8,16 @@ The configuration is similar to the default one described [here](../README.md#cr
 
 ```yaml
 receivers:
- kafka/example_topic:
-   brokers: ["localhost:9092"]
-   topic: "example-topic"
-   encoding: "text"
- kafka/example_topic_2:
-   brokers: ["localhost:9092"]
-   topic: "example-topic-2"
-   encoding: "text"
+  kafka/example_topic:
+    brokers: ["localhost:9092"]
+    logs:
+      topic: "example-topic"
+      encoding: "text"
+  kafka/example_topic_2:
+    brokers: ["localhost:9092"]
+    logs:
+      topic: "example-topic-2"
+      encoding: "text"
 
 processors:
  batch:
