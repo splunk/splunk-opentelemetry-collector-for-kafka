@@ -4,6 +4,7 @@ receivers:
     brokers: [ {{ .KafkaBrokerAddress }} ]
     logs:
       topic: {{ .KafkaRegexTopicName }}
+      exclude_topic: "^$"
       encoding: "text"
 
 processors:
