@@ -31,13 +31,13 @@ Follow the steps below to get started with SOC4Kafka. Or check our [Quickstart G
 ### Download Splunk OTel Collector package
 
 The SOC4Kafka base package is the Splunk OpenTelemetry Connector, offering multiple installation methods to suit different needs.
-Get the newest release using [this link](https://github.com/signalfx/splunk-otel-collector/releases/latest), download 
+Get the newest release (prefixed with `v`) using [this link](https://github.com/signalfx/splunk-otel-collector/releases), download 
 the package suited for your platform.
 
 For instance, if you are using Linux on an AMD64 architecture, you can execute the following `wget` command:
 
 ```commandline
-wget https://github.com/signalfx/splunk-otel-collector/releases/latest/download/otelcol_linux_amd64
+wget https://github.com/signalfx/splunk-otel-collector/releases/download/v0.141.0/otelcol_linux_amd64
 ```
 
 ### Create a minimal config template
