@@ -1,8 +1,9 @@
 receivers:
   kafka:
     brokers: [{{ brokers }}]
-    topic: {{ topic }}
-    encoding: {{ encoding }}
+    logs:
+      topic: {{ topic }}
+      encoding: {{ encoding }}
 
 processors:
   resourcedetection:

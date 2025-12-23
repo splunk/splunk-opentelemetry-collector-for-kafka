@@ -183,8 +183,9 @@ The configuration example below demonstrates how to retrieve the hostname of the
 receivers:
   kafka:
     brokers: ["kafka-broker:9092"]
-    topic: "three-pat"
-    encoding: "text"
+    logs:
+      topic: "three-pat"
+      encoding: "text"
 
 processors:
   resourcedetection:
