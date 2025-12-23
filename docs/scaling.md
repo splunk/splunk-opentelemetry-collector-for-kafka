@@ -20,7 +20,7 @@ receivers:
    logs:
      topic: "example-topic"
      encoding: "text"
-     group_id: <GROUP ID>
+   group_id: <GROUP ID>
 
 processors:
  batch:
