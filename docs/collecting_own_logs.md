@@ -31,8 +31,9 @@ Here is a complete example configuration that includes the telemetry section for
 receivers:
   kafka:
     brokers: ["kafka-broker-1:9092", "kafka-broker-2:9092"]
-    topic: example-topic
-    encoding: text
+    logs:
+      topic: example-topic
+      encoding: text
 
 processors:
   resourcedetection:
@@ -78,8 +79,9 @@ Our example configuration below demonstrates how to set this up:
 receivers:
   kafka:
     brokers: ["kafka-broker-1:9092", "kafka-broker-2:9092"]
-    topic: example-topic
-    encoding: text
+    logs:
+      topic: example-topic
+      encoding: text
 
   filelog:
     include:
@@ -150,8 +152,9 @@ Below is an example of how to set this up:
 receivers:
   kafka:
     brokers: ["kafka-broker-1:9092", "kafka-broker-2:9092"]
-    topic: test-v
-    encoding: text
+    logs:
+      topic: test-v
+      encoding: text
 
   filelog:
     include:

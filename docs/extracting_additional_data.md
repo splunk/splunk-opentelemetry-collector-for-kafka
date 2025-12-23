@@ -8,31 +8,32 @@ SOC4Kafka connector supports extracting data from headers.
 
 ```yaml
 receivers:
- kafka:
-   brokers: ["localhost:9092"]
-   topic: "example-topic"
-   encoding: "text"
-   header_extraction:
-     extract_headers: true
-     headers: ["index", "source", "sourcetype", "host","myHeader1", "myHeader2"]
+  kafka:
+    brokers: ["localhost:9092"]
+    logs:
+      topic: "example-topic"
+      encoding: "text"
+    header_extraction:
+      extract_headers: true
+      headers: ["index", "source", "sourcetype", "host","myHeader1", "myHeader2"]
 
 processors:
  batch:
 
 exporters:
- splunk_hec:
-   token: "your-splunk-hec-token"
-   endpoint: "https://splunk-hec-endpoint:8088/services/collector"
-   source: my-kafka
-   sourcetype: kafka-otel
-   index: kafka_otel
-   headers:
-     "__splunk_app_name": "soc4kafka"
-   otel_attrs_to_hec_metadata:
-     index: kafka.header.index
-     host: kafka.header.host
-     source: kafka.header.source
-     sourcetype: kafka.header.sourcetype
+  splunk_hec:
+    token: "your-splunk-hec-token"
+    endpoint: "https://splunk-hec-endpoint:8088/services/collector"
+    source: my-kafka
+    sourcetype: kafka-otel
+    index: kafka_otel
+    headers:
+      "__splunk_app_name": "soc4kafka"
+    otel_attrs_to_hec_metadata:
+      index: kafka.header.index
+      host: kafka.header.host
+      source: kafka.header.source
+      sourcetype: kafka.header.sourcetype
 
 service:
  pipelines:
@@ -78,8 +79,9 @@ Timestamp extraction configuration:
 receivers:
   kafka:
     brokers: ["localhost:9092"]
-    topic: "example-topic"
-    encoding: "text"
+    logs:
+      topic: "example-topic"
+      encoding: "text"
 
 processors:
   transform:

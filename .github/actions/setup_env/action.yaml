@@ -93,5 +93,5 @@ runs:
       shell: bash
       working-directory: tests
       run: |
-        wget -q https://github.com/signalfx/splunk-otel-collector/releases/latest/download/otelcol_linux_amd64
+        wget -q https://github.com/signalfx/splunk-otel-collector/releases/download/v0.141.0/otelcol_linux_amd64
         chmod +x otelcol_linux_amd64

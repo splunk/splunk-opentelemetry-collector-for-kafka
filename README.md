@@ -31,23 +31,24 @@ Follow the steps below to get started with SOC4Kafka. Or check our [Quickstart G
 ### Download Splunk OTel Collector package
 
 The SOC4Kafka base package is the Splunk OpenTelemetry Connector, offering multiple installation methods to suit different needs.
-Get the newest release using [this link](https://github.com/signalfx/splunk-otel-collector/releases/latest), download 
+Get the newest release (prefixed with `v`) using [this link](https://github.com/signalfx/splunk-otel-collector/releases), download 
 the package suited for your platform.
 
 For instance, if you are using Linux on an AMD64 architecture, you can execute the following `wget` command:
 
 ```commandline
-wget https://github.com/signalfx/splunk-otel-collector/releases/latest/download/otelcol_linux_amd64
+wget https://github.com/signalfx/splunk-otel-collector/releases/download/v0.141.0/otelcol_linux_amd64
 ```
 
 ### Create a minimal config template
 
 ```yaml
 receivers:
- kafka:
-   brokers: [<Brokers>]
-   topic: <Topic>
-   encoding: <Encoding>
+  kafka:
+    brokers: [<Brokers>]
+    logs:
+      topic: <Topic>
+      encoding: <Encoding>
 
 processors:
   resourcedetection:
@@ -63,6 +64,8 @@ exporters:
     source: <Source>
     sourcetype: <Sourcetype>
     index: <Splunk index>
+    tls:
+      insecure_skip_verify: false
     headers:
       "__splunk_app_name": "soc4kafka"
 
@@ -78,21 +81,22 @@ service:
 
 Mind that this is just a minimal configuration. You can customize it further based on your requirements by referring to the official documentation linked in the Component column.
 
-| **Category**   | **Component**                                                                                                                         | **Parameter**               | **Description**                                       | **Required** | **Default Value** |
-|----------------|---------------------------------------------------------------------------------------------------------------------------------------|-----------------------------|-------------------------------------------------------|--------------|-------------------|
-| **Receivers**  | [kafka](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/kafkareceiver)                           | `brokers`                   | Kafka broker addresses for message consumption.       | Yes          | N/A               |
-|                |                                                                                                                                       | `topic`                     | Kafka topic to subscribe to for receiving messages.   | Yes          | N/A               |
-|                |                                                                                                                                       | `encoding`                  | Encoding format of the Kafka messages.                | No           | `"text"`          |
-| **Processors** | [batch](https://github.com/open-telemetry/opentelemetry-collector/tree/main/processor/batchprocessor)                                 |                             | Groups messages into batches before exporting.        | No           | N/A               |
-|                | [resourcedetection](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/resourcedetectionprocessor) |                             | Sets a `host` field based on a machine's information. | No           | N/A               |
-| **Exporters**  | [splunk_hec](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter/splunkhecexporter)                  | `token`                     | Splunk HEC token for authentication.                  | Yes          | N/A               |
-|                |                                                                                                                                       | `endpoint`                  | Splunk HEC endpoint URL for sending data.             | Yes          | N/A               |
-|                |                                                                                                                                       | `source`                    | Source metadata for events sent to Splunk.            | No           | `"otel"`          |
-|                |                                                                                                                                       | `sourcetype`                | Sourcetype metadata for events sent to Splunk.        | No           | `"otel"`          |
-|                |                                                                                                                                       | `index`                     | Splunk index where the logs will be stored.           | Yes          | N/A               |
-| **Service**    |                                                                                                                                       | `pipelines.logs.receivers`  | Specifies the receiver(s) for the log pipeline.       | Yes          | N/A               |
-|                |                                                                                                                                       | `pipelines.logs.processors` | Specifies the processor(s) for the log pipeline.      | No           | `[]` (empty)      |
-|                |                                                                                                                                       | `pipelines.logs.exporters`  | Specifies the exporter(s) for the log pipeline.       | Yes          | N/A               |
+| **Category**   | **Component**                                                                                                                         | **Parameter**               | **Description**                                                                            | **Required** | **Default Value** |
+|----------------|---------------------------------------------------------------------------------------------------------------------------------------|-----------------------------|--------------------------------------------------------------------------------------------|--------------|-------------------|
+| **Receivers**  | [kafka](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/kafkareceiver)                           | `brokers`                   | Kafka broker addresses for message consumption.                                            | Yes          | N/A               |
+|                |                                                                                                                                       | `logs.topic`                | Kafka topic to subscribe to for receiving messages.                                        | Yes          | N/A               |
+|                |                                                                                                                                       | `logs.encoding`             | Encoding format of the Kafka messages.                                                     | No           | `"text"`          |
+| **Processors** | [batch](https://github.com/open-telemetry/opentelemetry-collector/tree/main/processor/batchprocessor)                                 |                             | Groups messages into batches before exporting.                                             | No           | N/A               |
+|                | [resourcedetection](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/resourcedetectionprocessor) |                             | Sets a `host` field based on a machine's information.                                      | No           | N/A               |
+| **Exporters**  | [splunk_hec](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter/splunkhecexporter)                  | `token`                     | Splunk HEC token for authentication.                                                       | Yes          | N/A               |
+|                |                                                                                                                                       | `endpoint`                  | Splunk HEC endpoint URL for sending data.                                                  | Yes          | N/A               |
+|                |                                                                                                                                       | `source`                    | Source metadata for events sent to Splunk.                                                 | No           | `"otel"`          |
+|                |                                                                                                                                       | `sourcetype`                | Sourcetype metadata for events sent to Splunk.                                             | No           | `"otel"`          |
+|                |                                                                                                                                       | `index`                     | Splunk index where the logs will be stored.                                                | Yes          | N/A               |
+|                |                                                                                                                                       | `tls.insecure_skip_verify`  | Whether to skip checking the certificate of the HEC endpoint when sending data over HTTPS. | No           | false             |
+| **Service**    |                                                                                                                                       | `pipelines.logs.receivers`  | Specifies the receiver(s) for the log pipeline.                                            | Yes          | N/A               |
+|                |                                                                                                                                       | `pipelines.logs.processors` | Specifies the processor(s) for the log pipeline.                                           | No           | `[]` (empty)      |
+|                |                                                                                                                                       | `pipelines.logs.exporters`  | Specifies the exporter(s) for the log pipeline.                                            | Yes          | N/A               |
 
 #### Example configuration
 
@@ -100,8 +104,9 @@ Mind that this is just a minimal configuration. You can customize it further bas
 receivers:
   kafka:
     brokers: ["kafka-broker-1:9092", "kafka-broker-2:9092", "kafka-broker-3:9092"]
-    topic: "example-topic"
-    encoding: "text"
+    logs:
+      topic: "example-topic"
+      encoding: "text"
 
 processors:
   resourcedetection:
@@ -117,6 +122,8 @@ exporters:
     source: my-kafka
     sourcetype: kafka-otel
     index: kafka_otel
+    tls:
+      insecure_skip_verify: false
     headers:
        "__splunk_app_name": "soc4kafka"
 
