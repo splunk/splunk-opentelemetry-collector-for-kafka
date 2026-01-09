@@ -501,7 +501,7 @@ Example output:
 ```
 ./kafka-consumer-groups.sh   --bootstrap-server localhost:9092   --describe   --group connect-kafka-connect-splunk
 GROUP                        TOPIC           PARTITION  CURRENT-OFFSET  LOG-END-OFFSET  LAG             CONSUMER-ID                                                                    HOST            CLIENT-ID
-connect-kafka-connect-splunk topic           0          3100135         3100135         0               connector-consumer-kafka-connect-splunk-0-a299967d-4ba2-4d8c-95f0-7f7db4f029ed /10.236.5.232   connector-consumer-kafka-connect-splunk-0
+connect-kafka-connect-splunk topic1          0          3100135         3100135         0               connector-consumer-kafka-connect-splunk-0-a299967d-4ba2-4d8c-95f0-7f7db4f029ed /10.236.5.232   connector-consumer-kafka-connect-splunk-0
 ```
 
 This output confirms which partitions are currently assigned to SC4Kafka and whether offsets are being actively committed.
@@ -533,7 +533,7 @@ receivers:
     brokers:
       - 10.236.5.232:9092
     logs:
-      topic: "topic"
+      topic: "topic1"
       encoding: "text"
     group_id: connect-kafka-connect-splunk
 ```
@@ -574,7 +574,7 @@ kafka-topics.sh \
   --replication-factor 1
 ```
 
-2. Update Kafka producers to publish events to the new topics (e.g., topic2) instead of the original topics.
+2. Update Kafka producers to publish events to the new topics (e.g., `topic2`) instead of the original topics.
 3. Configure SOC4Kafka to consume from the new topics:
 
 ```yaml
@@ -587,4 +587,4 @@ receivers:
       encoding: "text"
 ```
 
-4. Leave SC4Kafka configured to consume from the original topics (e.g., topic2).
+4. Leave SC4Kafka configured to consume from the original topics (e.g., `topic1`).
