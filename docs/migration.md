@@ -501,7 +501,7 @@ Example output:
 ```
 ./kafka-consumer-groups.sh   --bootstrap-server localhost:9092   --describe   --group connect-kafka-connect-splunk
 GROUP                        TOPIC           PARTITION  CURRENT-OFFSET  LOG-END-OFFSET  LAG             CONSUMER-ID                                                                    HOST            CLIENT-ID
-connect-kafka-connect-splunk perf2           0          3100135         3100135         0               connector-consumer-kafka-connect-splunk-0-a299967d-4ba2-4d8c-95f0-7f7db4f029ed /10.236.5.232   connector-consumer-kafka-connect-splunk-0
+connect-kafka-connect-splunk topic           0          3100135         3100135         0               connector-consumer-kafka-connect-splunk-0-a299967d-4ba2-4d8c-95f0-7f7db4f029ed /10.236.5.232   connector-consumer-kafka-connect-splunk-0
 ```
 
 This output confirms which partitions are currently assigned to SC4Kafka and whether offsets are being actively committed.
@@ -523,7 +523,7 @@ duplication is accounted for during the migration window.
 
 In this strategy, SC4Kafka and SOC4Kafka are configured to use the same Kafka consumer group ID. This causes both connectors to participate in the same consumer group and share partition assignments rather than independently consuming all messages.
 
-Configuration
+**Configuration**
 
 Configure SOC4Kafka with the same `group_id` used by SC4Kafka. For example:
 
@@ -532,7 +532,9 @@ receivers:
   kafka:
     brokers:
       - 10.236.5.232:9092
-    topic: perf2
+    logs:
+      topic: "topic"
+      encoding: "text"
     group_id: connect-kafka-connect-splunk
 ```
 
@@ -559,7 +561,7 @@ Using the same consumer group ID for SC4Kafka and SOC4Kafka is the recommended m
 In this strategy, new Kafka topics are introduced specifically for SOC4Kafka, while SC4Kafka continues to consume from the existing topics. Event producers are reconfigured to send data to the new topics, allowing both connectors to operate in parallel without sharing consumer groups or partitions.
 
 
-Configuration
+**Configuration**
 
 1. Create new Kafka topics for SOC4Kafka, typically by using a clear naming convention to distinguish them from existing topics. For example:
 
@@ -567,12 +569,12 @@ Configuration
 kafka-topics.sh \
   --bootstrap-server localhost:9092 \
   --create \
-  --topic perf2-soc \
+  --topic topic2 \
   --partitions 10 \
   --replication-factor 1
 ```
 
-2. Update Kafka producers to publish events to the new topics (e.g., perf2-soc) instead of the original topics.
+2. Update Kafka producers to publish events to the new topics (e.g., topic2) instead of the original topics.
 3. Configure SOC4Kafka to consume from the new topics:
 
 ```yaml
@@ -580,7 +582,9 @@ receivers:
   kafka:
     brokers:
       - 10.236.5.232:9092
-    topic: perf2-soc
+    logs:
+      topic: "topic2"
+      encoding: "text"
 ```
 
-4. Leave SC4Kafka configured to consume from the original topics (e.g., perf2).
+4. Leave SC4Kafka configured to consume from the original topics (e.g., topic2).
