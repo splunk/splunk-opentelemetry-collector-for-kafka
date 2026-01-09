@@ -1,6 +1,6 @@
 ## Design
 
-The SOC4Kafka connector is designed using the OpenTelemetry Collector framework and is composed of various classes of pipeline components. The key components of the Kafka OpenTelemetry (OTel) connector include:
+The SOC4Kafka collector is designed using the OpenTelemetry Collector framework and is composed of various classes of pipeline components. The key components of the Kafka OpenTelemetry (OTel) collector include:
 - Receivers
 - Processors
 - Exporters

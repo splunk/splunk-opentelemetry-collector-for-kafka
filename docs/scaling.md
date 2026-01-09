@@ -11,7 +11,7 @@ To handle higher throughput, you can deploy multiple instances of the SOC4Kafka.
 
 #### Use the same consumer group
 
-Configure all SOC4Kafka connectors to use the same `group_id`. Kafka ensures that each partition is consumed by only one collector instance within a consumer group.
+Configure all SOC4Kafka collectors to use the same `group_id`. Kafka ensures that each partition is consumed by only one collector instance within a consumer group.
 
 ```yaml
 receivers:

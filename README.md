@@ -1,6 +1,7 @@
-# SOC4Kafka connector
+# SOC4Kafka collector
 
-The new SOC4Kafka connector, built on OpenTelemetry, enables the collection of Kafka messages and forwards these events to Splunk. It serves as a replacement for the existing Kafka Connector [(kafka-connect-splunk)](https://github.com/splunk/kafka-connect-splunk).
+The new SOC4Kafka collector, built on OpenTelemetry, enables the collection of Kafka messages and forwards these events to Splunk. It serves as a replacement for the existing
+Splunk Connect for Kafka [(kafka-connect-splunk)](https://github.com/splunk/kafka-connect-splunk).
 
 ## Requirements
 
@@ -12,7 +13,7 @@ NOTE: HEC Acknowledgements are not supported in SOC4Kafka
 
 ## Support technologies
 
-Splunk OTel Connector for Kafka lets you subscribe to a Kafka topic and stream the data to the Splunk HTTP event collector on the following technologies:
+Splunk OTel Collector for Kafka lets you subscribe to a Kafka topic and stream the data to the Splunk HTTP event collector on the following technologies:
 
 - Apache Kafka
 - Amazon Managed Streaming for Apache Kafka (Amazon MSK)
@@ -20,7 +21,7 @@ Splunk OTel Connector for Kafka lets you subscribe to a Kafka topic and stream t
 
 ## Key differences to Splunk Connect for Kafka
 
-Not supported features which are available in previous version of Splunk Connect for Kafka but are not available in SOC4Kafka connector:
+Not supported features which are available in previous version of Splunk Connect for Kafka but are not available in SOC4Kafka collector:
 - Acknowledgment support - Not supported
 - Load balancing - Not supported
 - Protobuf encoding - Not supported
@@ -30,7 +31,7 @@ Follow the steps below to get started with SOC4Kafka. Or check our [Quickstart G
 
 ### Download Splunk OTel Collector package
 
-The SOC4Kafka base package is the Splunk OpenTelemetry Connector, offering multiple installation methods to suit different needs.
+The SOC4Kafka base package is the Splunk OpenTelemetry Collector, offering multiple installation methods to suit different needs.
 Get the newest release (prefixed with `v`) using [this link](https://github.com/signalfx/splunk-otel-collector/releases), download 
 the package suited for your platform.
 

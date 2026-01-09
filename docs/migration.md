@@ -1,8 +1,8 @@
-## Migration from Splunk Connector for Kafka
+## Migration from Splunk Connect for Kafka into Splunk OTel Collector for Kafka
 
 Naming: 
 - SC4Kafka - the [Splunk Connect for Kafka](https://github.com/splunk/kafka-connect-splunk)
-- SOC4Kafka - the Splunk OTel Connector for Kafka (the current project)
+- SOC4Kafka - the Splunk OTel Collector for Kafka (the current project)
 
 The biggest difference between SC4Kafka and SOC4Kafka is that:
 
@@ -15,19 +15,19 @@ The biggest difference between SC4Kafka and SOC4Kafka is that:
 | **Scaling**                | Scaling is managed using the `tasks.max` setting and supports multiple HEC endpoints. | Scaling is achieved by deploying multiple SOC4Kafka instances with the same `group_id`. Multiple HEC endpoints are not supported, but you can create multiple Splunk HEC exporters and add them to the pipeline. |
 
 Note:
-- The timestamp behavior differs between the two connectors. SOC4Kafka assigns a timestamp to the event based on when it is indexed, whereas Splunk Connect for Kafka uses the timestamp from when the event was originally produced. 
+- The timestamp behavior differs between the two solutions. SOC4Kafka assigns a timestamp to the event based on when it is indexed, whereas Splunk Connect for Kafka uses the timestamp from when the event was originally produced. 
 - Additionally messages from SOC4Kafka appear in Splunk first, as it forwards events to Splunk immediately. In contrast, Splunk Connect for Kafka processes and forwards events in batches, typically every configured number of seconds.
 
 ### SC4Kafka to SOC4Kafka mapping of configuration parameters
 
 The configuration settings for SC4Kafka cannot be directly transferred to SOC4Kafka due to differences in their architecture and design. However, many configuration parameters have equivalent settings in SOC4Kafka.
-A detailed description of the configuration parameter mappings can be found in the following [table](migration_config_values.md), which provides a comparison of the corresponding properties in both connectors.
+A detailed description of the configuration parameter mappings can be found in the following [table](migration_config_values.md), which provides a comparison of the corresponding properties in both solutions.
 
 ## Migration process from SC4Kafka to SOC4Kafka
 
 --- 
 ### Important Notes:
-- **Migration from the old connector to SOC4Kafka is a manual process.** There is no automated tool available for this migration.
+- **Migration from the old SC4Kafka connector to SOC4Kafka collector is a manual process.** There is no automated tool available for this migration.
 - Begin with a simple configuration, then gradually add more settings. This approach helps in isolating and troubleshooting potential issues during the migration.
 
 ---
