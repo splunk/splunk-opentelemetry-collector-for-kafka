@@ -2,9 +2,9 @@
 
 ### Change in Load Balancing Strategy for Splunk HEC
 
-Unlike the previous connector, SC4Kafka, SOC4Kafka delegates the responsibility of load balancing and high availability for Splunk HEC endpoints to dedicated infrastructure components. This aligns with modern architectural best practices and provides a more scalable and resilient solution than client-side logic.
+Unlike the previous SC4Kafka connector, SOC4Kafka collector delegates the responsibility of load balancing and high availability for Splunk HEC endpoints to dedicated infrastructure components. This aligns with modern architectural best practices and provides a more scalable and resilient solution than client-side logic.
 
-The connector should be configured with a single HEC endpoint. In a multi-indexer environment, this endpoint must be the address of a load balancer.
+The collector should be configured with a single HEC endpoint. In a multi-indexer environment, this endpoint must be the address of a load balancer.
 
 ### Recommended architecture
 

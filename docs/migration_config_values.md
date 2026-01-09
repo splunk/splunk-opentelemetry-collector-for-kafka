@@ -2,8 +2,8 @@
 
 In the OpenTelemetry (OTel) Collector, parameters are configured individually per exporter (data sink) or per receiver
 (data source), rather than being specified in a single consolidated table. This modular approach allows greater
-flexibility and customization for defining pipelines, but it differs fundamentally from the configuration style used in
-tools like the Splunk Kafka Connector.
+flexibility and customization for defining pipelines, but it differs fundamentally from the configuration style used in 
+the Splunk Connect for Kafka.
 
 ### Fields supported by SOC4Kafka
 

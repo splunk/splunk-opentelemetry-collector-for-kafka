@@ -2,7 +2,7 @@
 
 ### Headers
 
-SOC4Kafka connector supports extracting data from headers.
+SOC4Kafka collector supports extracting data from headers.
 
 #### Example configuration
 
