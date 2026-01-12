@@ -466,7 +466,7 @@ The example message appears like this in Splunk search results when properly con
 
 There are several considerations to take into account when migrating from SC4Kafka to SOC4Kafka. 
 During the transitional phase—when both SC4Kafka and SOC4Kafka are enabled and SC4Kafka has not yet been 
-decommissioned—Kafka’s at‑least‑once delivery semantics may result in duplicate events being ingested into Splunk. 
+decommissioned, Kafka’s at‑least‑once delivery semantics may result in duplicate events being ingested into Splunk. 
 This behavior is expected and is a consequence of Kafka’s design, which prioritizes data durability and avoidance of 
 data loss over deduplication.
 
@@ -548,8 +548,7 @@ When both connectors are running with the same consumer group:
 * Kafka determines partition ownership dynamically during group rebalances
 
 However, Kafka consumer groups are designed for parallel work sharing, not for active/standby failover. So when you decommission
-SC4Kafka with the same `group_id` configured,  SOC4Kafka will take over uncommitted partitions. Offsets that were processed but not yet committed by SC4Kafka may be replayed,
-this replay can result in duplicate events being ingested into Splunk.
+SC4Kafka with the same `group_id` configured,  SOC4Kafka will take over uncommitted partitions. Offsets that were processed but not yet committed by SC4Kafka may be replayed, this replay can result in duplicate events being ingested into Splunk.
 
 Note: Kafka consumer groups are optimized for resilience and throughput, not for seamless connector replacement. This strategy reduces duplication compared to using separate consumer groups but does not eliminate it entirely.
 
