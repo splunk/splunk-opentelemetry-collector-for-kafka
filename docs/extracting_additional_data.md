@@ -19,7 +19,7 @@ receivers:
       headers: ["index", "source", "sourcetype", "host","myHeader1", "myHeader2"]
 
 processors:
- batch:
+  batch:
 
 exporters:
   splunk_hec:
@@ -37,11 +37,11 @@ exporters:
       sourcetype: kafka.header.sourcetype
 
 service:
- pipelines:
-   logs:
-     receivers: [kafka]
-     processors: [batch]
-     exporters: [splunk_hec]
+  pipelines:
+    logs:
+      receivers: [kafka]
+      processors: [batch]
+      exporters: [splunk_hec]
 ```
 
 In the configuration above, the Kafka receiver includes a list of header names to extract. The extracted headers will be added to the log attributes in the following format: `kafka.header.<header_name>: <header_value>`

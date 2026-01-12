@@ -82,7 +82,7 @@ receivers:
       encoding: text
 ```
 
-This configuration subscribes to topics matching app-* pattern but excludes topics matching app-test-* and app-debug-* patterns.
+This configuration subscribes to topics matching `app-*` pattern but excludes topics matching `app-test-*` and `app-debug-*` patterns.
 
 #### Example 3: Multiple Topic Patterns with Exclusions
 
@@ -101,3 +101,6 @@ receivers:
 ```
 
 This configuration subscribes to multiple regex patterns while excluding topics ending with -archive or -old.
+
+Note that `exclude_topics` doesn't have to be regex, it can be an exact name. When using exact names no `^` at the beginning is necessary.
+
