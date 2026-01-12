@@ -2,7 +2,7 @@
 
 The configuration is similar to the default one described [here](../README.md#create-a-minimal-config-template), with the addition of multiple receivers - one for each topic you want to monitor. Thanks to the flexibility of the OpenTelemetry Collector, the setup can be tailored to meet specific requirements. This modular approach allows you to treat the components as building blocks, enabling you to create a pipeline that aligns perfectly with your use case. Depending on your needs, you can either use a single exporter for all receivers or configure a separate exporter for each receiver.
 
-![SOC4Kafka multiple topics](images/multiple_topics.png)
+![SOC4Kafka multiple topics](images/kafka-multiple-topics.png)
 
 ### Example config
 
