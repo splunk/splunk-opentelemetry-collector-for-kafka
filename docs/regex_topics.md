@@ -9,13 +9,23 @@ The receiver does not only subscribe to existing topics that match the regex, bu
 
 Please Note: Ensure that your regex pattern is valid and correctly formatted to avoid any subscription issues.
 
-### Example Config
+### Excluding topics
+
+You can exclude specific topics from being processed using the `kafka.logs.exclude_topics` field. This is useful when your regex pattern matches many topics, but you want to filter out certain ones from log collection.
+
+The `kafka.logs.exclude_topics` field accepts a list of topic names or regex patterns that should be excluded from processing. Topics matching any pattern in the exclude list will be ignored, even if they match the subscription regex pattern. Learn more about regex topics [here](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/kafkareceiver#regex-topic-patterns-with-exclusions).
+
+#### Example Config
+
 ```yaml
 receivers:
   kafka:
     brokers: [<Brokers>]
     logs:
-      topic: ^<Regex-Topic-Pattern>
+      topics: 
+        - ^<Regex-Topic-Pattern>
+      exclude_topics:
+        - ^<Regex-Topic-To-Exclude-Pattern>
       encoding: <Encoding>
 
 processors:
@@ -38,3 +48,56 @@ service:
       processors: [batch]
       exporters: [splunk_hec]
 ```
+
+### Configuration Examples
+
+#### Example 1: Subscribe to All Topics Except System Topics
+
+```yaml
+receivers:
+  kafka:
+    brokers: ["localhost:9092"]
+    logs:
+      topics:
+        - ^.*
+      exclude_topics:
+        - ^__.*
+      encoding: text
+```
+
+This configuration subscribes to all topics but excludes any topics starting with __ (Kafka internal topics).
+
+#### Example 2: Subscribe to Application Logs with Pattern Exclusions
+
+```yaml
+receivers:
+  kafka:
+    brokers: ["localhost:9092"]
+    logs:
+      topics:
+        - ^app-.*
+      exclude_topics:
+        - ^app-test-.*
+        - ^app-debug-.*
+      encoding: text
+```
+
+This configuration subscribes to topics matching app-* pattern but excludes topics matching app-test-* and app-debug-* patterns.
+
+#### Example 3: Multiple Topic Patterns with Exclusions
+
+```yaml
+receivers:
+  kafka:
+    brokers: ["localhost:9092"]
+    logs:
+      topics:
+        - ^logs-.*
+        - ^events-.*
+      exclude_topics:
+        - ^.*-archive$
+        - ^.*-old$
+      encoding: text
+```
+
+This configuration subscribes to multiple regex patterns while excluding topics ending with -archive or -old.

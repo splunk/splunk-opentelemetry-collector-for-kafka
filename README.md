@@ -48,7 +48,8 @@ receivers:
   kafka:
     brokers: [<Brokers>]
     logs:
-      topic: <Topic>
+      topics:
+        - <Topic>
       encoding: <Encoding>
 
 processors:
@@ -85,7 +86,7 @@ Mind that this is just a minimal configuration. You can customize it further bas
 | **Category**   | **Component**                                                                                                                         | **Parameter**               | **Description**                                                                            | **Required** | **Default Value** |
 |----------------|---------------------------------------------------------------------------------------------------------------------------------------|-----------------------------|--------------------------------------------------------------------------------------------|--------------|-------------------|
 | **Receivers**  | [kafka](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/kafkareceiver)                           | `brokers`                   | Kafka broker addresses for message consumption.                                            | Yes          | N/A               |
-|                |                                                                                                                                       | `logs.topic`                | Kafka topic to subscribe to for receiving messages.                                        | Yes          | N/A               |
+|                |                                                                                                                                       | `logs.topics`               | Kafka list of topics to subscribe to for receiving messages.                               | Yes          | N/A               |
 |                |                                                                                                                                       | `logs.encoding`             | Encoding format of the Kafka messages.                                                     | No           | `"text"`          |
 | **Processors** | [batch](https://github.com/open-telemetry/opentelemetry-collector/tree/main/processor/batchprocessor)                                 |                             | Groups messages into batches before exporting.                                             | No           | N/A               |
 |                | [resourcedetection](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/resourcedetectionprocessor) |                             | Sets a `host` field based on a machine's information.                                      | No           | N/A               |
@@ -106,7 +107,8 @@ receivers:
   kafka:
     brokers: ["kafka-broker-1:9092", "kafka-broker-2:9092", "kafka-broker-3:9092"]
     logs:
-      topic: "example-topic"
+      topics: 
+       - "example-topic"
       encoding: "text"
 
 processors:

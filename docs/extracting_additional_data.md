@@ -11,7 +11,8 @@ receivers:
   kafka:
     brokers: ["localhost:9092"]
     logs:
-      topic: "example-topic"
+      topics: 
+        - "example-topic"
       encoding: "text"
     header_extraction:
       extract_headers: true
@@ -80,7 +81,8 @@ receivers:
   kafka:
     brokers: ["localhost:9092"]
     logs:
-      topic: "example-topic"
+      topics:
+        - "example-topic"
       encoding: "text"
 
 processors:

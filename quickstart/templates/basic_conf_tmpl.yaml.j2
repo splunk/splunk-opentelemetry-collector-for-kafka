@@ -2,7 +2,8 @@ receivers:
   kafka:
     brokers: [{{ brokers }}]
     logs:
-      topic: {{ topic }}
+      topics:
+        - {{ topic }}
       encoding: {{ encoding }}
 
 processors:
