@@ -38,7 +38,7 @@ the package suited for your platform.
 For instance, if you are using Linux on an AMD64 architecture, you can execute the following `wget` command:
 
 ```commandline
-wget https://github.com/signalfx/splunk-otel-collector/releases/download/v0.141.0/otelcol_linux_amd64
+wget https://github.com/signalfx/splunk-otel-collector/releases/download/v0.142.0/otelcol_linux_amd64
 ```
 
 ### Create a minimal config template
