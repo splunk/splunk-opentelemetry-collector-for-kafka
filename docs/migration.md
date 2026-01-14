@@ -25,6 +25,8 @@ A detailed description of the configuration parameter mappings can be found in t
 
 ## Migration process from SC4Kafka to SOC4Kafka
 
+Before migrating please get familiar with the [migration strategies](#recommended-migration-strategy).
+
 --- 
 ### Important Notes:
 - **Migration from the old SC4Kafka connector to SOC4Kafka collector is a manual process.** There is no automated tool available for this migration.
