@@ -487,7 +487,9 @@ For example, if the connector list is:
 ["kafka-connect-splunk"]
 ```
 
-The corresponding consumer group ID will be: `connect-kafka-connect-splunk`. You can verify consumer group activity and partition assignments from the Kafka perspective using the built‑in `kafka-consumer-groups.sh` script located in Kafka’s `bin` directory:
+The corresponding consumer group ID will be: `connect-kafka-connect-splunk`.
+
+You can verify consumer group activity and partition assignments from the Kafka perspective using the built‑in `kafka-consumer-groups.sh` script located in Kafka’s `bin` directory:
 
 ```
 ./kafka-consumer-groups.sh \
@@ -531,7 +533,7 @@ Configure SOC4Kafka with the same `group_id` used by SC4Kafka. For example:
 receivers:
   kafka:
     brokers:
-      - 10.236.5.232:9092
+      - "kafka-broker:9092"
     logs:
       topic: "topic1"
       encoding: "text"
@@ -580,10 +582,11 @@ kafka-topics.sh \
 receivers:
   kafka:
     brokers:
-      - 10.236.5.232:9092
+      - "kafka-broker:9092"
     logs:
       topic: "topic2"
       encoding: "text"
 ```
 
 4. Leave SC4Kafka configured to consume from the original topics (e.g., `topic1`).
+5. Once all messages are ingested by SC4Kafka, you can safely stop the connector. 
