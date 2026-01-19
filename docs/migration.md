@@ -102,7 +102,8 @@ receivers:
   kafka:
     brokers: ["kafka-broker:9092"]
     logs:
-      topic: "three-pat"
+      topics:
+        - "three-pat"
       encoding: "text"
 
 processors:
@@ -141,7 +142,8 @@ receivers:
   kafka:
     brokers: ["kafka-broker:9092"]
     logs:
-      topic: "three-pat"
+      topics:
+        - "three-pat"
       encoding: "text"
 
 processors:
@@ -186,7 +188,8 @@ receivers:
   kafka:
     brokers: ["kafka-broker:9092"]
     logs:
-      topic: "three-pat"
+      topics:
+        - "three-pat"
       encoding: "text"
 
 processors:
@@ -258,7 +261,8 @@ receivers:
   kafka:
     brokers: ["kafka-broker:9092"]
     logs:
-      topic: "three-pat"
+      topics:
+        - "three-pat"
       encoding: "text"
     header_extraction:
       extract_headers: true
@@ -325,13 +329,15 @@ receivers:
   kafka/1:
     brokers: ["kafka-broker:9092"]
     logs:
-      topic: "three-pat"
+      topics:
+        - "three-pat"
       encoding: "text"
 
   kafka/2:
     brokers: ["kafka-broker:9092"]
     logs:
-      topic: "two-pat"
+      topics:
+        - "two-pat"
       encoding: "text"
 
 processors:
@@ -417,7 +423,8 @@ receivers:
   kafka:
     brokers: ["kafka-broker:9092"]
     logs:
-      topic: "topic"
+      topics:
+        - "topic"
       encoding: "text"
 
 exporters:

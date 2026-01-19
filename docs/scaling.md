@@ -18,7 +18,8 @@ receivers:
  kafka:
    brokers: ["localhost:9092"]
    logs:
-     topic: "example-topic"
+     topics:
+       - "example-topic"
      encoding: "text"
    group_id: <GROUP ID>
 

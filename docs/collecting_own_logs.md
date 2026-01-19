@@ -32,7 +32,8 @@ receivers:
   kafka:
     brokers: ["kafka-broker-1:9092", "kafka-broker-2:9092"]
     logs:
-      topic: example-topic
+      topics: 
+        - example-topic
       encoding: text
 
 processors:
@@ -80,7 +81,8 @@ receivers:
   kafka:
     brokers: ["kafka-broker-1:9092", "kafka-broker-2:9092"]
     logs:
-      topic: example-topic
+      topics: 
+        - example-topic
       encoding: text
 
   filelog:
@@ -153,7 +155,8 @@ receivers:
   kafka:
     brokers: ["kafka-broker-1:9092", "kafka-broker-2:9092"]
     logs:
-      topic: test-v
+      topics: 
+        - test-v
       encoding: text
 
   filelog:

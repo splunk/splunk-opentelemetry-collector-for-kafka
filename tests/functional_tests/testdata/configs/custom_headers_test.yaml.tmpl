@@ -3,7 +3,8 @@ receivers:
   kafka:
     brokers: [ {{ .KafkaBrokerAddress }} ]
     logs:
-      topic: {{ .KafkaTopicName }}
+      topics:
+        - {{ .KafkaTopicName }}
       encoding: "text"
     header_extraction:
       extract_headers: true

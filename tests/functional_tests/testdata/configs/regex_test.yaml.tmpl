@@ -3,7 +3,8 @@ receivers:
   kafka:
     brokers: [ {{ .KafkaBrokerAddress }} ]
     logs:
-      topic: {{ .KafkaRegexTopicName }}
+      topics:
+        - {{ .KafkaRegexTopicName }}
       encoding: "text"
 
 processors:

@@ -3,12 +3,14 @@ receivers:
   kafka/{{ .KafkaTopicName1 }}:
     brokers: [ {{ .KafkaBrokerAddress }} ]
     logs:
-      topic: {{ .KafkaTopicName1 }}
+      topics:
+        - {{ .KafkaTopicName1 }}
       encoding: "text"
   kafka/{{ .KafkaTopicName2 }}:
     brokers: [ {{ .KafkaBrokerAddress }} ]
     logs:
-      topic: {{ .KafkaTopicName2 }}
+      topics:
+        - {{ .KafkaTopicName2 }}
       encoding: "text"
 
 processors:
