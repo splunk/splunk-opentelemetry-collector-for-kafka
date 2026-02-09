@@ -1,0 +1,115 @@
+# Default values for splunk-opentelemetry-collector-for-kafka.
+# Deploy on MicroK8s or any Kubernetes cluster with: helm install soc4kafka . -f my-values.yaml
+
+# Collector image (Splunk OTel Collector - same distribution as SOC4Kafka binary)
+image:
+  repository: quay.io/signalfx/splunk-otel-collector
+  tag: "0.143.0"
+  pullPolicy: IfNotPresent
+
+# Replica count for the collector deployment
+replicaCount: 1
+
+# Kafka configuration
+kafka:
+  # Comma-separated list of broker addresses, e.g. "broker1:9092,broker2:9092"
+  brokers: "kafka-broker:9092"
+  # Topics to consume (YAML list)
+  topics:
+    - example-topic
+  # Message encoding: text, json, etc.
+  encoding: "text"
+
+# Splunk HEC (HTTP Event Collector) configuration
+# Do NOT put real tokens in this file. Use --set splunk.hec.token=... or a secret (see below).
+splunk:
+  hec:
+    # HEC token - override via CLI or use existingSecret
+    token: ""
+    # HEC endpoint URL, e.g. https://splunk.example.com:8088/services/collector
+    endpoint: "https://splunk-hec-endpoint:8088/services/collector"
+    # Event metadata
+    source: "soc4kafka"
+    sourcetype: "kafka-otel"
+    index: "main"
+    # Set to true only for dev/test with self-signed certs
+    insecureSkipVerify: false
+
+# Use an existing secret for the HEC token instead of creating one from values.
+# Secret must contain key "splunk-hec-token".
+existingSecret: ""
+# existingSecret: "my-splunk-hec-secret"
+
+# Resource limits and requests
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 100m
+    memory: 256Mi
+
+# Container security context (image runs as splunk-otel-collector uid 999)
+securityContext:
+  runAsNonRoot: true
+  runAsUser: 999
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: false
+  capabilities:
+    drop: ["ALL"]
+
+# Pod security context
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 999
+  fsGroup: 999
+
+# Service account
+serviceAccount:
+  create: true
+  name: ""
+  annotations: {}
+
+# Pod annotations and labels
+podAnnotations: {}
+podLabels: {}
+
+# Node selector / tolerations for scheduling (e.g. MicroK8s nodes)
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+# Extra environment variables for the collector container
+extraEnv: []
+# extraEnv:
+#   - name: OTEL_LOG_LEVEL
+#     value: "debug"
+
+# Liveness and readiness probes
+livenessProbe:
+  httpGet:
+    path: /
+    port: 13133
+  initialDelaySeconds: 30
+  periodSeconds: 10
+  timeoutSeconds: 5
+readinessProbe:
+  httpGet:
+    path: /
+    port: 13133
+  initialDelaySeconds: 5
+  periodSeconds: 10
+  timeoutSeconds: 5
+
+# Enable persistence for collector state (optional - not required for basic Kafka consumer)
+persistence:
+  enabled: false
+  # storageClass: ""  # Use cluster default
+  # size: 1Gi
+
+# Horizontal Pod Autoscaler (disable to use fixed replicaCount)
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 70
