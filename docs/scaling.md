@@ -15,33 +15,33 @@ Configure all SOC4Kafka collectors to use the same `group_id`. Kafka ensures tha
 
 ```yaml
 receivers:
- kafka:
-   brokers: ["localhost:9092"]
-   logs:
-     topics:
-       - "example-topic"
-     encoding: "text"
-   group_id: <GROUP ID>
+  kafka:
+    brokers: ["localhost:9092"]
+    logs:
+      topics:
+        - "example-topic"
+      encoding: "text"
+    group_id: <GROUP ID>
 
 processors:
  batch:
 
 exporters:
- splunk_hec:
-   token: "your-splunk-hec-token"
-   endpoint: "https://splunk-hec-endpoint:8088/services/collector"
-   source: my-kafka
-   sourcetype: kafka-otel
-   index: kafka_otel
-   headers:
-     "__splunk_app_name": "soc4kafka"
+  splunk_hec:
+    token: "your-splunk-hec-token"
+    endpoint: "https://splunk-hec-endpoint:8088/services/collector"
+    source: my-kafka
+    sourcetype: kafka-otel
+    index: kafka_otel
+    splunk_app_name: "soc4kafka"
+    splunk_app_version: 0.144.0
 
 service:
- pipelines:
-   logs:
-     receivers: [kafka]
-     processors: [batch]
-     exporters: [splunk_hec]
+  pipelines:
+    logs:
+      receivers: [kafka]
+      processors: [batch]
+      exporters: [splunk_hec]
 ```
 
 Note: Replace `<GROUP ID>` with a name that will be shared across all SOC4Kafka instances. This ensures that all instances are part of the same consumer group.

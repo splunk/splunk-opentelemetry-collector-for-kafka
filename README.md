@@ -38,7 +38,7 @@ the package suited for your platform.
 For instance, if you are using Linux on an AMD64 architecture, you can execute the following `wget` command:
 
 ```commandline
-wget https://github.com/signalfx/splunk-otel-collector/releases/download/v0.143.0/otelcol_linux_amd64
+wget https://github.com/signalfx/splunk-otel-collector/releases/download/v0.144.0/otelcol_linux_amd64
 ```
 
 ### Create a minimal config template
@@ -68,8 +68,8 @@ exporters:
     index: <Splunk index>
     tls:
       insecure_skip_verify: false
-    headers:
-      "__splunk_app_name": "soc4kafka"
+    splunk_app_name: "soc4kafka"
+    splunk_app_version: 0.144.0
 
 service:
   pipelines:
@@ -127,8 +127,8 @@ exporters:
     index: kafka_otel
     tls:
       insecure_skip_verify: false
-    headers:
-       "__splunk_app_name": "soc4kafka"
+    splunk_app_name: "soc4kafka"
+    splunk_app_version: 0.144.0
 
 service:
   pipelines:
