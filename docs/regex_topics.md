@@ -38,8 +38,8 @@ exporters:
     source: <Source>
     sourcetype: <Sourcetype>
     index: <Splunk index>
-    headers:
-      "__splunk_app_name": "soc4kafka"
+    splunk_app_name: "soc4kafka"
+    splunk_app_version: 0.144.0
 
 service:
   pipelines:

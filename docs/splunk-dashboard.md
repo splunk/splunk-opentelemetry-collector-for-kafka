@@ -148,8 +148,8 @@ exporters:
     source: <source>
     sourcetype: <sourcetype>
     index: <metrics-index>
-    headers:
-      "__splunk_app_name": "soc4kafka"
+    splunk_app_name: "soc4kafka"
+    splunk_app_version: 0.144.0
 ```
 
 Make sure you've created a metric type index:

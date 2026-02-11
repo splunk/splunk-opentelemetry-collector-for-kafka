@@ -50,8 +50,8 @@ exporters:
     source: my-kafka
     sourcetype: kafka-otel
     index: kafka_otel
-    headers:
-      "__splunk_app_name": "soc4kafka"
+    splunk_app_name: "soc4kafka"
+    splunk_app_version: 0.144.0
       
 service:
   telemetry:
@@ -105,15 +105,15 @@ exporters:
     source: my-kafka
     sourcetype: kafka-otel
     index: kafka_otel
-    headers:
-      "__splunk_app_name": "soc4kafka"
+    splunk_app_name: "soc4kafka"
+    splunk_app_version: 0.144.0
   
   splunk_hec/internal_logs:
     token: "your-splunk-hec-token"
     endpoint: "https://splunk-hec-endpoint:8088/services/collector"
     index: kafka-logs
-    headers:
-      "__splunk_app_name": "soc4kafka"    
+    splunk_app_name: "soc4kafka"
+    splunk_app_version: 0.144.0 
 
 extensions:
   file_storage:
@@ -181,15 +181,15 @@ exporters:
     source: my-kafka
     sourcetype: kafka-otel
     index: kafka_otel
-    headers:
-      "__splunk_app_name": "soc4kafka"
+    splunk_app_name: "soc4kafka"
+    splunk_app_version: 0.144.0
 
   splunk_hec/internal_logs:
     token: "your-splunk-hec-token"
     endpoint: "https://splunk-hec-endpoint:8088/services/collector"
     index: kafka-logs
-    headers:
-      "__splunk_app_name": "soc4kafka"
+    splunk_app_name: "soc4kafka"
+    splunk_app_version: 0.144.0
 
 extensions:
   file_storage:
