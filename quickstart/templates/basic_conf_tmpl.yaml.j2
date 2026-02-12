@@ -21,7 +21,6 @@ exporters:
     sourcetype: {{ sourcetype }}
     index: {{ splunk_index }}
     splunk_app_name: "soc4kafka"
-    splunk_app_version: 0.144.0
     tls:
       insecure_skip_verify: {{ insecure_skip_verify | default(false) | lower }}  # Set to true to skip TLS verification (not recommended for production)
 
