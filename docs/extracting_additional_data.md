@@ -29,7 +29,7 @@ exporters:
     sourcetype: kafka-otel
     index: kafka_otel
     splunk_app_name: "soc4kafka"
-    splunk_app_version: 0.144.0
+    splunk_app_version: 0.145.0
     otel_attrs_to_hec_metadata:
       index: kafka.header.index
       host: kafka.header.host
@@ -102,7 +102,7 @@ exporters:
     sourcetype: kafka-otel
     index: kafka_otel
     splunk_app_name: "soc4kafka"
-    splunk_app_version: 0.144.0
+    splunk_app_version: 0.145.0
 
 service:
   pipelines:

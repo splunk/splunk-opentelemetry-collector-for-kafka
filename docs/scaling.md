@@ -34,7 +34,7 @@ exporters:
     sourcetype: kafka-otel
     index: kafka_otel
     splunk_app_name: "soc4kafka"
-    splunk_app_version: 0.144.0
+    splunk_app_version: 0.145.0
 
 service:
   pipelines:

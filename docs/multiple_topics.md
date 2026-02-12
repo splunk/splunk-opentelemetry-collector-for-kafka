@@ -33,7 +33,7 @@ exporters:
     sourcetype: kafka-otel
     index: kafka_otel_index_a
     splunk_app_name: "soc4kafka"
-    splunk_app_version: 0.144.0
+    splunk_app_version: 0.145.0
       
   splunk_hec/b:
     token: "your-splunk-hec-token"
@@ -42,7 +42,7 @@ exporters:
     sourcetype: kafka-otel
     index: kafka_otel_index_b
     splunk_app_name: "soc4kafka"
-    splunk_app_version: 0.144.0
+    splunk_app_version: 0.145.0
 
 service:
   pipelines:
