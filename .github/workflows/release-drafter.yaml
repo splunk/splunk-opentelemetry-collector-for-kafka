@@ -141,7 +141,6 @@ jobs:
           find . -type f \
             -not -path './.git/*' \
             -not -path './node_modules/*' \
-            -not -path './.github/*' \
             -not -name '*.sum' \
             -not -name 'go.sum' \
             -exec grep -l "$CURRENT_VERSION" {} \; | while read file; do
@@ -154,7 +153,6 @@ jobs:
           find . -type f \
             -not -path './.git/*' \
             -not -path './node_modules/*' \
-            -not -path './.github/*' \
             -not -name '*.sum' \
             -not -name 'go.sum' \
             -exec grep -l "v${CURRENT_VERSION}" {} \; | while read file; do
