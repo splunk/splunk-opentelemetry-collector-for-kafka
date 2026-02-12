@@ -69,7 +69,6 @@ exporters:
     tls:
       insecure_skip_verify: false
     splunk_app_name: "soc4kafka"
-    splunk_app_version: 0.144.0
 
 service:
   pipelines:
@@ -128,7 +127,6 @@ exporters:
     tls:
       insecure_skip_verify: false
     splunk_app_name: "soc4kafka"
-    splunk_app_version: 0.144.0
 
 service:
   pipelines:

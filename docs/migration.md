@@ -117,7 +117,6 @@ exporters:
     sourcetype: kafka-otel
     index: "logs_index"
     splunk_app_name: "soc4kafka"
-    splunk_app_version: 0.144.0
 
 service:
   pipelines:
@@ -163,7 +162,6 @@ exporters:
     sourcetype: kafka-otel
     index: "logs_index"
     splunk_app_name: "soc4kafka"
-    splunk_app_version: 0.144.0
 
 service:
   pipelines:
@@ -207,7 +205,6 @@ exporters:
     sourcetype: kafka-otel
     index: "logs_index"
     splunk_app_name: "soc4kafka"
-    splunk_app_version: 0.144.0
 
 service:
   telemetry:
@@ -276,7 +273,6 @@ exporters:
     token: "your-splunk-hec-token"
     endpoint: "https://splunk-hec-endpoint:8088/services/collector"
     splunk_app_name: "soc4kafka"
-    splunk_app_version: 0.144.0
     otel_attrs_to_hec_metadata:
       index: kafka.header.index
       host: kafka.header.host
@@ -355,7 +351,6 @@ exporters:
     sourcetype: kafka-otel
     index: "logs_index"
     splunk_app_name: "soc4kafka"
-    splunk_app_version: 0.144.0
 
   splunk_hec/2:
     token: "your-splunk-hec-token"
@@ -364,7 +359,6 @@ exporters:
     sourcetype: kafka-otel
     index: "kafka_otel"
     splunk_app_name: "soc4kafka"
-    splunk_app_version: 0.144.0
 
 service:
   pipelines:
@@ -435,7 +429,6 @@ exporters:
     sourcetype: otel
     index: test
     splunk_app_name: "soc4kafka"
-    splunk_app_version: 0.144.0
     export_raw: true
 
 service:
