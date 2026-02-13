@@ -142,6 +142,7 @@ jobs:
           # Use word boundaries with proper escaping for version numbers
           find . -type f \
             -not -path './.git/*' \
+            -not -path './.github/*' \
             -not -path './node_modules/*' \
             -not -name '*.sum' \
             -not -name 'go.sum' \
@@ -154,6 +155,7 @@ jobs:
           # Pattern 2: Replace version with 'v' prefix in URLs (e.g., v0.144.0)
           find . -type f \
             -not -path './.git/*' \
+            -not -path './.github/*' \
             -not -path './node_modules/*' \
             -not -name '*.sum' \
             -not -name 'go.sum' \
