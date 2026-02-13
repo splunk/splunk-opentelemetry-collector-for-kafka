@@ -1,0 +1,218 @@
+name: Check for new Splunk OTel Collector version
+
+# Description:
+# This workflow monitors the splunk-otel-collector repository for new releases.
+# When a new release is detected, it updates all version strings in the codebase
+# and creates a PR with the changes.
+
+on:
+  push:
+    branches:
+      - '*'
+  schedule:
+    # Run every 12 hours at 55 minutes past the hour.
+    - cron: "55 */12 * * *"
+  workflow_dispatch:
+    inputs:
+      APP_VERSION:
+        description: 'Optionally overrides the collector version to update to.'
+        required: false
+        default: ''
+      OVERWRITE_EXISTING_PR:
+        description: 'Allow updating an existing update-collector-version PR if changes differ.'
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - 'false'
+          - 'true'
+
+jobs:
+  prepare_release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.2.2
+        with:
+          fetch-depth: 0
+
+      - name: Get current version from codebase
+        id: current_version
+        run: |
+          # Find the current version by looking for common patterns
+          # Check for splunk_app_version or download URLs
+          CURRENT_VERSION=$(grep -r "splunk_app_version:" . --include="*.yaml" --include="*.yml" --include="*.md" --include="*.j2" | \
+            grep -oE "[0-9]+\.[0-9]+\.[0-9]+" | head -1)
+          
+          if [ -z "$CURRENT_VERSION" ]; then
+            # Try to find version in download URLs
+            CURRENT_VERSION=$(grep -r "splunk-otel-collector/releases/download/v" . --include="*.yaml" --include="*.yml" --include="*.md" --include="*.sh" | \
+              grep -oE "v[0-9]+\.[0-9]+\.[0-9]+" | head -1 | sed 's/^v//')
+          fi
+          
+          if [ -z "$CURRENT_VERSION" ]; then
+            echo "Error: Could not determine current version from codebase"
+            exit 1
+          fi
+          
+          echo "current_version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
+          echo "Current version found in codebase: $CURRENT_VERSION"
+
+      - name: Get latest collector version
+        id: latest_version
+        run: |
+          if [ -n "${{ github.event.inputs.APP_VERSION }}" ]; then
+            LATEST_VERSION="${{ github.event.inputs.APP_VERSION }}"
+            echo "Using provided version: $LATEST_VERSION"
+          else
+            # Fetch latest release from splunk-otel-collector
+            LATEST_VERSION=$(curl -L -qs -H 'Accept: application/vnd.github+json' \
+              "https://api.github.com/repos/signalfx/splunk-otel-collector/releases?per_page=50" | \
+              jq -r '[.[] | select(.tag_name | test("^v[0-9]+\\.[0-9]+\\.[0-9]+$")) | .tag_name] | first' | \
+              sed 's/^v//')
+          fi
+          
+          if [[ -z "$LATEST_VERSION" || "$LATEST_VERSION" == "null" || ! "$LATEST_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "[ERROR] LATEST_VERSION $LATEST_VERSION is invalid. Aborting update."
+            exit 1
+          fi
+          
+          echo "latest_version=$LATEST_VERSION" >> $GITHUB_OUTPUT
+          echo "Latest collector version: $LATEST_VERSION"
+
+      - name: Check if update is needed
+        id: check_update
+        run: |
+          CURRENT="${{ steps.current_version.outputs.current_version }}"
+          LATEST="${{ steps.latest_version.outputs.latest_version }}"
+          
+          if [ "$CURRENT" = "$LATEST" ]; then
+            echo "update_needed=false" >> $GITHUB_OUTPUT
+            echo "No update needed. Current version ($CURRENT) matches latest ($LATEST)."
+          else
+            echo "update_needed=true" >> $GITHUB_OUTPUT
+            echo "Update needed: $CURRENT -> $LATEST"
+          fi
+
+      - name: Setup Git
+        if: steps.check_update.outputs.update_needed == 'true'
+        run: |
+          git config --global user.name "Olga"
+          git config --global user.email "86965961+omrozowicz-splunk@users.noreply.github.com"
+
+      - name: Check if PR is already open
+        id: check_if_pr_open
+        if: steps.check_update.outputs.update_needed == 'true'
+        run: |
+          echo "PR_NEEDED=1" >> "$GITHUB_OUTPUT"
+          git fetch origin
+          # Check if update-collector-version branch exists
+          if [ -n "$(git ls-remote --heads origin update-collector-version)" ]; then
+            if [ "${{ github.event.inputs.OVERWRITE_EXISTING_PR }}" = "true" ]; then
+              # Overwrite mode: Check if the target version is different
+              echo "OVERWRITE_EXISTING_PR is enabled - checking if update is needed"
+              # We'll proceed with update since versions differ
+              echo "Will update existing PR with new version"
+            else
+              # Default mode: Skip if branch exists
+              echo "PR_NEEDED=0" >> "$GITHUB_OUTPUT"
+              echo "Skipping PR creation - update-collector-version branch already exists"
+              echo "Use OVERWRITE_EXISTING_PR=true to allow updating if changes differ"
+            fi
+          fi
+
+      - name: Update version strings
+        if: steps.check_update.outputs.update_needed == 'true' && steps.check_if_pr_open.outputs.PR_NEEDED == '1'
+        run: |
+          CURRENT_VERSION="${{ steps.current_version.outputs.current_version }}"
+          LATEST_VERSION="${{ steps.latest_version.outputs.latest_version }}"
+          
+          # Escape dots in version for sed pattern
+          CURRENT_VERSION_ESCAPED=$(echo "$CURRENT_VERSION" | sed 's/\./\\./g')
+          CURRENT_VERSION_V_ESCAPED="v${CURRENT_VERSION_ESCAPED}"
+          
+          echo "Updating versions: $CURRENT_VERSION -> $LATEST_VERSION"
+          
+          # Find and replace all occurrences
+          # Pattern 1: Replace version without 'v' prefix (e.g., splunk_app_version: 0.144.0)
+          # Use word boundaries with proper escaping for version numbers
+          find . -type f \
+            -not -path './.git/*' \
+            -not -path './node_modules/*' \
+            -not -name '*.sum' \
+            -not -name 'go.sum' \
+            -exec grep -l "$CURRENT_VERSION" {} \; | while read file; do
+              echo "Updating $file: $CURRENT_VERSION -> $LATEST_VERSION"
+              # Use word boundaries, but handle cases where version might be at start/end of line or surrounded by non-word chars
+              sed -i "s/\<${CURRENT_VERSION_ESCAPED}\>/${LATEST_VERSION}/g" "$file"
+            done
+          
+          # Pattern 2: Replace version with 'v' prefix in URLs (e.g., v0.144.0)
+          find . -type f \
+            -not -path './.git/*' \
+            -not -path './node_modules/*' \
+            -not -name '*.sum' \
+            -not -name 'go.sum' \
+            -exec grep -l "v${CURRENT_VERSION}" {} \; | while read file; do
+              echo "Updating $file: v$CURRENT_VERSION -> v$LATEST_VERSION"
+              # Replace v-prefixed version (word boundary before 'v', version pattern after)
+              sed -i "s/\<v${CURRENT_VERSION_ESCAPED}\>/v${LATEST_VERSION}/g" "$file"
+            done
+
+      - name: Check for changes
+        id: check_changes
+        if: steps.check_update.outputs.update_needed == 'true' && steps.check_if_pr_open.outputs.PR_NEEDED == '1'
+        run: |
+          if git diff --quiet && git diff --cached --quiet; then
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+            echo "No changes detected after version update"
+          else
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+            echo "Changes detected"
+            git diff --stat
+          fi
+
+      - name: Clean up existing branch
+        if: steps.check_update.outputs.update_needed == 'true'
+        run: |
+          # 1. Check if the branch exists on remote
+          BRANCH_EXISTS=$(git ls-remote --heads origin update-collector-version)
+          
+          # 2. Get the overwrite preference (default to true if running on a branch)
+          OVERWRITE="${{ inputs.OVERWRITE_EXISTING_PR || 'true' }}"
+          if [ -n "$BRANCH_EXISTS" ] && [ "$OVERWRITE" = "true" ]; then
+            echo "Branch update-collector-version found. Deleting..."
+            # Use || true to ensure the workflow continues even if deletion hits a race condition
+            git push origin --delete update-collector-version || true
+          else
+            echo "No remote branch to delete or overwrite disabled."
+          fi
+
+      - name: Open PR for Version Update
+        if: steps.check_update.outputs.update_needed == 'true' && steps.check_if_pr_open.outputs.PR_NEEDED == '1' && steps.check_changes.outputs.has_changes == 'true'
+        uses: peter-evans/create-pull-request@v8
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "Prepare release v${{ steps.latest_version.outputs.latest_version }}"
+          title: "Prepare release v${{ steps.latest_version.outputs.latest_version }}"
+          body: |
+            This PR was automatically created to update the Splunk OTel Collector dependency.
+            
+            **Version Update:**
+            - Previous version: `${{ steps.current_version.outputs.current_version }}`
+            - New version: `${{ steps.latest_version.outputs.latest_version }}`
+            
+            **Changes:**
+            - Updated all occurrences of `${{ steps.current_version.outputs.current_version }}` to `${{ steps.latest_version.outputs.latest_version }}`
+            - Updated download URLs and version references across the codebase
+            
+            **Source:**
+            - Collector repository: `signalfx/splunk-otel-collector`
+          branch: update-collector-version
+          base: main
+          delete-branch: true
+          author: ${{ github.event_name == 'schedule' && 'Olga <86965961+omrozowicz-splunk@users.noreply.github.com>' || format('{0} <{1}+{0}@users.noreply.github.com>', github.actor, github.actor_id) }}
