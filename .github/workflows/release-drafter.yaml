@@ -6,9 +6,6 @@ name: Check for new Splunk OTel Collector version
 # and creates a PR with the changes.
 
 on:
-  push:
-    branches:
-      - '*'
   schedule:
     # Run every 12 hours at 55 minutes past the hour.
     - cron: "55 */12 * * *"
