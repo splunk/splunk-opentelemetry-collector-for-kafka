@@ -7,7 +7,7 @@ on:
 jobs:
   create_release:
     runs-on: ubuntu-latest
-    if: startsWith(github.event.head_commit.message, 'Update Splunk OTel Collector to v')
+    if: startsWith(github.event.head_commit.message, 'Prepare release v')
     permissions:
       contents: write
 
