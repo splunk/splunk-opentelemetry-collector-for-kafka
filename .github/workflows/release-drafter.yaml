@@ -130,7 +130,6 @@ jobs:
           
           # Escape dots in version for sed pattern
           CURRENT_VERSION_ESCAPED=$(echo "$CURRENT_VERSION" | sed 's/\./\\./g')
-          CURRENT_VERSION_V_ESCAPED="v${CURRENT_VERSION_ESCAPED}"
           
           echo "Updating versions: $CURRENT_VERSION -> $LATEST_VERSION"
           
