@@ -145,8 +145,7 @@ jobs:
             -not -name 'go.sum' \
             -exec grep -l "$CURRENT_VERSION" {} \; | while read file; do
               echo "Updating $file: $CURRENT_VERSION -> $LATEST_VERSION"
-              # Use word boundaries, but handle cases where version might be at start/end of line or surrounded by non-word chars
-              sed -i "s/\<${CURRENT_VERSION_ESCAPED}\>/${LATEST_VERSION}/g" "$file"
+              sed -i "s/${CURRENT_VERSION_ESCAPED}/${LATEST_VERSION}/g" "$file"
             done
           
           # Pattern 2: Replace version with 'v' prefix in URLs (e.g., v0.144.0)
@@ -158,8 +157,7 @@ jobs:
             -not -name 'go.sum' \
             -exec grep -l "v${CURRENT_VERSION}" {} \; | while read file; do
               echo "Updating $file: v$CURRENT_VERSION -> v$LATEST_VERSION"
-              # Replace v-prefixed version (word boundary before 'v', version pattern after)
-              sed -i "s/\<v${CURRENT_VERSION_ESCAPED}\>/v${LATEST_VERSION}/g" "$file"
+              sed -i "s/${CURRENT_VERSION_ESCAPED}/${LATEST_VERSION}/g" "$file"
             done
 
       - name: Check for changes
