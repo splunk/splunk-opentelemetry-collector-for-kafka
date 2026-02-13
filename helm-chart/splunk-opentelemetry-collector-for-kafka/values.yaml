@@ -10,30 +10,78 @@ image:
 # Replica count for the collector deployment
 replicaCount: 1
 
-# Kafka configuration
-kafka:
-  # Comma-separated list of broker addresses, e.g. "broker1:9092,broker2:9092"
-  brokers: "kafka-broker:9092"
-  # Topics to consume (YAML list)
-  topics:
-    - example-topic
-  # Message encoding: text, json, etc.
-  encoding: "text"
+# =============================================================================
+# SIMPLE MODE - Most users configure only this section
+# =============================================================================
 
-# Splunk HEC (HTTP Event Collector) configuration
-# Do NOT put real tokens in this file. Use --set splunk.hec.token=... or a secret (see below).
-splunk:
-  hec:
-    # HEC token - override via CLI or use existingSecret
-    token: ""
-    # HEC endpoint URL, e.g. https://splunk.example.com:8088/services/collector
-    endpoint: "https://splunk-hec-endpoint:8088/services/collector"
-    # Event metadata
+# Define multiple Kafka receivers easily
+kafkaReceivers:
+  - name: main
+    brokers:
+      - "kafka-broker-1:9092"
+      - "kafka-broker-2:9092"
+    topics:
+      - "application-logs"
+    encoding: utf-8
+    consumerGroup: "soc4kafka-main"
+
+# Define multiple Splunk HEC exporters easily
+splunkExporters:
+  - name: primary
+    endpoint: "https://splunk-hec:8088/services/collector"
+    token: "${SPLUNK_HEC_TOKEN}"
     source: "soc4kafka"
-    sourcetype: "kafka-otel"
+    sourcetype: "otel:logs"
     index: "main"
-    # Set to true only for dev/test with self-signed certs
     insecureSkipVerify: false
+
+# Define pipelines - maps receivers to exporters
+pipelines:
+  - name: logs
+    receivers:
+      - main
+    exporters:
+      - primary
+    processors:
+      - batch
+      - resourcedetection
+
+# =============================================================================
+# COMPONENT DEFAULTS - Users can modify these
+# =============================================================================
+
+defaults:
+  extensions:
+    health_check:
+      endpoint: "0.0.0.0:13133"
+
+  receivers:
+    kafka:
+      encoding: utf-8
+      initial_offset: latest
+
+  processors:
+    batch:
+      timeout: 5s
+      send_batch_size: 1000
+    resourcedetection:
+      detectors: ["system"]
+      system:
+        hostname_sources: ["os"]
+
+  exporters:
+    splunk_hec:
+      tls:
+        insecure_skip_verify: false
+      headers:
+        __splunk_app_name: "soc4kafka"
+
+# =============================================================================
+# ADVANCED MODE - Full override capability
+# =============================================================================
+
+# Advanced users can provide raw OTel config that merges over everything
+configOverride: {}
 
 # Use an existing secret for the HEC token instead of creating one from values.
 # Secret must contain key "splunk-hec-token".
