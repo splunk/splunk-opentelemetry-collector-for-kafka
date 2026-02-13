@@ -178,12 +178,20 @@ jobs:
           fi
 
       - name: Clean up existing branch
-        if: steps.check_update.outputs.update_needed == 'true' && inputs.OVERWRITE_EXISTING_PR == 'true'
+        if: steps.check_update.outputs.update_needed == 'true'
         run: |
-          # If the branch exists, delete it so we start fresh
-          if [ -n "$(git ls-remote --heads origin update-collector-version)" ]; then
-            echo "Deleting existing branch to avoid merge/cherry-pick conflicts..."
-            git push origin --delete update-collector-version
+          # 1. Check if the branch exists on remote
+          BRANCH_EXISTS=$(git ls-remote --heads origin update-collector-version)
+          
+          # 2. Get the overwrite preference (default to true if running on a branch)
+          OVERWRITE="${{ inputs.OVERWRITE_EXISTING_PR || 'true' }}"
+
+          if [ -n "$BRANCH_EXISTS" ] && [ "$OVERWRITE" = "true" ]; then
+            echo "Branch update-collector-version found. Deleting..."
+            # Use || true to ensure the workflow continues even if deletion hits a race condition
+            git push origin --delete update-collector-version || true
+          else
+            echo "No remote branch to delete or overwrite disabled."
           fi
 
       - name: Open PR for Version Update
