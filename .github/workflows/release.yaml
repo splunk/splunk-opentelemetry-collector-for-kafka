@@ -30,4 +30,4 @@ jobs:
           # Create the tag and release
           gh release create "v$VERSION" \
             --title "v$VERSION" \
-            --notes "This SOC4Kafka release adopts [the Splunk OpenTelemetry Collector v$VERSION](https://github.com/signalfx/splunk-otel-collector-chart/releases/tag/splunk-otel-collector-$VERSION)"
+            --notes "This SOC4Kafka release adopts [the Splunk OpenTelemetry Collector v$VERSION](https://github.com/signalfx/splunk-otel-collector/releases/tag/v$VERSION)"
