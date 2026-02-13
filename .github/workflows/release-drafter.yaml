@@ -177,6 +177,15 @@ jobs:
             git diff --stat
           fi
 
+      - name: Clean up existing branch
+        if: steps.check_update.outputs.update_needed == 'true' && inputs.OVERWRITE_EXISTING_PR == 'true'
+        run: |
+          # If the branch exists, delete it so we start fresh
+          if [ -n "$(git ls-remote --heads origin update-collector-version)" ]; then
+            echo "Deleting existing branch to avoid merge/cherry-pick conflicts..."
+            git push origin --delete update-collector-version
+          fi
+
       - name: Open PR for Version Update
         if: steps.check_update.outputs.update_needed == 'true' && steps.check_if_pr_open.outputs.PR_NEEDED == '1' && steps.check_changes.outputs.has_changes == 'true'
         uses: peter-evans/create-pull-request@v8
