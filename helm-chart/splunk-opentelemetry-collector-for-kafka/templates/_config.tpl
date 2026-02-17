@@ -52,7 +52,7 @@ service:
     {{- end }}
   pipelines:
     {{- range .Values.pipelines }}
-    {{ .name }}:
+    {{ .type }}/{{ .name }}:
       receivers:
         {{- range .receivers }}
         {{- $receiverName := ternary "kafka" (printf "kafka/%s" .) (eq . "main") }}

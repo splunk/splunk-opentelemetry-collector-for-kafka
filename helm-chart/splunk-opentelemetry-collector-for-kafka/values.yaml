@@ -37,7 +37,8 @@ splunkExporters:
 
 # Define pipelines - maps receivers to exporters
 pipelines:
-  - name: logs
+  - name: 1
+    type: logs
     receivers:
       - main
     exporters:
