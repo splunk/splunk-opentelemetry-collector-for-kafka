@@ -22,8 +22,8 @@ kafkaReceivers:
       - "kafka-broker-2:9092"
     topics:
       - "application-logs"
-    encoding: utf-8
-    consumerGroup: "soc4kafka-main"
+    encoding: text
+    group_id: "soc4kafka-main"
 
 # Define multiple Splunk HEC exporters easily
 splunkExporters:
@@ -33,7 +33,8 @@ splunkExporters:
     source: "soc4kafka"
     sourcetype: "otel:logs"
     index: "main"
-    insecureSkipVerify: false
+    tls:
+      insecure_skip_verify: false
 
 # Define pipelines - maps receivers to exporters
 pipelines:
@@ -58,8 +59,7 @@ defaults:
 
   receivers:
     kafka:
-      encoding: utf-8
-      initial_offset: latest
+      encoding: text
 
   processors:
     batch:
@@ -74,8 +74,7 @@ defaults:
     splunk_hec:
       tls:
         insecure_skip_verify: false
-      headers:
-        __splunk_app_name: "soc4kafka"
+      splunk_app_name: "soc4kafka"
 
 # =============================================================================
 # ADVANCED MODE - Full override capability
@@ -123,6 +122,16 @@ serviceAccount:
 podAnnotations: {}
 podLabels: {}
 
+# Deployment strategy
+strategy:
+  type: RollingUpdate
+  rollingUpdate:
+    maxSurge: 25%
+    maxUnavailable: 25%
+
+# Termination grace period (important for Kafka consumers to commit offsets gracefully)
+terminationGracePeriodSeconds: 30
+
 # Node selector / tolerations for scheduling (e.g. MicroK8s nodes)
 nodeSelector: {}
 tolerations: []
@@ -134,7 +143,13 @@ extraEnv: []
 #   - name: OTEL_LOG_LEVEL
 #     value: "debug"
 
-# Liveness and readiness probes
+# Service configuration (optional - probes work without it, but useful for monitoring/debugging)
+service:
+  enabled: true  # Set to false if you don't need external access to health endpoint
+  type: ClusterIP
+  port: 13133
+
+# Liveness, readiness, and startup probes
 livenessProbe:
   httpGet:
     path: /
@@ -149,12 +164,25 @@ readinessProbe:
   initialDelaySeconds: 5
   periodSeconds: 10
   timeoutSeconds: 5
+startupProbe:
+  httpGet:
+    path: /
+    port: 13133
+  initialDelaySeconds: 10
+  periodSeconds: 10
+  timeoutSeconds: 5
+  failureThreshold: 30
+
+# Image pull secrets for private registries
+imagePullSecrets: []
+# imagePullSecrets:
+#   - name: regcred
 
 # Enable persistence for collector state (optional - not required for basic Kafka consumer)
 persistence:
   enabled: false
   # storageClass: ""  # Use cluster default
-  # size: 1Gi
+  size: 1Gi  # Required when persistence.enabled is true
 
 # Horizontal Pod Autoscaler (disable to use fixed replicaCount)
 autoscaling:
@@ -162,3 +190,10 @@ autoscaling:
   minReplicas: 1
   maxReplicas: 10
   targetCPUUtilizationPercentage: 70
+  targetMemoryUtilizationPercentage: 80
+
+# Pod Disruption Budget for high availability
+podDisruptionBudget:
+  enabled: false
+  minAvailable: 1
+  # maxUnavailable: 1  # Alternative to minAvailable

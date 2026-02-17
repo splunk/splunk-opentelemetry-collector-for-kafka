@@ -2,20 +2,29 @@ SOC4Kafka (Splunk OpenTelemetry Collector for Kafka) has been installed.
 
 1. Provide your Splunk HEC token (required):
 
-   Option A - Create a secret and reference it:
-     kubectl create secret generic my-splunk-hec --from-literal=splunk-hec-token=YOUR_HEC_TOKEN
-     helm upgrade {{ .Release.Name }} . --set existingSecret=my-splunk-hec --reuse-values
+   Option A - Create a secret and reference it (RECOMMENDED):
+     kubectl create secret generic my-splunk-hec-secret \
+       --from-literal=splunk-hec-token-primary=YOUR_HEC_TOKEN
+     # Note: Secret key format is "splunk-hec-token-{exporter-name}"
+     helm upgrade {{ .Release.Name }} . \
+       --set existingSecret=my-splunk-hec-secret \
+       --reuse-values
 
-   Option B - Set at install/upgrade (avoid storing in values files):
-     helm upgrade {{ .Release.Name }} . --set splunk.hec.token=YOUR_HEC_TOKEN --reuse-values
+   Option B - Update values.yaml with your token (ensure values.yaml is not committed to version control):
+     # Edit values.yaml and set:
+     # splunkExporters:
+     #   - name: primary
+     #     token: "YOUR_HEC_TOKEN"
+     helm upgrade {{ .Release.Name }} . --reuse-values
 
 2. Override Kafka and Splunk settings for your environment:
 
    helm upgrade {{ .Release.Name }} . \
-     --set kafka.brokers="broker1:9092,broker2:9092" \
-     --set kafka.topics[0]=your-topic \
-     --set splunk.hec.endpoint="https://splunk.example.com:8088/services/collector" \
-     --set splunk.hec.index=your-index \
+     --set kafkaReceivers[0].brokers[0]="broker1:9092" \
+     --set kafkaReceivers[0].brokers[1]="broker2:9092" \
+     --set kafkaReceivers[0].topics[0]=your-topic \
+     --set splunkExporters[0].endpoint="https://splunk.example.com:8088/services/collector" \
+     --set splunkExporters[0].index=your-index \
      --reuse-values
 
 3. Check collector pods:
@@ -23,7 +32,15 @@ SOC4Kafka (Splunk OpenTelemetry Collector for Kafka) has been installed.
    kubectl get pods -l app.kubernetes.io/name={{ include "soc4kafka.name" . }}
    kubectl logs -l app.kubernetes.io/name={{ include "soc4kafka.name" . }} -f
 
-4. On MicroK8s: ensure the cluster has access to Kafka (in-cluster or network reachable)
+4. Check collector health (if service is enabled):
+
+   kubectl port-forward svc/{{ include "soc4kafka.fullname" . }} 13133:13133
+   curl http://localhost:13133/
+   
+   # Or directly via pod:
+   kubectl port-forward -l app.kubernetes.io/name={{ include "soc4kafka.name" . }} 13133:13133
+
+5. On MicroK8s: ensure the cluster has access to Kafka (in-cluster or network reachable)
    and that the Splunk HEC endpoint is reachable from the cluster.
 
 Documentation: https://github.com/splunk/splunk-opentelemetry-collector-for-kafka

@@ -8,19 +8,18 @@ extensions:
 receivers:
   {{- range .Values.kafkaReceivers }}
   {{- $receiverName := ternary "kafka" (printf "kafka/%s" .name) (eq .name "main") }}
+  {{- $receiverConfig := dict "brokers" .brokers }}
+  {{- $logsConfig := dict "topics" .topics }}
+  {{- if .encoding }}
+    {{- $_ := set $logsConfig "encoding" .encoding }}
+  {{- end }}
+  {{- $defaults := $.Values.defaults.receivers.kafka | default dict }}
+  {{- $defaultsLogs := get $defaults "logs" | default dict }}
+  {{- $mergedLogs := mustMergeOverwrite $defaultsLogs $logsConfig }}
+  {{- $_ := set $receiverConfig "logs" $mergedLogs }}
+  {{- $merged := mustMergeOverwrite $defaults $receiverConfig }}
   {{ $receiverName }}:
-    brokers:
-      {{- toYaml .brokers | nindent 6 }}
-    logs:
-      topics:
-      {{- range .topics }}
-        - {{ . }}
-      {{- end }}
-      encoding: {{ .encoding | default $.Values.defaults.receivers.kafka.encoding }}
-    {{- if .consumerGroup }}
-    group_id: {{ .consumerGroup }}
-    {{- end }}
-    initial_offset: {{ .initialOffset | default $.Values.defaults.receivers.kafka.initial_offset }}
+    {{- toYaml $merged | nindent 4 }}
   {{- end }}
 
 processors:
@@ -33,16 +32,14 @@ exporters:
   {{- if not (hasPrefix "${" .token) }}
     {{- $tokenValue = printf "${SPLUNK_HEC_TOKEN_%s}" (.name | upper | replace "-" "_") }}
   {{- end }}
+  {{- $exporterConfig := dict "endpoint" .endpoint "token" $tokenValue "source" .source "sourcetype" .sourcetype "index" .index }}
+  {{- if .tls }}
+    {{- $_ := set $exporterConfig "tls" .tls }}
+  {{- end }}
+  {{- $defaults := $.Values.defaults.exporters.splunk_hec | default dict }}
+  {{- $merged := mustMergeOverwrite $defaults $exporterConfig }}
   {{ $exporterName }}:
-    endpoint: {{ .endpoint | quote }}
-    token: {{ $tokenValue | quote }}
-    source: {{ .source | quote }}
-    sourcetype: {{ .sourcetype | quote }}
-    index: {{ .index | quote }}
-    tls:
-      insecure_skip_verify: {{ .insecureSkipVerify | default $.Values.defaults.exporters.splunk_hec.tls.insecure_skip_verify }}
-    headers:
-      {{- toYaml $.Values.defaults.exporters.splunk_hec.headers | nindent 6 }}
+    {{- toYaml $merged | nindent 4 }}
   {{- end }}
 
 service:

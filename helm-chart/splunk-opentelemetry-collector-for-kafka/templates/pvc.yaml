@@ -10,7 +10,7 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
-      storage: {{ .Values.persistence.size }}
+      storage: {{ .Values.persistence.size | default "1Gi" }}
   {{- if .Values.persistence.storageClass }}
   storageClassName: {{ .Values.persistence.storageClass | quote }}
   {{- end }}

@@ -8,6 +8,13 @@ spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
   {{- end }}
+  strategy:
+    type: {{ .Values.strategy.type | default "RollingUpdate" }}
+    {{- if eq (.Values.strategy.type | default "RollingUpdate") "RollingUpdate" }}
+    rollingUpdate:
+      maxSurge: {{ .Values.strategy.rollingUpdate.maxSurge | default "25%" }}
+      maxUnavailable: {{ .Values.strategy.rollingUpdate.maxUnavailable | default "25%" }}
+    {{- end }}
   selector:
     matchLabels:
       {{- include "soc4kafka.selectorLabels" . | nindent 6 }}
@@ -26,8 +33,15 @@ spec:
       {{- with .Values.serviceAccount }}
       serviceAccountName: {{ include "soc4kafka.serviceAccountName" $ }}
       {{- end }}
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      {{- if .Values.terminationGracePeriodSeconds }}
+      terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
+      {{- end }}
       containers:
         - name: collector
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
@@ -54,6 +68,10 @@ spec:
             - name: health
               containerPort: 13133
               protocol: TCP
+          {{- if .Values.startupProbe }}
+          startupProbe:
+            {{- toYaml .Values.startupProbe | nindent 12 }}
+          {{- end }}
           livenessProbe:
             {{- toYaml .Values.livenessProbe | nindent 12 }}
           readinessProbe:
