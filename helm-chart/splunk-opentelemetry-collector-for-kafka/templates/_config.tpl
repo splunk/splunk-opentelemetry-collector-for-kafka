@@ -8,15 +8,21 @@ extensions:
 receivers:
   {{- range .Values.kafkaReceivers }}
   {{- $receiverName := ternary "kafka" (printf "kafka/%s" .name) (eq .name "main") }}
-  {{- $receiverConfig := dict "brokers" .brokers }}
-  {{- $logsConfig := dict "topics" .topics }}
-  {{- if .encoding }}
-    {{- $_ := set $logsConfig "encoding" .encoding }}
+  {{- $receiverConfig := dict }}
+  {{- range $key, $value := . }}
+    {{- if ne $key "name" }}
+      {{- if eq $key "logs" }}
+        {{- $logsConfig := $value | default dict }}
+        {{- $defaults := $.Values.defaults.receivers.kafka | default dict }}
+        {{- $defaultsLogs := get $defaults "logs" | default dict }}
+        {{- $mergedLogs := mustMergeOverwrite $defaultsLogs $logsConfig }}
+        {{- $_ := set $receiverConfig "logs" $mergedLogs }}
+      {{- else }}
+        {{- $_ := set $receiverConfig $key $value }}
+      {{- end }}
+    {{- end }}
   {{- end }}
   {{- $defaults := $.Values.defaults.receivers.kafka | default dict }}
-  {{- $defaultsLogs := get $defaults "logs" | default dict }}
-  {{- $mergedLogs := mustMergeOverwrite $defaultsLogs $logsConfig }}
-  {{- $_ := set $receiverConfig "logs" $mergedLogs }}
   {{- $merged := mustMergeOverwrite $defaults $receiverConfig }}
   {{ $receiverName }}:
     {{- toYaml $merged | nindent 4 }}

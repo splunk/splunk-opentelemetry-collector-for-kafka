@@ -15,38 +15,13 @@ replicaCount: 1
 # =============================================================================
 
 # Define multiple Kafka receivers easily
-kafkaReceivers:
-  - name: main
-    brokers:
-      - "kafka-broker-1:9092"
-      - "kafka-broker-2:9092"
-    topics:
-      - "application-logs"
-    encoding: text
-    group_id: "soc4kafka-main"
+kafkaReceivers: []
 
 # Define multiple Splunk HEC exporters easily
-splunkExporters:
-  - name: primary
-    endpoint: "https://splunk-hec:8088/services/collector"
-    token: "${SPLUNK_HEC_TOKEN}"
-    source: "soc4kafka"
-    sourcetype: "otel:logs"
-    index: "main"
-    tls:
-      insecure_skip_verify: false
+splunkExporters: []
 
 # Define pipelines - maps receivers to exporters
-pipelines:
-  - name: 1
-    type: logs
-    receivers:
-      - main
-    exporters:
-      - primary
-    processors:
-      - batch
-      - resourcedetection
+pipelines: []
 
 # =============================================================================
 # COMPONENT DEFAULTS - Users can modify these
@@ -59,8 +34,9 @@ defaults:
 
   receivers:
     kafka:
-      encoding: text
-
+      logs:
+        encoding: text
+      group_id: "soc4kafka-main"
   processors:
     batch:
       timeout: 5s
