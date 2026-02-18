@@ -1,16 +1,37 @@
 kafkaReceivers:
-  - name: main
+  - name: plain
     brokers:
     - "kafka-broker:9092"
     logs:
       topics:
-        - "perf4"
-    group_id: "soc4kafka-main1"
+        - "perf1"
     auth:
       plain_text:
         username: "myuser"
         password:
-          secret: "kafka-auth-secret"
+          secret: "kafka-plain-secret"
+
+  - name: kerberos
+    brokers:
+    - "kafka-broker2:9092"
+    logs:
+      topics:
+        - "perf2"
+    auth:
+      kerberos:
+        password:
+          secret: "kafka-kerberos-secret"
+
+  - name: sasl
+    brokers:
+    - "kafka-broker3:9092"
+    logs:
+      topics:
+        - "perf3"
+      sasl:
+        username: "myuser"
+        password:
+          secret: "kafka-sasl-secret"
 
 # Define multiple Splunk HEC exporters easily
 splunkExporters:
@@ -26,7 +47,9 @@ pipelines:
   - name: base_logs
     type: logs
     receivers:
-      - main
+      - plain
+      - kerberos
+      - sasl
     exporters:
       - primary
     processors:
