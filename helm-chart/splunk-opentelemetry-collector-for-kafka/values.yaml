@@ -59,10 +59,17 @@ defaults:
 # Advanced users can provide raw OTel config that merges over everything
 configOverride: {}
 
-# Use an existing secret for the HEC token instead of creating one from values.
-# Secret must contain key "splunk-hec-token".
-existingSecret: ""
-# existingSecret: "my-splunk-hec-secret"
+# Each exporter can specify its own secret, or one will be automatically created.
+# If secret is not specified, a secret named "{release-name}-hec-{exporter-name}" will be created.
+# All secrets use the key "splunk-hec-token".
+# 
+# Example:
+# splunkExporters:
+#   - name: primary
+#     secret: "my-primary-secret"  # Optional: use existing secret
+#     # If not specified, secret "{release-name}-hec-primary" will be auto-created
+#   - name: secondary
+#     secret: "my-secondary-secret"  # Different secret for this exporter
 
 # Resource limits and requests
 resources:

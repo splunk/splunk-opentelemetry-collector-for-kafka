@@ -51,14 +51,14 @@ spec:
           args:
             - "--config=/etc/otel/config.yaml"
           env:
-            {{- $secretName := .Values.existingSecret | default (printf "%s-hec" (include "soc4kafka.fullname" .)) }}
             {{- range .Values.splunkExporters }}
             {{- if and .token (not (hasPrefix "${" .token)) }}
+            {{- $secretName := .secret | default (printf "%s-hec-%s" (include "soc4kafka.fullname" $) .name) }}
             - name: SPLUNK_HEC_TOKEN_{{ .name | upper | replace "-" "_" }}
               valueFrom:
                 secretKeyRef:
                   name: {{ $secretName }}
-                  key: splunk-hec-token-{{ .name }}
+                  key: splunk-hec-token
             {{- end }}
             {{- end }}
             {{- with .Values.extraEnv }}
