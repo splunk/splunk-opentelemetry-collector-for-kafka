@@ -1,0 +1,104 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "properties": {
+    "kafkaReceivers": {
+      "type": "array",
+      "minItems": 1,
+      "description": "At least one Kafka receiver is required",
+      "items": {
+        "type": "object",
+        "required": ["name"],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "brokers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "logs": {
+            "type": "object"
+          },
+          "group_id": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "splunkExporters": {
+      "type": "array",
+      "minItems": 1,
+      "description": "At least one Splunk HEC exporter is required",
+      "items": {
+        "type": "object",
+        "required": ["name", "endpoint"],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "endpoint": {
+            "type": "string"
+          },
+          "token": {
+            "type": "string"
+          },
+          "secret": {
+            "type": "string"
+          },
+          "source": {
+            "type": "string"
+          },
+          "sourcetype": {
+            "type": "string"
+          },
+          "index": {
+            "type": "string"
+          },
+          "tls": {
+            "type": "object"
+          }
+        }
+      }
+    },
+    "pipelines": {
+      "type": "array",
+      "minItems": 1,
+      "description": "At least one pipeline is required",
+      "items": {
+        "type": "object",
+        "required": ["name", "type", "receivers", "exporters"],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["logs", "metrics", "traces"]
+          },
+          "receivers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "exporters": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "processors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  },
+  "required": ["kafkaReceivers", "splunkExporters", "pipelines"]
+}
