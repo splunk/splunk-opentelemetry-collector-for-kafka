@@ -8,24 +8,36 @@ extensions:
 receivers:
   {{- range .Values.kafkaReceivers }}
   {{- $receiverName := ternary "kafka" (printf "kafka/%s" .name) (eq .name "main") }}
-  {{- $receiverConfig := dict }}
-  {{- range $key, $value := . }}
-    {{- if ne $key "name" }}
-      {{- if eq $key "logs" }}
-        {{- $logsConfig := $value | default dict }}
-        {{- $defaults := $.Values.defaults.receivers.kafka | default dict }}
-        {{- $defaultsLogs := get $defaults "logs" | default dict }}
-        {{- $mergedLogs := mustMergeOverwrite $defaultsLogs $logsConfig }}
-        {{- $_ := set $receiverConfig "logs" $mergedLogs }}
-      {{- else }}
-        {{- $_ := set $receiverConfig $key $value }}
+  {{- $defaults := deepCopy $.Values.defaults.receivers.kafka }}
+  {{- $receiverConfig := mustMergeOverwrite $defaults (omit . "name") }}
+  {{- if $receiverConfig.auth }}
+    {{- if $receiverConfig.auth.plain_text }}
+      {{- if and $receiverConfig.auth.plain_text.password (kindIs "map" $receiverConfig.auth.plain_text.password) }}
+        {{- if $receiverConfig.auth.plain_text.password.secret }}
+          {{- $envVarName := printf "KAFKA_%s_PLAIN_TEXT_PASSWORD" ($receiverName | upper | replace "/" "_" | replace "-" "_") }}
+          {{- $_ := set $receiverConfig.auth.plain_text "password" (printf "${%s}" $envVarName) }}
+        {{- end }}
+      {{- end }}
+    {{- end }}
+    {{- if $receiverConfig.auth.sasl }}
+      {{- if and $receiverConfig.auth.sasl.password (kindIs "map" $receiverConfig.auth.sasl.password) }}
+        {{- if $receiverConfig.auth.sasl.password.secret }}
+          {{- $envVarName := printf "KAFKA_%s_SASL_PASSWORD" ($receiverName | upper | replace "/" "_" | replace "-" "_") }}
+          {{- $_ := set $receiverConfig.auth.sasl "password" (printf "${%s}" $envVarName) }}
+        {{- end }}
+      {{- end }}
+    {{- end }}
+    {{- if $receiverConfig.auth.kerberos }}
+      {{- if and $receiverConfig.auth.kerberos.password (kindIs "map" $receiverConfig.auth.kerberos.password) }}
+        {{- if $receiverConfig.auth.kerberos.password.secret }}
+          {{- $envVarName := printf "KAFKA_%s_KERBEROS_PASSWORD" ($receiverName | upper | replace "/" "_" | replace "-" "_") }}
+          {{- $_ := set $receiverConfig.auth.kerberos "password" (printf "${%s}" $envVarName) }}
+        {{- end }}
       {{- end }}
     {{- end }}
   {{- end }}
-  {{- $defaults := $.Values.defaults.receivers.kafka | default dict }}
-  {{- $merged := mustMergeOverwrite $defaults $receiverConfig }}
   {{ $receiverName }}:
-    {{- toYaml $merged | nindent 4 }}
+    {{- toYaml $receiverConfig | nindent 4 }}
   {{- end }}
 
 processors:
@@ -34,25 +46,11 @@ processors:
 exporters:
   {{- range .Values.splunkExporters }}
   {{- $exporterName := ternary "splunk_hec" (printf "splunk_hec/%s" .name) (eq .name "primary") }}
-  {{- $exporterConfig := dict "endpoint" .endpoint "source" .source "sourcetype" .sourcetype "index" .index }}
-  {{- $envVarName := printf "SPLUNK_HEC_TOKEN_%s" (.name | upper | replace "-" "_") }}
-  {{- $tokenValue := printf "${%s}" $envVarName }}
-  {{- if .token }}
-    {{- $tokenStr := toString .token }}
-    {{- if hasPrefix "${" $tokenStr }}
-      {{- $tokenValue = $tokenStr }}
-    {{- else }}
-      {{- $tokenValue = printf "${%s}" $envVarName }}
-    {{- end }}
-  {{- end }}
+  {{- $tokenValue := printf "${SPLUNK_HEC_TOKEN_%s}" (.name | upper | replace "-" "_") }}
+  {{- $exporterConfig := omit . "name" "token" "secret" | mustMergeOverwrite (deepCopy $.Values.defaults.exporters.splunk_hec) }}
   {{- $_ := set $exporterConfig "token" $tokenValue }}
-  {{- if .tls }}
-    {{- $_ := set $exporterConfig "tls" .tls }}
-  {{- end }}
-  {{- $defaults := $.Values.defaults.exporters.splunk_hec | default dict }}
-  {{- $merged := mustMergeOverwrite $defaults $exporterConfig }}
   {{ $exporterName }}:
-    {{- toYaml $merged | nindent 4 }}
+    {{- toYaml $exporterConfig | nindent 4 }}
   {{- end }}
 
 service:

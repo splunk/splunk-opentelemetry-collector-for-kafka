@@ -4,7 +4,7 @@
 # Collector image (Splunk OTel Collector - same distribution as SOC4Kafka binary)
 image:
   repository: quay.io/signalfx/splunk-otel-collector
-  tag: "0.143.0"
+  tag: "0.145.0"
   pullPolicy: IfNotPresent
 
 # Replica count for the collector deployment
@@ -15,10 +15,51 @@ replicaCount: 1
 # =============================================================================
 
 # Define multiple Kafka receivers easily
+# Authentication passwords can reference Kubernetes secrets:
+#   - Use a string for literal passwords or env var references (e.g., "${MY_PASSWORD}")
+#   - Use an object with "secret" and optional "key" to reference a Kubernetes secret
+#
+# Example with secret reference:
+# kafkaReceivers:
+#   - name: main
+#     brokers:
+#       - "kafka-broker:9092"
+#     logs:
+#       topics:
+#         - "my-topic"
+#     auth:
+#       plain_text:
+#         username: "myuser"
+#         password:
+#           secret: "kafka-auth-secret"  # Kubernetes secret name
+#           key: "password"              # Optional, defaults to "password"
+#       # Or for SASL:
+#       # sasl:
+#       #   username: "myuser"
+#       #   password:
+#       #     secret: "kafka-sasl-secret"
+#       #     key: "password"
+#       # Or for Kerberos:
+#       # kerberos:
+#       #   password:
+#       #     secret: "kafka-kerberos-secret"
+#       #     key: "password"
 kafkaReceivers: []
 
 # Define multiple Splunk HEC exporters easily
 splunkExporters: []
+# Each exporter can specify its own secret, or one will be automatically created.
+# If secret is not specified, a secret named "{release-name}-hec-{exporter-name}" will be created.
+# All secrets use the key "splunk-hec-token".
+#
+# Example:
+# splunkExporters:
+#   - name: primary
+#     secret: "my-primary-secret"  # Optional: use existing secret
+#     # If not specified, secret "{release-name}-hec-primary" will be auto-created
+#   - name: secondary
+#     secret: "my-secondary-secret"  # Different secret for this exporter
+# Define pipelines - maps receivers to exporters
 
 # Define pipelines - maps receivers to exporters
 pipelines: []
@@ -58,18 +99,6 @@ defaults:
 
 # Advanced users can provide raw OTel config that merges over everything
 configOverride: {}
-
-# Each exporter can specify its own secret, or one will be automatically created.
-# If secret is not specified, a secret named "{release-name}-hec-{exporter-name}" will be created.
-# All secrets use the key "splunk-hec-token".
-# 
-# Example:
-# splunkExporters:
-#   - name: primary
-#     secret: "my-primary-secret"  # Optional: use existing secret
-#     # If not specified, secret "{release-name}-hec-primary" will be auto-created
-#   - name: secondary
-#     secret: "my-secondary-secret"  # Different secret for this exporter
 
 # Resource limits and requests
 resources:

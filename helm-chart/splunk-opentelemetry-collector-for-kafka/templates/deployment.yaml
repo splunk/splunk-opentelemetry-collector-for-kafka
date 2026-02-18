@@ -61,6 +61,59 @@ spec:
                   key: splunk-hec-token
             {{- end }}
             {{- end }}
+            {{- range .Values.kafkaReceivers }}
+            {{- $receiverName := ternary "kafka" (printf "kafka/%s" .name) (eq .name "main") }}
+            {{- if .auth }}
+              {{- if .auth.plain_text }}
+                {{- if .auth.plain_text.password }}
+                  {{- if kindIs "map" .auth.plain_text.password }}
+                    {{- if .auth.plain_text.password.secret }}
+                      {{- $envVarName := printf "KAFKA_%s_PLAIN_TEXT_PASSWORD" ($receiverName | upper | replace "/" "_" | replace "-" "_") }}
+                      {{- $secretName := .auth.plain_text.password.secret }}
+                      {{- $secretKey := .auth.plain_text.password.key | default "password" }}
+            - name: {{ $envVarName }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $secretName }}
+                  key: {{ $secretKey }}
+                    {{- end }}
+                  {{- end }}
+                {{- end }}
+              {{- end }}
+              {{- if .auth.sasl }}
+                {{- if .auth.sasl.password }}
+                  {{- if kindIs "map" .auth.sasl.password }}
+                    {{- if .auth.sasl.password.secret }}
+                      {{- $envVarName := printf "KAFKA_%s_SASL_PASSWORD" ($receiverName | upper | replace "/" "_" | replace "-" "_") }}
+                      {{- $secretName := .auth.sasl.password.secret }}
+                      {{- $secretKey := .auth.sasl.password.key | default "password" }}
+            - name: {{ $envVarName }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $secretName }}
+                  key: {{ $secretKey }}
+                    {{- end }}
+                  {{- end }}
+                {{- end }}
+              {{- end }}
+              {{- if .auth.kerberos }}
+                {{- if .auth.kerberos.password }}
+                  {{- if kindIs "map" .auth.kerberos.password }}
+                    {{- if .auth.kerberos.password.secret }}
+                      {{- $envVarName := printf "KAFKA_%s_KERBEROS_PASSWORD" ($receiverName | upper | replace "/" "_" | replace "-" "_") }}
+                      {{- $secretName := .auth.kerberos.password.secret }}
+                      {{- $secretKey := .auth.kerberos.password.key | default "password" }}
+            - name: {{ $envVarName }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $secretName }}
+                  key: {{ $secretKey }}
+                    {{- end }}
+                  {{- end }}
+                {{- end }}
+              {{- end }}
+            {{- end }}
+            {{- end }}
             {{- with .Values.extraEnv }}
             {{- toYaml . | nindent 12 }}
             {{- end }}
