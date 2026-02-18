@@ -52,8 +52,8 @@ spec:
             - "--config=/etc/otel/config.yaml"
           env:
             {{- range .Values.splunkExporters }}
-            {{- if and .token (not (hasPrefix "${" .token)) }}
             {{- $secretName := .secret | default (printf "%s-hec-%s" (include "soc4kafka.fullname" $) .name) }}
+            {{- if or .secret (and .token (not (hasPrefix "${" (toString .token)))) }}
             - name: SPLUNK_HEC_TOKEN_{{ .name | upper | replace "-" "_" }}
               valueFrom:
                 secretKeyRef:

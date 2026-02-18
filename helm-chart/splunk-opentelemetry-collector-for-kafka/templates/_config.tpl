@@ -34,11 +34,18 @@ processors:
 exporters:
   {{- range .Values.splunkExporters }}
   {{- $exporterName := ternary "splunk_hec" (printf "splunk_hec/%s" .name) (eq .name "primary") }}
-  {{- $tokenValue := .token }}
-  {{- if not (hasPrefix "${" .token) }}
-    {{- $tokenValue = printf "${SPLUNK_HEC_TOKEN_%s}" (.name | upper | replace "-" "_") }}
+  {{- $exporterConfig := dict "endpoint" .endpoint "source" .source "sourcetype" .sourcetype "index" .index }}
+  {{- $envVarName := printf "SPLUNK_HEC_TOKEN_%s" (.name | upper | replace "-" "_") }}
+  {{- $tokenValue := printf "${%s}" $envVarName }}
+  {{- if .token }}
+    {{- $tokenStr := toString .token }}
+    {{- if hasPrefix "${" $tokenStr }}
+      {{- $tokenValue = $tokenStr }}
+    {{- else }}
+      {{- $tokenValue = printf "${%s}" $envVarName }}
+    {{- end }}
   {{- end }}
-  {{- $exporterConfig := dict "endpoint" .endpoint "token" $tokenValue "source" .source "sourcetype" .sourcetype "index" .index }}
+  {{- $_ := set $exporterConfig "token" $tokenValue }}
   {{- if .tls }}
     {{- $_ := set $exporterConfig "tls" .tls }}
   {{- end }}
