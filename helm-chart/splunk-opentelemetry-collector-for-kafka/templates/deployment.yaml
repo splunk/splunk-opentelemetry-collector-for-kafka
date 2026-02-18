@@ -27,6 +27,7 @@ spec:
         {{- end }}
       annotations:
         checksum/config: {{ include "soc4kafka.configMapHash" . }}
+        checksum/secrets: {{ include "soc4kafka.secretsHash" . }}
         {{- with .Values.podAnnotations }}
         {{- toYaml . | nindent 8 }}
         {{- end }}

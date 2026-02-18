@@ -26,6 +26,9 @@ spec:
       labels:
         app.kubernetes.io/name: splunk-opentelemetry-collector-for-kafka
         app.kubernetes.io/instance: release-name
+      annotations:
+        checksum/config: b71ce864
+        checksum/secrets: 77d308c6
     spec:
       serviceAccountName: release-name-splunk-opentelemetry-collector-for-kafka
       securityContext:
@@ -53,16 +56,6 @@ spec:
                 secretKeyRef:
                   name: release-name-splunk-opentelemetry-collector-for-kafka-hec-primary
                   key: splunk-hec-token
-            - name: KAFKA_KAFKA_PLAIN_PLAIN_TEXT_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: kafka-plain-secret
-                  key: password
-            - name: KAFKA_KAFKA_KERBEROS_KERBEROS_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: kafka-kerberos-secret
-                  key: password
           ports:
             - name: health
               containerPort: 13133

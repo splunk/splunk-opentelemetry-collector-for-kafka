@@ -65,3 +65,47 @@ Calculate ConfigMap hash to trigger pod restarts on config changes
 {{- define "soc4kafka.configMapHash" -}}
 {{- include "soc4kafka.finalConfig" . | sha256sum | trunc 8 }}
 {{- end }}
+
+{{/*
+Calculate secrets hash to trigger pod restarts on secret changes
+Includes:
+- Token values for auto-created Splunk HEC secrets
+- Secret name/key references for all secrets (Splunk HEC and Kafka auth)
+*/}}
+{{- define "soc4kafka.secretsHash" -}}
+{{- $secretData := list }}
+{{- range .Values.splunkExporters }}
+  {{- $secretName := .secret | default (printf "%s-hec-%s" (include "soc4kafka.fullname" $) .name) }}
+  {{- if .secret }}
+    {{- $secretData = append $secretData (printf "splunk-hec:%s:splunk-hec-token" $secretName) }}
+  {{- else if and .token (not (hasPrefix "${" (toString .token))) }}
+    {{- $secretData = append $secretData (printf "splunk-hec:%s:splunk-hec-token:%s" $secretName (toString .token)) }}
+  {{- end }}
+{{- end }}
+{{- range .Values.kafkaReceivers }}
+  {{- if .auth }}
+    {{- if .auth.plain_text }}
+      {{- if and .auth.plain_text.password (kindIs "map" .auth.plain_text.password) }}
+        {{- if .auth.plain_text.password.secret }}
+          {{- $secretData = append $secretData (printf "kafka-plain-text:%s:password" .auth.plain_text.password.secret) }}
+        {{- end }}
+      {{- end }}
+    {{- end }}
+    {{- if .auth.sasl }}
+      {{- if and .auth.sasl.password (kindIs "map" .auth.sasl.password) }}
+        {{- if .auth.sasl.password.secret }}
+          {{- $secretData = append $secretData (printf "kafka-sasl:%s:password" .auth.sasl.password.secret) }}
+        {{- end }}
+      {{- end }}
+    {{- end }}
+    {{- if .auth.kerberos }}
+      {{- if and .auth.kerberos.password (kindIs "map" .auth.kerberos.password) }}
+        {{- if .auth.kerberos.password.secret }}
+          {{- $secretData = append $secretData (printf "kafka-kerberos:%s:password" .auth.kerberos.password.secret) }}
+        {{- end }}
+      {{- end }}
+    {{- end }}
+  {{- end }}
+{{- end }}
+{{- $secretData | join "|" | sha256sum | trunc 8 }}
+{{- end }}
