@@ -58,3 +58,10 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
+
+{{/*
+Calculate ConfigMap hash to trigger pod restarts on config changes
+*/}}
+{{- define "soc4kafka.configMapHash" -}}
+{{- include "soc4kafka.finalConfig" . | sha256sum | trunc 8 }}
+{{- end }}
