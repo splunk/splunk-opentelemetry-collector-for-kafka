@@ -16,6 +16,7 @@ data:
       splunk_hec:
         endpoint: https://127.0.0.1:8088/services/collector
         index: kafka-otel
+        insecureSkipVerify: true
         source: soc4kafka
         sourcetype: otel:logs
         splunk_app_name: soc4kafka
@@ -25,6 +26,7 @@ data:
       splunk_hec/secondary:
         endpoint: https://127.0.0.1:8088/services/collector
         index: kafka-otel-second
+        insecureSkipVerify: true
         source: soc4kafka
         sourcetype: otel:logs
         splunk_app_name: soc4kafka
@@ -45,7 +47,7 @@ data:
           hostname_sources:
           - os
     receivers:
-      kafka:
+      kafka/main:
         brokers:
         - kafka-broker:9092
         group_id: soc4kafka-main1
@@ -80,7 +82,7 @@ data:
           - batch
           - resourcedetection
           receivers:
-          - kafka
+          - kafka/main
           - kafka/secondary
         logs/2:
           exporters:

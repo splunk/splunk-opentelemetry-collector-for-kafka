@@ -35,7 +35,7 @@ spec:
       terminationGracePeriodSeconds: 30
       containers:
         - name: collector
-          image: "quay.io/signalfx/splunk-otel-collector:CURRENT-VERSION"
+          image: "quay.io/signalfx/splunk-otel-collector:0.145.0"
           imagePullPolicy: IfNotPresent
           securityContext:
             allowPrivilegeEscalation: false

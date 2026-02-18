@@ -7,7 +7,7 @@ extensions:
 
 receivers:
   {{- range .Values.kafkaReceivers }}
-  {{- $receiverName := ternary "kafka" (printf "kafka/%s" .name) (eq .name "main") }}
+  {{- $receiverName := printf "kafka/%s" .name }}
   {{- $defaults := deepCopy $.Values.defaults.receivers.kafka }}
   {{- $receiverConfig := mustMergeOverwrite $defaults (omit . "name") }}
   {{- if $receiverConfig.auth }}
@@ -63,7 +63,7 @@ service:
     {{ .type }}/{{ .name }}:
       receivers:
         {{- range .receivers }}
-        {{- $receiverName := ternary "kafka" (printf "kafka/%s" .) (eq . "main") }}
+        {{- $receiverName := printf "kafka/%s" . }}
         - {{ $receiverName }}
         {{- end }}
       processors:

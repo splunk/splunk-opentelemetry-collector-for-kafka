@@ -41,7 +41,7 @@ splunkExporters:
     insecureSkipVerify: true
 
 pipelines:
-  - name: 1
+  - name: "1"
     type: logs
     receivers:
       - main
@@ -51,7 +51,7 @@ pipelines:
     processors:
       - batch
       - resourcedetection
-  - name: 2
+  - name: "2"
     type: logs
     receivers:
       - third

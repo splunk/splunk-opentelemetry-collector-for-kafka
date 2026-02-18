@@ -1,0 +1,36 @@
+kafkaReceivers:
+  - name: main
+    brokers:
+    - "kafka-broker:9092"
+    logs:
+      topics:
+        - "perf4"
+    group_id: "soc4kafka-main1"
+    auth:
+      plain_text:
+        username: "myuser"
+        password:
+          secret: "kafka-auth-secret"
+
+# Define multiple Splunk HEC exporters easily
+splunkExporters:
+  - name: primary
+    endpoint: "https://127.0.0.1:8088/services/collector"
+    token: "00000000-0000-0000-0000-000000000000"
+    source: "soc4kafka"
+    sourcetype: "otel:logs"
+    index: "kafka-otel"
+    insecureSkipVerify: true
+
+pipelines:
+  - name: base_logs
+    type: logs
+    receivers:
+      - main
+    exporters:
+      - primary
+    processors:
+      - batch
+      - resourcedetection
+
+replicaCount: 3
