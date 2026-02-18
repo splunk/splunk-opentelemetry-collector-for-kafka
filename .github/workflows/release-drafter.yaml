@@ -40,19 +40,22 @@ jobs:
       - name: Get current version from codebase
         id: current_version
         run: |
-          # Find the current version by looking for common patterns
-          # Check for splunk_app_version or download URLs
-          CURRENT_VERSION=$(grep -r "splunk_app_version:" . --include="*.yaml" --include="*.yml" --include="*.md" --include="*.j2" | \
-            grep -oE "[0-9]+\.[0-9]+\.[0-9]+" | head -1)
+          # Find the current version by looking for download URLs (primary source)
+          # Also check for splunk_app_version as fallback
+          CURRENT_VERSION=$(grep -r "splunk-otel-collector/releases/download/v" . --include="*.yaml" --include="*.yml" --include="*.md" --include="*.sh" 2>/dev/null | \
+            grep -oE "v[0-9]+\.[0-9]+\.[0-9]+" | head -1 | sed 's/^v//')
           
           if [ -z "$CURRENT_VERSION" ]; then
-            # Try to find version in download URLs
-            CURRENT_VERSION=$(grep -r "splunk-otel-collector/releases/download/v" . --include="*.yaml" --include="*.yml" --include="*.md" --include="*.sh" | \
-              grep -oE "v[0-9]+\.[0-9]+\.[0-9]+" | head -1 | sed 's/^v//')
+            # Fallback: Try to find version in splunk_app_version fields
+            CURRENT_VERSION=$(grep -r "splunk_app_version:" . --include="*.yaml" --include="*.yml" --include="*.md" --include="*.j2" 2>/dev/null | \
+              grep -oE "[0-9]+\.[0-9]+\.[0-9]+" | head -1)
           fi
           
           if [ -z "$CURRENT_VERSION" ]; then
             echo "Error: Could not determine current version from codebase"
+            echo "Searched for:"
+            echo "  - splunk-otel-collector/releases/download/v* in yaml, yml, md, sh files"
+            echo "  - splunk_app_version: in yaml, yml, md, j2 files"
             exit 1
           fi
           
@@ -134,7 +137,7 @@ jobs:
           echo "Updating versions: $CURRENT_VERSION -> $LATEST_VERSION"
           
           # Find and replace all occurrences
-          # Pattern 1: Replace version without 'v' prefix (e.g., splunk_app_version: 0.144.0)
+          # Pattern 1: Replace version without 'v' prefix
           # Use word boundaries with proper escaping for version numbers
           find . -type f \
             -not -path './.git/*' \
@@ -147,7 +150,9 @@ jobs:
               sed -i "s/${CURRENT_VERSION_ESCAPED}/${LATEST_VERSION}/g" "$file"
             done
           
-          # Pattern 2: Replace version with 'v' prefix in URLs (e.g., v0.144.0)
+          # Pattern 2: Replace version with 'v' prefix in URLs
+          # Escape dots for the v-prefixed version pattern
+          CURRENT_VERSION_V_ESCAPED="v${CURRENT_VERSION_ESCAPED}"
           find . -type f \
             -not -path './.git/*' \
             -not -path './.github/*' \
@@ -156,7 +161,7 @@ jobs:
             -not -name 'go.sum' \
             -exec grep -l "v${CURRENT_VERSION}" {} \; | while read file; do
               echo "Updating $file: v$CURRENT_VERSION -> v$LATEST_VERSION"
-              sed -i "s/${CURRENT_VERSION_ESCAPED}/${LATEST_VERSION}/g" "$file"
+              sed -i "s/${CURRENT_VERSION_V_ESCAPED}/v${LATEST_VERSION}/g" "$file"
             done
 
       - name: Check for changes
