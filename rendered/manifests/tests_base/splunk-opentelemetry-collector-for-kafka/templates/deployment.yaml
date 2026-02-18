@@ -51,13 +51,13 @@ spec:
             - name: SPLUNK_HEC_TOKEN_PRIMARY
               valueFrom:
                 secretKeyRef:
-                  name: release-name-splunk-opentelemetry-collector-for-kafka-hec
-                  key: splunk-hec-token-primary
+                  name: release-name-splunk-opentelemetry-collector-for-kafka-hec-primary
+                  key: splunk-hec-token
             - name: SPLUNK_HEC_TOKEN_SECONDARY
               valueFrom:
                 secretKeyRef:
-                  name: release-name-splunk-opentelemetry-collector-for-kafka-hec
-                  key: splunk-hec-token-secondary
+                  name: release-name-splunk-opentelemetry-collector-for-kafka-hec-secondary
+                  key: splunk-hec-token
           ports:
             - name: health
               containerPort: 13133
