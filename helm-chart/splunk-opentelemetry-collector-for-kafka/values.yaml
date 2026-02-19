@@ -123,9 +123,12 @@ collectorLogs:
 
 # Enable metrics collection (Prometheus scraping and hostmetrics)
 # When enabled, collects collector internal metrics and system metrics (CPU, memory, disk, network)
-# Uses the first splunkExporter for forwarding metrics to Splunk
 # For advanced configuration, use configOverride
-enableMetrics: false
+collectorMetrics:
+  enabled: false
+  # Optional: Reference to an existing splunkExporter by name for metrics (uses it directly)
+  # If not specified, uses the first splunkExporter
+  exporter: ""  # Optional: name of splunkExporter to use (e.g., "primary")
 
 # Resource limits and requests
 resources:

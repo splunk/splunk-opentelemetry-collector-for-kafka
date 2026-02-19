@@ -12,7 +12,7 @@ spec:
       targetPort: health
       protocol: TCP
       name: health
-    {{- if .Values.enableMetrics }}
+    {{- if .Values.collectorMetrics.enabled }}
     - port: 8888
       targetPort: metrics
       protocol: TCP

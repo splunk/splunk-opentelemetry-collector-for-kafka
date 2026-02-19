@@ -52,7 +52,7 @@ receivers:
     start_at: beginning
     storage: file_storage
   {{- end }}
-  {{- if .Values.enableMetrics }}
+  {{- if .Values.collectorMetrics.enabled }}
   prometheus:
     config:
       scrape_configs:
@@ -116,7 +116,7 @@ service:
     {{- if and .Values.collectorLogs.enabled .Values.collectorLogs.forwardToSplunk.enabled }}
     - file_storage
     {{- end }}
-  {{- if or .Values.collectorLogs.enabled .Values.enableMetrics }}
+  {{- if or .Values.collectorLogs.enabled .Values.collectorMetrics.enabled }}
   telemetry:
     {{- if .Values.collectorLogs.enabled }}
     logs:
@@ -126,7 +126,7 @@ service:
       error_output_paths:
         {{- toYaml .Values.collectorLogs.errorOutputPaths | nindent 8 }}
     {{- end }}
-    {{- if .Values.enableMetrics }}
+    {{- if .Values.collectorMetrics.enabled }}
     metrics:
       level: "detailed"
       readers:
@@ -165,8 +165,9 @@ service:
       exporters:
         - {{ $referencedExporterName }}
     {{- end }}
-    {{- if .Values.enableMetrics }}
-    {{- $metricsExporterName := ternary "splunk_hec" (printf "splunk_hec/%s" (index .Values.splunkExporters 0).name) (eq (index .Values.splunkExporters 0).name "primary") }}
+    {{- if .Values.collectorMetrics.enabled }}
+    {{- $referencedExporterName := .Values.collectorMetrics.exporter | default (index .Values.splunkExporters 0).name }}
+    {{- $referencedExporterName = ternary "splunk_hec" (printf "splunk_hec/%s" $referencedExporterName) (eq $referencedExporterName "primary") }}
     metrics:
       receivers:
         - prometheus
@@ -174,7 +175,7 @@ service:
       processors:
         - resourcedetection
       exporters:
-        - {{ $metricsExporterName }}
+        - {{ $referencedExporterName }}
     {{- end }}
 {{- end }}
 

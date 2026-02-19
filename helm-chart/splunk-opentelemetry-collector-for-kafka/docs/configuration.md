@@ -70,7 +70,7 @@ See [values.yaml](../values.yaml) for all available configuration options. Key a
 - **Pod Disruption Budget** (`podDisruptionBudget`): Configure PDB for high availability
 - **Service Account** (`serviceAccount`): Configure service account with workload identity annotations for cloud environments (AWS EKS, GCP GKE, Azure AKS)
 - **Collector Logs** (`collectorLogs`): Enable collection of the collector's own logs to files and stdout/stderr
-- **Metrics** (`enableMetrics`): Enable collection of collector internal metrics and system metrics (CPU, memory, disk, network)
+- **Collector Metrics** (`collectorMetrics`): Enable collection of collector internal metrics and system metrics (CPU, memory, disk, network)
 
 ### Collector Logs
 
@@ -119,13 +119,16 @@ Enable collection of collector internal metrics and system metrics. When enabled
 4. **Metrics pipeline** - Forwards metrics to Splunk using the first `splunkExporter`
 
 ```yaml
-enableMetrics: true
+collectorMetrics:
+  enabled: true
+  exporter: ""  # Optional: name of splunkExporter to use (e.g., "primary")
+  # If not specified, uses the first splunkExporter
 ```
 
 **Features:**
 - Collector internal metrics exposed via Prometheus endpoint (port 8888)
 - System metrics collected via hostmetrics receiver (CPU, memory, disk, network, filesystem, process)
-- Metrics forwarded to Splunk using the first `splunkExporter`
+- Metrics forwarded to Splunk using the referenced `splunkExporter` (or first if not specified)
 - Service exposes metrics port for Prometheus scraping
 - All metrics go through the `resourcedetection` processor for host filtering
 
