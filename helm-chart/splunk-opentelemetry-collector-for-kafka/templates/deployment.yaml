@@ -127,6 +127,11 @@ spec:
             - name: health
               containerPort: 13133
               protocol: TCP
+            {{- if .Values.enableMetrics }}
+            - name: metrics
+              containerPort: 8888
+              protocol: TCP
+            {{- end }}
           {{- if .Values.startupProbe }}
           startupProbe:
             {{- toYaml .Values.startupProbe | nindent 12 }}

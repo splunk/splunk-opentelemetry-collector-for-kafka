@@ -12,6 +12,12 @@ spec:
       targetPort: health
       protocol: TCP
       name: health
+    {{- if .Values.enableMetrics }}
+    - port: 8888
+      targetPort: metrics
+      protocol: TCP
+      name: metrics
+    {{- end }}
   selector:
     {{- include "soc4kafka.selectorLabels" . | nindent 4 }}
 {{- end }}

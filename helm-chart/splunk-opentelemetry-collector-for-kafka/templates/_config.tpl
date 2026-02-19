@@ -52,6 +52,49 @@ receivers:
     start_at: beginning
     storage: file_storage
   {{- end }}
+  {{- if .Values.enableMetrics }}
+  prometheus:
+    config:
+      scrape_configs:
+        - job_name: 'otel-collector'
+          scrape_interval: 1s
+          static_configs:
+            - targets: ['0.0.0.0:8888']
+  hostmetrics:
+    collection_interval: 1s
+    scrapers:
+      cpu:
+        metrics:
+          system.cpu.utilization:
+            enabled: true
+          system.cpu.logical.count:
+            enabled: true
+      memory:
+        metrics:
+          system.memory.utilization:
+            enabled: true
+          system.memory.limit:
+            enabled: true
+      process:
+        mute_process_all_errors: true
+        include:
+          names: ["otelcol"]
+          match_type: "regexp"
+        metrics:
+          process.memory.utilization:
+            enabled: true
+          process.cpu.utilization:
+            enabled: true
+      filesystem:
+        metrics:
+          system.filesystem.utilization:
+            enabled: true
+      disk:
+        metrics:
+          system.disk.io:
+            enabled: true
+      network:
+  {{- end }}
 
 processors:
 {{- toYaml .Values.defaults.processors | nindent 2 }}
@@ -73,14 +116,26 @@ service:
     {{- if and .Values.collectorLogs.enabled .Values.collectorLogs.forwardToSplunk.enabled }}
     - file_storage
     {{- end }}
-  {{- if .Values.collectorLogs.enabled }}
+  {{- if or .Values.collectorLogs.enabled .Values.enableMetrics }}
   telemetry:
+    {{- if .Values.collectorLogs.enabled }}
     logs:
       level: {{ .Values.collectorLogs.level }}
       output_paths:
         {{- toYaml .Values.collectorLogs.outputPaths | nindent 8 }}
       error_output_paths:
         {{- toYaml .Values.collectorLogs.errorOutputPaths | nindent 8 }}
+    {{- end }}
+    {{- if .Values.enableMetrics }}
+    metrics:
+      level: "detailed"
+      readers:
+        - pull:
+            exporter:
+              prometheus:
+                host: '0.0.0.0'
+                port: 8888
+    {{- end }}
   {{- end }}
   pipelines:
     {{- range .Values.pipelines }}
@@ -109,6 +164,17 @@ service:
         - resourcedetection
       exporters:
         - {{ $referencedExporterName }}
+    {{- end }}
+    {{- if .Values.enableMetrics }}
+    {{- $metricsExporterName := ternary "splunk_hec" (printf "splunk_hec/%s" (index .Values.splunkExporters 0).name) (eq (index .Values.splunkExporters 0).name "primary") }}
+    metrics:
+      receivers:
+        - prometheus
+        - hostmetrics
+      processors:
+        - resourcedetection
+      exporters:
+        - {{ $metricsExporterName }}
     {{- end }}
 {{- end }}
 

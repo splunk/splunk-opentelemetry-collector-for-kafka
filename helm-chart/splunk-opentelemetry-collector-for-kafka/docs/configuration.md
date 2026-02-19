@@ -70,6 +70,7 @@ See [values.yaml](../values.yaml) for all available configuration options. Key a
 - **Pod Disruption Budget** (`podDisruptionBudget`): Configure PDB for high availability
 - **Service Account** (`serviceAccount`): Configure service account with workload identity annotations for cloud environments (AWS EKS, GCP GKE, Azure AKS)
 - **Collector Logs** (`collectorLogs`): Enable collection of the collector's own logs to files and stdout/stderr
+- **Metrics** (`enableMetrics`): Enable collection of collector internal metrics and system metrics (CPU, memory, disk, network)
 
 ### Collector Logs
 
@@ -107,6 +108,30 @@ collectorLogs:
 - Uses the first `splunkExporter`'s endpoint and secret by default (can be overridden)
 
 **Note:** Log files are stored in an `emptyDir` volume, which means they are ephemeral and will be lost when the pod is deleted. However, logs are forwarded to Splunk, so they are preserved there.
+
+### Metrics Collection
+
+Enable collection of collector internal metrics and system metrics. When enabled, the chart automatically configures:
+
+1. **Prometheus receiver** - Scrapes the collector's internal telemetry endpoint (exposed on port 8888)
+2. **Hostmetrics receiver** - Collects system metrics (CPU, memory, disk, network, filesystem, process)
+3. **Telemetry service** - Exposes collector metrics via Prometheus endpoint
+4. **Metrics pipeline** - Forwards metrics to Splunk using the first `splunkExporter`
+
+```yaml
+enableMetrics: true
+```
+
+**Features:**
+- Collector internal metrics exposed via Prometheus endpoint (port 8888)
+- System metrics collected via hostmetrics receiver (CPU, memory, disk, network, filesystem, process)
+- Metrics forwarded to Splunk using the first `splunkExporter`
+- Service exposes metrics port for Prometheus scraping
+- All metrics go through the `resourcedetection` processor for host filtering
+
+**Note:** Make sure you have a metrics-type index in Splunk for the metrics data. See the [Splunk Dashboard documentation](../../../docs/splunk-dashboard.md) for details.
+
+**Advanced Configuration:** For custom metrics configuration (different exporter, scrapers, intervals, etc.), use `configOverride` to override the generated configuration.
 
 ## Configuration Precedence
 
