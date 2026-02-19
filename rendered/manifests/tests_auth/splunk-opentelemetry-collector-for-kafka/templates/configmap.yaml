@@ -72,6 +72,23 @@ data:
           encoding: text
           topics:
           - perf3
+      kafka/sasl_password:
+        auth:
+          sasl:
+            password: kafka-sasl-password
+            username: myuser
+        brokers:
+        - kafka-broker3:9092
+        conn_idle_timeout: 15s
+        group_id: group1
+        logs:
+          encoding: text
+          topics:
+          - perf3
+        telemetry:
+          metrics:
+            kafka_receiver_records_delay:
+              enabled: true
     service:
       extensions:
       - health_check
@@ -86,3 +103,4 @@ data:
           - kafka/plain
           - kafka/kerberos
           - kafka/sasl
+          - kafka/sasl_password

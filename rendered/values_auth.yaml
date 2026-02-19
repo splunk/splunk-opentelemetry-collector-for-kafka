@@ -31,6 +31,23 @@ kafkaReceivers:
         username: "myuser"
         secret: "kafka-sasl-secret"
 
+  - name: sasl_password
+    brokers:
+    - "kafka-broker3:9092"
+    logs:
+      topics:
+        - "perf3"
+    auth:
+      sasl:
+        username: "myuser"
+        password: "kafka-sasl-password"
+    group_id: "group1"
+    conn_idle_timeout: 15s
+    telemetry:
+      metrics:
+        kafka_receiver_records_delay:
+          enabled: true
+
 # Define multiple Splunk HEC exporters easily
 splunkExporters:
   - name: primary
@@ -48,6 +65,7 @@ pipelines:
       - plain
       - kerberos
       - sasl
+      - sasl_password
     exporters:
       - primary
     processors:
