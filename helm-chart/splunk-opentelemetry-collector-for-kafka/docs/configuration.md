@@ -70,6 +70,41 @@ See [values.yaml](../values.yaml) for all available configuration options. Key a
 - **Pod Disruption Budget** (`podDisruptionBudget`): Configure PDB for high availability
 - **Service Account** (`serviceAccount`): Configure service account with workload identity annotations for cloud environments (AWS EKS, GCP GKE, Azure AKS)
 
+## Configuration Precedence
+
+The chart merges configuration in the following order (highest to lowest priority):
+
+1. **`configOverride`** - Highest priority. Completely overrides any generated configuration. Use this for advanced customizations that can't be achieved through other means.
+
+2. **Explicit configuration** - Values specified directly in `kafkaReceivers` and `splunkExporters` override defaults. For example:
+   ```yaml
+   kafkaReceivers:
+     - name: main
+       group_id: "custom-group"  # This overrides defaults.receivers.kafka.group_id
+   ```
+
+3. **`defaults`** - Lowest priority. Provides default values for receivers, processors, and exporters. These are used when not explicitly specified.
+
+**Merge behavior:**
+- `mustMergeOverwrite` is used, which means values are deeply merged, and explicit values completely replace defaults at the same path
+- For nested objects, only the specified keys are replaced; other keys from defaults are preserved
+- `configOverride` is applied last and can override any part of the generated configuration
+
+**Example precedence:**
+```yaml
+defaults:
+  processors:
+    batch:
+      timeout: 5s
+      send_batch_size: 1000
+
+# If you specify in defaults but also in configOverride:
+configOverride:
+  processors:
+    batch:
+      timeout: 15s  # This wins - configOverride has highest priority
+```
+
 ## Automatic Pod Restarts
 
 The chart includes automatic pod restart triggers:

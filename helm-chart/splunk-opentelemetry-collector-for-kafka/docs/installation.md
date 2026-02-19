@@ -35,10 +35,13 @@ pipelines:
       - resourcedetection
 ```
 
-2. Install the chart:
+2. Add helm repository <TBD>
+
+TBD: Replace . to be the helm repository
+3. Install the chart:
 
 ```bash
-helm install soc4kafka . -f values.yaml
+helm upgrade --install soc4kafka . -f values.yaml 
 ```
 
 ## Using Existing Secrets
