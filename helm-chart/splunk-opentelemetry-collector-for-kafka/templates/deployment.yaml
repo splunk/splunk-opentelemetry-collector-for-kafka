@@ -44,6 +44,25 @@ spec:
       {{- if .Values.terminationGracePeriodSeconds }}
       terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
       {{- end }}
+      {{- if .Values.collectorLogs.enabled }}
+      {{- $runAsUser := .Values.podSecurityContext.runAsUser | default 999 }}
+      {{- $fsGroup := .Values.podSecurityContext.fsGroup | default 999 }}
+      initContainers:
+        - name: init-log-dirs
+          image: busybox:1.36
+          command: ['sh', '-c']
+          args:
+            - |
+              mkdir -p /var/log/otelcol/checkpoint
+              chown -R {{ $runAsUser }}:{{ $fsGroup }} /var/log/otelcol
+              chmod -R 755 /var/log/otelcol
+          securityContext:
+            runAsUser: 0
+            runAsNonRoot: false
+          volumeMounts:
+            - name: collector-logs
+              mountPath: /var/log/otelcol
+      {{- end }}
       containers:
         - name: collector
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
@@ -101,6 +120,28 @@ spec:
               {{- end }}
             {{- end }}
             {{- end }}
+            {{- if and .Values.collectorLogs.enabled .Values.collectorLogs.forwardToSplunk.enabled }}
+            {{- $firstExporter := index .Values.splunkExporters 0 }}
+            {{- $internalSecretName := "" }}
+            {{- $needsSecret := false }}
+            {{- if .Values.collectorLogs.forwardToSplunk.secret }}
+              {{- $internalSecretName = .Values.collectorLogs.forwardToSplunk.secret }}
+              {{- $needsSecret = true }}
+            {{- else if and .Values.collectorLogs.forwardToSplunk.token (not (hasPrefix "${" .Values.collectorLogs.forwardToSplunk.token)) }}
+              {{- $internalSecretName = printf "%s-hec-internal-logs" (include "soc4kafka.fullname" .) }}
+              {{- $needsSecret = true }}
+            {{- else }}
+              {{- $internalSecretName = $firstExporter.secret | default (printf "%s-hec-%s" (include "soc4kafka.fullname" .) $firstExporter.name) }}
+              {{- $needsSecret = or $firstExporter.secret (and $firstExporter.token (not (hasPrefix "${" $firstExporter.token))) }}
+            {{- end }}
+            {{- if $needsSecret }}
+            - name: SPLUNK_HEC_TOKEN_INTERNAL_LOGS
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $internalSecretName }}
+                  key: splunk-hec-token
+            {{- end }}
+            {{- end }}
             {{- with .Values.extraEnv }}
             {{- toYaml . | nindent 12 }}
             {{- end }}
@@ -126,6 +167,10 @@ spec:
             - name: data
               mountPath: /var/lib/otelcol
             {{- end }}
+            {{- if .Values.collectorLogs.enabled }}
+            - name: collector-logs
+              mountPath: /var/log/otelcol
+            {{- end }}
       volumes:
         - name: config
           configMap:
@@ -134,6 +179,13 @@ spec:
         - name: data
           persistentVolumeClaim:
             claimName: {{ include "soc4kafka.fullname" . }}
+        {{- end }}
+        {{- if .Values.collectorLogs.enabled }}
+        - name: collector-logs
+          emptyDir:
+            {{- if .Values.collectorLogs.sizeLimit }}
+            sizeLimit: {{ .Values.collectorLogs.sizeLimit }}
+            {{- end }}
         {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:

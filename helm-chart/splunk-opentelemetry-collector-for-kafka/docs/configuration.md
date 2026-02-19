@@ -69,6 +69,49 @@ See [values.yaml](../values.yaml) for all available configuration options. Key a
 - **Autoscaling** (`autoscaling`): Configure Horizontal Pod Autoscaler
 - **Pod Disruption Budget** (`podDisruptionBudget`): Configure PDB for high availability
 - **Service Account** (`serviceAccount`): Configure service account with workload identity annotations for cloud environments (AWS EKS, GCP GKE, Azure AKS)
+- **Collector Logs** (`collectorLogs`): Enable collection of the collector's own logs to files and stdout/stderr
+
+### Collector Logs
+
+Enable collection of the OpenTelemetry Collector's own logs. When enabled, logs are written to files in `/var/log/otelcol` (using an emptyDir volume) and also to stdout/stderr for Kubernetes log aggregation.
+
+By default, when `collectorLogs.enabled` is `true`, the chart also forwards these logs to Splunk using a `filelog` receiver. This allows you to centrally monitor collector logs from multiple instances.
+
+```yaml
+collectorLogs:
+  enabled: true
+  level: info  # Options: debug, info, warn, error
+  outputPaths:
+    - /var/log/otelcol/otel-collector.log
+    - stdout
+  errorOutputPaths:
+    - /var/log/otelcol/otel-collector-errors.log
+    - stderr
+  # Forward collector logs to Splunk (enabled by default when collectorLogs.enabled is true)
+  forwardToSplunk:
+    enabled: true
+    # Optional: override endpoint and secret/token for internal logs
+    # If not specified, uses the first splunkExporter's endpoint and secret
+    endpoint: ""  # Optional
+    token: ""  # Optional: provide token directly (secret will be auto-created) or use env var reference (e.g., "${MY_TOKEN}")
+    secret: ""  # Optional: reference existing secret (must have key "splunk-hec-token")
+    index: "kafka-logs"  # Splunk index for collector logs
+    source: "soc4kafka-collector"
+    sourcetype: "otel:collector"
+  # File storage extension for checkpointing (prevents re-reading logs on restart)
+  fileStorage:
+    directory: /var/log/otelcol/checkpoint
+    createDirectory: true
+```
+
+**Features:**
+- Logs are written to files and stdout/stderr
+- Logs are automatically forwarded to Splunk via `filelog` receiver
+- `file_storage` extension tracks read position to prevent re-reading logs on restart
+- Internal logs are sent to a separate Splunk index for easier analysis
+- Uses the first `splunkExporter`'s endpoint and secret by default (can be overridden)
+
+**Note:** Log files are stored in an `emptyDir` volume, which means they are ephemeral and will be lost when the pod is deleted. However, logs are forwarded to Splunk, so they are preserved there.
 
 ## Configuration Precedence
 

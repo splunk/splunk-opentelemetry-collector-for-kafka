@@ -130,3 +130,67 @@ pipelines:
       - batch
       - resourcedetection
 ```
+
+## With Collector Logs Enabled
+
+Enable collection of the collector's own logs for debugging and monitoring:
+
+```yaml
+kafkaReceivers:
+  - name: main
+    brokers:
+      - "kafka:9092"
+    logs:
+      topics:
+        - "logs"
+      encoding: text
+    group_id: "soc4kafka"
+
+splunkExporters:
+  - name: primary
+    endpoint: "https://splunk:8088/services/collector"
+    secret: "splunk-hec-secret"
+    source: "kafka"
+    sourcetype: "otel:logs"
+    index: "main"
+
+pipelines:
+  - name: logs
+    type: logs
+    receivers:
+      - main
+    exporters:
+      - primary
+    processors:
+      - batch
+      - resourcedetection
+
+# Enable collector's own logs and forward to Splunk
+collectorLogs:
+  enabled: true
+  level: info
+  outputPaths:
+    - /var/log/otelcol/otel-collector.log
+    - stdout
+  errorOutputPaths:
+    - /var/log/otelcol/otel-collector-errors.log
+    - stderr
+  # Automatically forwards logs to Splunk via filelog receiver
+  forwardToSplunk:
+    enabled: true
+    index: "kafka-logs"  # Separate index for collector logs
+    source: "soc4kafka-collector"
+    sourcetype: "otel:collector"
+```
+
+When enabled, collector logs will be:
+- Written to files in `/var/log/otelcol/` inside the container
+- Available in pod logs via `kubectl logs` (stdout/stderr)
+- Automatically forwarded to Splunk in the `kafka-logs` index (or your specified index)
+- Tracked with `file_storage` extension to prevent re-reading on restart
+
+The chart automatically adds:
+- `filelog` receiver to read collector log files
+- `file_storage` extension for checkpointing
+- `splunk_hec/internal_logs` exporter for forwarding to Splunk
+- `logs/internal` pipeline connecting filelog → processors → internal_logs exporter

@@ -4,6 +4,11 @@ Generate the complete OTel collector configuration
 {{- define "soc4kafka.generatedConfig" -}}
 extensions:
 {{- toYaml .Values.defaults.extensions | nindent 2 }}
+{{- if and .Values.collectorLogs.enabled .Values.collectorLogs.forwardToSplunk.enabled }}
+  file_storage:
+    directory: {{ .Values.collectorLogs.fileStorage.directory }}
+    create_directory: {{ .Values.collectorLogs.fileStorage.createDirectory }}
+{{- end }}
 
 receivers:
   {{- range .Values.kafkaReceivers }}
@@ -40,6 +45,13 @@ receivers:
   {{ $receiverName }}:
     {{- toYaml $receiverConfig | nindent 4 }}
   {{- end }}
+  {{- if and .Values.collectorLogs.enabled .Values.collectorLogs.forwardToSplunk.enabled }}
+  filelog:
+    include:
+      - /var/log/otelcol/*.log
+    start_at: beginning
+    storage: file_storage
+  {{- end }}
 
 processors:
 {{- toYaml .Values.defaults.processors | nindent 2 }}
@@ -53,12 +65,36 @@ exporters:
   {{ $exporterName }}:
     {{- toYaml $exporterConfig | nindent 4 }}
   {{- end }}
+  {{- if and .Values.collectorLogs.enabled .Values.collectorLogs.forwardToSplunk.enabled }}
+  {{- $firstExporter := index $.Values.splunkExporters 0 }}
+  {{- $internalEndpoint := .Values.collectorLogs.forwardToSplunk.endpoint | default $firstExporter.endpoint }}
+  {{- $internalTokenValue := printf "${SPLUNK_HEC_TOKEN_INTERNAL_LOGS}" }}
+  splunk_hec/internal_logs:
+    endpoint: {{ $internalEndpoint }}
+    token: {{ $internalTokenValue }}
+    index: {{ .Values.collectorLogs.forwardToSplunk.index }}
+    source: {{ .Values.collectorLogs.forwardToSplunk.source }}
+    sourcetype: {{ .Values.collectorLogs.forwardToSplunk.sourcetype }}
+    splunk_app_name: "soc4kafka"
+  {{- end }}
 
 service:
   extensions:
     {{- range $name, $_ := .Values.defaults.extensions }}
     - {{ $name }}
     {{- end }}
+    {{- if and .Values.collectorLogs.enabled .Values.collectorLogs.forwardToSplunk.enabled }}
+    - file_storage
+    {{- end }}
+  {{- if .Values.collectorLogs.enabled }}
+  telemetry:
+    logs:
+      level: {{ .Values.collectorLogs.level }}
+      output_paths:
+        {{- toYaml .Values.collectorLogs.outputPaths | nindent 8 }}
+      error_output_paths:
+        {{- toYaml .Values.collectorLogs.errorOutputPaths | nindent 8 }}
+  {{- end }}
   pipelines:
     {{- range .Values.pipelines }}
     {{ .type }}/{{ .name }}:
@@ -74,6 +110,16 @@ service:
         {{- $exporterName := ternary "splunk_hec" (printf "splunk_hec/%s" .) (eq . "primary") }}
         - {{ $exporterName }}
         {{- end }}
+    {{- end }}
+    {{- if and .Values.collectorLogs.enabled .Values.collectorLogs.forwardToSplunk.enabled }}
+    logs/internal:
+      receivers:
+        - filelog
+      processors:
+        - batch
+        - resourcedetection
+      exporters:
+        - splunk_hec/internal_logs
     {{- end }}
 {{- end }}
 

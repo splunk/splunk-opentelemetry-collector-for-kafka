@@ -203,3 +203,35 @@ podDisruptionBudget:
   enabled: false
   minAvailable: 1
   # maxUnavailable: 1  # Alternative to minAvailable
+
+# Enable collection of collector's own logs
+# When enabled, collector logs will be written to files and stdout/stderr
+# Logs are stored in /var/log/otelcol directory (emptyDir volume)
+# When enabled, also forwards logs to Splunk via filelog receiver
+collectorLogs:
+  enabled: false
+  level: info  # Log level: debug, info, warn, error
+  outputPaths:
+    - /var/log/otelcol/otel-collector.log
+    - stdout
+  errorOutputPaths:
+    - /var/log/otelcol/otel-collector-errors.log
+    - stderr
+  # Optional: size limit for the emptyDir volume (e.g., "1Gi", "500Mi")
+  # If not specified, no limit is set (uses node's available space)
+  sizeLimit: ""  # Example: "1Gi"
+  # Configuration for forwarding collector logs to Splunk
+  forwardToSplunk:
+    enabled: true  # When true, adds filelog receiver and pipeline to forward logs to Splunk
+    # Internal logs exporter configuration
+    # If not specified, uses the first splunkExporter's endpoint and secret
+    endpoint: ""  # Optional: override endpoint for internal logs
+    token: ""  # Optional: provide token directly (secret will be auto-created) or use env var reference (e.g., "${MY_TOKEN}")
+    secret: ""  # Optional: override secret for internal logs (must have key "splunk-hec-token")
+    index: "kafka-logs"  # Splunk index for collector logs
+    source: "soc4kafka-collector"  # Source field for collector logs
+    sourcetype: "otel:collector"  # Sourcetype for collector logs
+  # File storage extension for checkpointing (prevents re-reading logs on restart)
+  fileStorage:
+    directory: /var/log/otelcol/checkpoint
+    createDirectory: true
