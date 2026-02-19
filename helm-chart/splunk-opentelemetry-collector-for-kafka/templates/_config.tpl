@@ -66,16 +66,25 @@ exporters:
     {{- toYaml $exporterConfig | nindent 4 }}
   {{- end }}
   {{- if and .Values.collectorLogs.enabled .Values.collectorLogs.forwardToSplunk.enabled }}
-  {{- $firstExporter := index $.Values.splunkExporters 0 }}
-  {{- $internalEndpoint := .Values.collectorLogs.forwardToSplunk.endpoint | default $firstExporter.endpoint }}
-  {{- $internalTokenValue := printf "${SPLUNK_HEC_TOKEN_INTERNAL_LOGS}" }}
+  {{- $referencedExporterName := .Values.collectorLogs.forwardToSplunk.exporter | default (index $.Values.splunkExporters 0).name }}
+  {{- $referencedExporter := dict }}
+  {{- range $.Values.splunkExporters }}
+    {{- if eq .name $referencedExporterName }}
+      {{- $referencedExporter = . }}
+    {{- end }}
+  {{- end }}
+  {{- if not $referencedExporter }}
+    {{- $referencedExporter = index $.Values.splunkExporters 0 }}
+  {{- end }}
+  {{- $internalExporterName := ternary "splunk_hec" (printf "splunk_hec/%s" $referencedExporter.name) (eq $referencedExporter.name "primary") }}
+  {{- $internalTokenValue := printf "${SPLUNK_HEC_TOKEN_%s}" ($referencedExporter.name | upper | replace "-" "_") }}
+  {{- $internalExporterConfig := omit $referencedExporter "name" "token" "secret" | mustMergeOverwrite (deepCopy $.Values.defaults.exporters.splunk_hec) }}
+  {{- $_ := set $internalExporterConfig "token" $internalTokenValue }}
+  {{- $_ := set $internalExporterConfig "index" .Values.collectorLogs.forwardToSplunk.index }}
+  {{- $_ := set $internalExporterConfig "source" .Values.collectorLogs.forwardToSplunk.source }}
+  {{- $_ := set $internalExporterConfig "sourcetype" .Values.collectorLogs.forwardToSplunk.sourcetype }}
   splunk_hec/internal_logs:
-    endpoint: {{ $internalEndpoint }}
-    token: {{ $internalTokenValue }}
-    index: {{ .Values.collectorLogs.forwardToSplunk.index }}
-    source: {{ .Values.collectorLogs.forwardToSplunk.source }}
-    sourcetype: {{ .Values.collectorLogs.forwardToSplunk.sourcetype }}
-    splunk_app_name: "soc4kafka"
+    {{- toYaml $internalExporterConfig | nindent 4 }}
   {{- end }}
 
 service:

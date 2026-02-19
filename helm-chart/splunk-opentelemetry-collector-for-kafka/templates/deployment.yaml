@@ -120,28 +120,6 @@ spec:
               {{- end }}
             {{- end }}
             {{- end }}
-            {{- if and .Values.collectorLogs.enabled .Values.collectorLogs.forwardToSplunk.enabled }}
-            {{- $firstExporter := index .Values.splunkExporters 0 }}
-            {{- $internalSecretName := "" }}
-            {{- $needsSecret := false }}
-            {{- if .Values.collectorLogs.forwardToSplunk.secret }}
-              {{- $internalSecretName = .Values.collectorLogs.forwardToSplunk.secret }}
-              {{- $needsSecret = true }}
-            {{- else if and .Values.collectorLogs.forwardToSplunk.token (not (hasPrefix "${" .Values.collectorLogs.forwardToSplunk.token)) }}
-              {{- $internalSecretName = printf "%s-hec-internal-logs" (include "soc4kafka.fullname" .) }}
-              {{- $needsSecret = true }}
-            {{- else }}
-              {{- $internalSecretName = $firstExporter.secret | default (printf "%s-hec-%s" (include "soc4kafka.fullname" .) $firstExporter.name) }}
-              {{- $needsSecret = or $firstExporter.secret (and $firstExporter.token (not (hasPrefix "${" $firstExporter.token))) }}
-            {{- end }}
-            {{- if $needsSecret }}
-            - name: SPLUNK_HEC_TOKEN_INTERNAL_LOGS
-              valueFrom:
-                secretKeyRef:
-                  name: {{ $internalSecretName }}
-                  key: splunk-hec-token
-            {{- end }}
-            {{- end }}
             {{- with .Values.extraEnv }}
             {{- toYaml . | nindent 12 }}
             {{- end }}

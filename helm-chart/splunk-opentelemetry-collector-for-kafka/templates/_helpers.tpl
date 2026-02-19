@@ -101,19 +101,5 @@ Includes:
     {{- end }}
   {{- end }}
 {{- end }}
-{{- if and .Values.collectorLogs.enabled .Values.collectorLogs.forwardToSplunk.enabled }}
-  {{- $internalSecretName := "" }}
-  {{- if .Values.collectorLogs.forwardToSplunk.secret }}
-    {{- $internalSecretName = .Values.collectorLogs.forwardToSplunk.secret }}
-    {{- $secretData = append $secretData (printf "splunk-hec-internal:%s:splunk-hec-token" $internalSecretName) }}
-  {{- else if and .Values.collectorLogs.forwardToSplunk.token (not (hasPrefix "${" .Values.collectorLogs.forwardToSplunk.token)) }}
-    {{- $internalSecretName = printf "%s-hec-internal-logs" (include "soc4kafka.fullname" .) }}
-    {{- $secretData = append $secretData (printf "splunk-hec-internal:%s:splunk-hec-token:%s" $internalSecretName (toString .Values.collectorLogs.forwardToSplunk.token)) }}
-  {{- else }}
-    {{- $firstExporter := index .Values.splunkExporters 0 }}
-    {{- $internalSecretName = $firstExporter.secret | default (printf "%s-hec-%s" (include "soc4kafka.fullname" .) $firstExporter.name) }}
-    {{- $secretData = append $secretData (printf "splunk-hec-internal:%s:splunk-hec-token" $internalSecretName) }}
-  {{- end }}
-{{- end }}
 {{- $secretData | join "|" | sha256sum | trunc 8 }}
 {{- end }}

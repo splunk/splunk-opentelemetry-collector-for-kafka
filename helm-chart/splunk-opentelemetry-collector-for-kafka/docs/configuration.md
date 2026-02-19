@@ -90,12 +90,10 @@ collectorLogs:
   # Forward collector logs to Splunk (enabled by default when collectorLogs.enabled is true)
   forwardToSplunk:
     enabled: true
-    # Optional: override endpoint and secret/token for internal logs
-    # If not specified, uses the first splunkExporter's endpoint and secret
-    endpoint: ""  # Optional
-    token: ""  # Optional: provide token directly (secret will be auto-created) or use env var reference (e.g., "${MY_TOKEN}")
-    secret: ""  # Optional: reference existing secret (must have key "splunk-hec-token")
-    index: "kafka-logs"  # Splunk index for collector logs
+    # Reference to an existing splunkExporter by name (uses its endpoint and secret)
+    # If not specified, uses the first splunkExporter
+    exporter: ""  # Optional: name of splunkExporter to use (e.g., "primary")
+    index: "kafka-logs"  # Splunk index for collector logs (can override exporter's index)
     source: "soc4kafka-collector"
     sourcetype: "otel:collector"
   # File storage extension for checkpointing (prevents re-reading logs on restart)
