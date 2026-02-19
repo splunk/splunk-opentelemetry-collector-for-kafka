@@ -9,30 +9,31 @@ receivers:
   {{- range .Values.kafkaReceivers }}
   {{- $receiverName := printf "kafka/%s" .name }}
   {{- $defaults := deepCopy $.Values.defaults.receivers.kafka }}
-  {{- $receiverConfig := mustMergeOverwrite $defaults (omit . "name") }}
+  {{- $receiverInput := omit . "name" }}
+  {{- $receiverConfig := mustMergeOverwrite $defaults $receiverInput }}
   {{- if $receiverConfig.auth }}
     {{- if $receiverConfig.auth.plain_text }}
-      {{- if and $receiverConfig.auth.plain_text.password (kindIs "map" $receiverConfig.auth.plain_text.password) }}
-        {{- if $receiverConfig.auth.plain_text.password.secret }}
-          {{- $envVarName := printf "KAFKA_%s_PLAIN_TEXT_PASSWORD" ($receiverName | upper | replace "/" "_" | replace "-" "_") }}
-          {{- $_ := set $receiverConfig.auth.plain_text "password" (printf "${%s}" $envVarName) }}
-        {{- end }}
+      {{- if $receiverConfig.auth.plain_text.secret }}
+        {{- $envVarName := printf "KAFKA_%s_PLAIN_TEXT_PASSWORD" ($receiverName | upper | replace "/" "_" | replace "-" "_") }}
+        {{- $plainTextWithoutSecret := omit $receiverConfig.auth.plain_text "secret" }}
+        {{- $_ := set $plainTextWithoutSecret "password" (printf "${%s}" $envVarName) }}
+        {{- $_ := set $receiverConfig.auth "plain_text" $plainTextWithoutSecret }}
       {{- end }}
     {{- end }}
     {{- if $receiverConfig.auth.sasl }}
-      {{- if and $receiverConfig.auth.sasl.password (kindIs "map" $receiverConfig.auth.sasl.password) }}
-        {{- if $receiverConfig.auth.sasl.password.secret }}
-          {{- $envVarName := printf "KAFKA_%s_SASL_PASSWORD" ($receiverName | upper | replace "/" "_" | replace "-" "_") }}
-          {{- $_ := set $receiverConfig.auth.sasl "password" (printf "${%s}" $envVarName) }}
-        {{- end }}
+      {{- if $receiverConfig.auth.sasl.secret }}
+        {{- $envVarName := printf "KAFKA_%s_SASL_PASSWORD" ($receiverName | upper | replace "/" "_" | replace "-" "_") }}
+        {{- $saslWithoutSecret := omit $receiverConfig.auth.sasl "secret" }}
+        {{- $_ := set $saslWithoutSecret "password" (printf "${%s}" $envVarName) }}
+        {{- $_ := set $receiverConfig.auth "sasl" $saslWithoutSecret }}
       {{- end }}
     {{- end }}
     {{- if $receiverConfig.auth.kerberos }}
-      {{- if and $receiverConfig.auth.kerberos.password (kindIs "map" $receiverConfig.auth.kerberos.password) }}
-        {{- if $receiverConfig.auth.kerberos.password.secret }}
-          {{- $envVarName := printf "KAFKA_%s_KERBEROS_PASSWORD" ($receiverName | upper | replace "/" "_" | replace "-" "_") }}
-          {{- $_ := set $receiverConfig.auth.kerberos "password" (printf "${%s}" $envVarName) }}
-        {{- end }}
+      {{- if $receiverConfig.auth.kerberos.secret }}
+        {{- $envVarName := printf "KAFKA_%s_KERBEROS_PASSWORD" ($receiverName | upper | replace "/" "_" | replace "-" "_") }}
+        {{- $kerberosWithoutSecret := omit $receiverConfig.auth.kerberos "secret" }}
+        {{- $_ := set $kerberosWithoutSecret "password" (printf "${%s}" $envVarName) }}
+        {{- $_ := set $receiverConfig.auth "kerberos" $kerberosWithoutSecret }}
       {{- end }}
     {{- end }}
   {{- end }}

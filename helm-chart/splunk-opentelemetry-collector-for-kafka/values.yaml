@@ -17,7 +17,7 @@ replicaCount: 1
 # Define multiple Kafka receivers easily
 # Authentication passwords can reference Kubernetes secrets:
 #   - Use a string for literal passwords or env var references (e.g., "${MY_PASSWORD}")
-#   - Use an object with "secret" to reference a Kubernetes secret (key is always "password")
+#   - Use "secret" field to reference a Kubernetes secret (key is always "password")
 #
 # Example with secret reference:
 # kafkaReceivers:
@@ -30,17 +30,14 @@ replicaCount: 1
 #     auth:
 #       plain_text:
 #         username: "myuser"
-#         password:
-#           secret: "kafka-auth-secret"  # Kubernetes secret name (key is always "password")
+#         secret: "kafka-auth-secret"  # Kubernetes secret name (key is always "password")
 #       # Or for SASL:
 #       # sasl:
 #       #   username: "myuser"
-#       #   password:
-#       #     secret: "kafka-sasl-secret"
+#       #   secret: "kafka-sasl-secret"
 #       # Or for Kerberos:
 #       # kerberos:
-#       #   password:
-#       #     secret: "kafka-kerberos-secret"
+#       #   secret: "kafka-kerberos-secret"
 kafkaReceivers: []
 
 # Define multiple Splunk HEC exporters easily

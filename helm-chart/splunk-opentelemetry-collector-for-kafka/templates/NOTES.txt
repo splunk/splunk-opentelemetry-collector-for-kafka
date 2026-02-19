@@ -1,31 +1,51 @@
 SOC4Kafka (Splunk OpenTelemetry Collector for Kafka) has been installed.
 
-1. Provide your Splunk HEC token (required):
+1. Configure your Kafka receivers and Splunk exporters:
 
-   Option A - Create a secret and reference it (RECOMMENDED):
-     kubectl create secret generic my-splunk-hec-secret \
-       --from-literal=splunk-hec-token-primary=YOUR_HEC_TOKEN
-     # Note: Secret key format is "splunk-hec-token-{exporter-name}"
-     helm upgrade {{ .Release.Name }} . \
-       --set existingSecret=my-splunk-hec-secret \
-       --reuse-values
+   Create or update a values.yaml file with your configuration:
+   
+   # Example values.yaml:
+   kafkaReceivers:
+     - name: main
+       brokers:
+         - "broker1:9092"
+         - "broker2:9092"
+       logs:
+         topics:
+           - "your-topic"
+         encoding: text
+       group_id: "soc4kafka-main"
+   
+   splunkExporters:
+     - name: primary
+       endpoint: "https://splunk.example.com:8088/services/collector"
+       secret: "my-splunk-hec-secret"  # Or use token: "YOUR_TOKEN"
+       source: "soc4kafka"
+       sourcetype: "otel:logs"
+       index: "your-index"
+   
+   pipelines:
+     - name: main-logs
+       type: logs
+       receivers:
+         - main
+       exporters:
+         - primary
+       processors:
+         - batch
+         - resourcedetection
+   
+   Then upgrade:
+   helm upgrade {{ .Release.Name }} . -f values.yaml
 
-   Option B - Update values.yaml with your token (ensure values.yaml is not committed to version control):
-     # Edit values.yaml and set:
-     # splunkExporters:
-     #   - name: primary
-     #     token: "YOUR_HEC_TOKEN"
-     helm upgrade {{ .Release.Name }} . --reuse-values
-
-2. Override Kafka and Splunk settings for your environment:
-
-   helm upgrade {{ .Release.Name }} . \
-     --set kafkaReceivers[0].brokers[0]="broker1:9092" \
-     --set kafkaReceivers[0].brokers[1]="broker2:9092" \
-     --set kafkaReceivers[0].topics[0]=your-topic \
-     --set splunkExporters[0].endpoint="https://splunk.example.com:8088/services/collector" \
-     --set splunkExporters[0].index=your-index \
-     --reuse-values
+2. If using secrets, create them first:
+   
+   kubectl create secret generic my-splunk-hec-secret \
+     --from-literal=splunk-hec-token=YOUR_HEC_TOKEN
+   
+   # For Kafka authentication:
+   kubectl create secret generic kafka-auth-secret \
+     --from-literal=password=YOUR_KAFKA_PASSWORD
 
 3. Check collector pods:
 

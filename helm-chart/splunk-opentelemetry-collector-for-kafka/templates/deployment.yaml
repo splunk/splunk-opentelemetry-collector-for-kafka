@@ -67,48 +67,36 @@ spec:
             {{- $receiverName := printf "kafka/%s" .name }}
             {{- if .auth }}
               {{- if .auth.plain_text }}
-                {{- if .auth.plain_text.password }}
-                  {{- if kindIs "map" .auth.plain_text.password }}
-                    {{- if .auth.plain_text.password.secret }}
-                      {{- $envVarName := printf "KAFKA_%s_PLAIN_TEXT_PASSWORD" ($receiverName | upper | replace "/" "_" | replace "-" "_") }}
-                      {{- $secretName := .auth.plain_text.password.secret }}
+                {{- if .auth.plain_text.secret }}
+                  {{- $envVarName := printf "KAFKA_%s_PLAIN_TEXT_PASSWORD" ($receiverName | upper | replace "/" "_" | replace "-" "_") }}
+                  {{- $secretName := .auth.plain_text.secret }}
             - name: {{ $envVarName }}
               valueFrom:
                 secretKeyRef:
                   name: {{ $secretName }}
                   key: password
-                    {{- end }}
-                  {{- end }}
                 {{- end }}
               {{- end }}
               {{- if .auth.sasl }}
-                {{- if .auth.sasl.password }}
-                  {{- if kindIs "map" .auth.sasl.password }}
-                    {{- if .auth.sasl.password.secret }}
-                      {{- $envVarName := printf "KAFKA_%s_SASL_PASSWORD" ($receiverName | upper | replace "/" "_" | replace "-" "_") }}
-                      {{- $secretName := .auth.sasl.password.secret }}
+                {{- if .auth.sasl.secret }}
+                  {{- $envVarName := printf "KAFKA_%s_SASL_PASSWORD" ($receiverName | upper | replace "/" "_" | replace "-" "_") }}
+                  {{- $secretName := .auth.sasl.secret }}
             - name: {{ $envVarName }}
               valueFrom:
                 secretKeyRef:
                   name: {{ $secretName }}
                   key: password
-                    {{- end }}
-                  {{- end }}
                 {{- end }}
               {{- end }}
               {{- if .auth.kerberos }}
-                {{- if .auth.kerberos.password }}
-                  {{- if kindIs "map" .auth.kerberos.password }}
-                    {{- if .auth.kerberos.password.secret }}
-                      {{- $envVarName := printf "KAFKA_%s_KERBEROS_PASSWORD" ($receiverName | upper | replace "/" "_" | replace "-" "_") }}
-                      {{- $secretName := .auth.kerberos.password.secret }}
+                {{- if .auth.kerberos.secret }}
+                  {{- $envVarName := printf "KAFKA_%s_KERBEROS_PASSWORD" ($receiverName | upper | replace "/" "_" | replace "-" "_") }}
+                  {{- $secretName := .auth.kerberos.secret }}
             - name: {{ $envVarName }}
               valueFrom:
                 secretKeyRef:
                   name: {{ $secretName }}
                   key: password
-                    {{- end }}
-                  {{- end }}
                 {{- end }}
               {{- end }}
             {{- end }}

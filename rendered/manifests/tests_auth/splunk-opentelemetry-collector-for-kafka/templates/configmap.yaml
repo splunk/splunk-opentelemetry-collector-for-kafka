@@ -61,15 +61,15 @@ data:
           topics:
           - perf1
       kafka/sasl:
+        auth:
+          sasl:
+            password: ${KAFKA_KAFKA_SASL_SASL_PASSWORD}
+            username: myuser
         brokers:
         - kafka-broker3:9092
         group_id: soc4kafka-main
         logs:
           encoding: text
-          sasl:
-            password:
-              secret: kafka-sasl-secret
-            username: myuser
           topics:
           - perf3
     service:

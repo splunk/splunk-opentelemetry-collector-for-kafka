@@ -8,8 +8,7 @@ kafkaReceivers:
     auth:
       plain_text:
         username: "myuser"
-        password:
-          secret: "kafka-plain-secret"
+        secret: "kafka-plain-secret"
 
   - name: kerberos
     brokers:
@@ -19,8 +18,7 @@ kafkaReceivers:
         - "perf2"
     auth:
       kerberos:
-        password:
-          secret: "kafka-kerberos-secret"
+        secret: "kafka-kerberos-secret"
 
   - name: sasl
     brokers:
@@ -28,10 +26,10 @@ kafkaReceivers:
     logs:
       topics:
         - "perf3"
+    auth:
       sasl:
         username: "myuser"
-        password:
-          secret: "kafka-sasl-secret"
+        secret: "kafka-sasl-secret"
 
 # Define multiple Splunk HEC exporters easily
 splunkExporters:

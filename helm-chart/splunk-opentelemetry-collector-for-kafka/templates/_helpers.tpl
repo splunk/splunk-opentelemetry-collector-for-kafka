@@ -85,24 +85,18 @@ Includes:
 {{- range .Values.kafkaReceivers }}
   {{- if .auth }}
     {{- if .auth.plain_text }}
-      {{- if and .auth.plain_text.password (kindIs "map" .auth.plain_text.password) }}
-        {{- if .auth.plain_text.password.secret }}
-          {{- $secretData = append $secretData (printf "kafka-plain-text:%s:password" .auth.plain_text.password.secret) }}
-        {{- end }}
+      {{- if .auth.plain_text.secret }}
+        {{- $secretData = append $secretData (printf "kafka-plain-text:%s:password" .auth.plain_text.secret) }}
       {{- end }}
     {{- end }}
     {{- if .auth.sasl }}
-      {{- if and .auth.sasl.password (kindIs "map" .auth.sasl.password) }}
-        {{- if .auth.sasl.password.secret }}
-          {{- $secretData = append $secretData (printf "kafka-sasl:%s:password" .auth.sasl.password.secret) }}
-        {{- end }}
+      {{- if .auth.sasl.secret }}
+        {{- $secretData = append $secretData (printf "kafka-sasl:%s:password" .auth.sasl.secret) }}
       {{- end }}
     {{- end }}
     {{- if .auth.kerberos }}
-      {{- if and .auth.kerberos.password (kindIs "map" .auth.kerberos.password) }}
-        {{- if .auth.kerberos.password.secret }}
-          {{- $secretData = append $secretData (printf "kafka-kerberos:%s:password" .auth.kerberos.password.secret) }}
-        {{- end }}
+      {{- if .auth.kerberos.secret }}
+        {{- $secretData = append $secretData (printf "kafka-kerberos:%s:password" .auth.kerberos.secret) }}
       {{- end }}
     {{- end }}
   {{- end }}
