@@ -60,7 +60,7 @@ kubectl create secret generic my-splunk-hec-secret \
 
 # Kafka authentication password
 kubectl create secret generic kafka-auth-secret \
-  --from-literal=password=your-kafka-password
+  --from-literal=password=YOUR_KAFKA_TOKEN
 ```
 
 ## Important Notes
