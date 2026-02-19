@@ -1,0 +1,94 @@
+---
+# Source: splunk-opentelemetry-collector-for-kafka/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: release-name-splunk-opentelemetry-collector-for-kafka-config
+  labels:
+    helm.sh/chart: splunk-opentelemetry-collector-for-kafka-0.1.0
+    app.kubernetes.io/name: splunk-opentelemetry-collector-for-kafka
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/version: "CURRENT-VERSION"
+    app.kubernetes.io/managed-by: Helm
+data:
+  config.yaml: |
+    exporters:
+      splunk_hec:
+        endpoint: https://127.0.0.1:8088/services/collector
+        index: kafka-otel
+        insecureSkipVerify: true
+        source: soc4kafka
+        sourcetype: otel:logs
+        splunk_app_name: soc4kafka
+        tls:
+          insecure_skip_verify: false
+        token: ${SPLUNK_HEC_TOKEN_PRIMARY}
+    extensions:
+      file_storage:
+        create_directory: true
+        directory: /var/log/otelcol/checkpoint
+      health_check:
+        endpoint: 0.0.0.0:13133
+    processors:
+      batch:
+        send_batch_size: 1000
+        timeout: 5s
+      resourcedetection:
+        detectors:
+        - system
+        system:
+          hostname_sources:
+          - os
+    receivers:
+      filelog:
+        include:
+        - /var/log/otelcol/*.log
+        start_at: beginning
+        storage: file_storage
+      kafka/main:
+        brokers:
+        - kafka-broker:9092
+        group_id: soc4kafka-main1
+        logs:
+          encoding: text
+          topics:
+          - perf4
+      kafka/secondary:
+        brokers:
+        - kafka-broker:9092
+        group_id: soc4kafka-main2
+        logs:
+          encoding: text
+          topics:
+          - perf2
+    service:
+      extensions:
+      - health_check
+      - file_storage
+      pipelines:
+        logs/1:
+          exporters:
+          - splunk_hec
+          processors:
+          - batch
+          - resourcedetection
+          receivers:
+          - kafka/main
+          - kafka/secondary
+        logs/internal:
+          exporters:
+          - splunk_hec
+          processors:
+          - batch
+          - resourcedetection
+          receivers:
+          - filelog
+      telemetry:
+        logs:
+          error_output_paths:
+          - /var/log/otelcol/otel-collector-errors.log
+          - stderr
+          level: info
+          output_paths:
+          - /var/log/otelcol/otel-collector.log
+          - stdout

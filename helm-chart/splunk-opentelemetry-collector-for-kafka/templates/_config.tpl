@@ -65,28 +65,6 @@ exporters:
   {{ $exporterName }}:
     {{- toYaml $exporterConfig | nindent 4 }}
   {{- end }}
-  {{- if and .Values.collectorLogs.enabled .Values.collectorLogs.forwardToSplunk.enabled }}
-  {{- $referencedExporterName := .Values.collectorLogs.forwardToSplunk.exporter | default (index $.Values.splunkExporters 0).name }}
-  {{- $referencedExporter := dict }}
-  {{- range $.Values.splunkExporters }}
-    {{- if eq .name $referencedExporterName }}
-      {{- $referencedExporter = . }}
-    {{- end }}
-  {{- end }}
-  {{- if not $referencedExporter }}
-    {{- $referencedExporter = index $.Values.splunkExporters 0 }}
-  {{- end }}
-  {{- $internalExporterName := ternary "splunk_hec" (printf "splunk_hec/%s" $referencedExporter.name) (eq $referencedExporter.name "primary") }}
-  {{- $internalTokenValue := printf "${SPLUNK_HEC_TOKEN_%s}" ($referencedExporter.name | upper | replace "-" "_") }}
-  {{- $internalExporterConfig := omit $referencedExporter "name" "token" "secret" | mustMergeOverwrite (deepCopy $.Values.defaults.exporters.splunk_hec) }}
-  {{- $_ := set $internalExporterConfig "token" $internalTokenValue }}
-  {{- $_ := set $internalExporterConfig "index" .Values.collectorLogs.forwardToSplunk.index }}
-  {{- $_ := set $internalExporterConfig "source" .Values.collectorLogs.forwardToSplunk.source }}
-  {{- $_ := set $internalExporterConfig "sourcetype" .Values.collectorLogs.forwardToSplunk.sourcetype }}
-  splunk_hec/internal_logs:
-    {{- toYaml $internalExporterConfig | nindent 4 }}
-  {{- end }}
-
 service:
   extensions:
     {{- range $name, $_ := .Values.defaults.extensions }}
@@ -121,6 +99,8 @@ service:
         {{- end }}
     {{- end }}
     {{- if and .Values.collectorLogs.enabled .Values.collectorLogs.forwardToSplunk.enabled }}
+    {{- $referencedExporterName := .Values.collectorLogs.forwardToSplunk.exporter | default (index .Values.splunkExporters 0).name }}
+    {{- $referencedExporterName = ternary "splunk_hec" (printf "splunk_hec/%s" $referencedExporterName) (eq $referencedExporterName "primary") }}
     logs/internal:
       receivers:
         - filelog
@@ -128,7 +108,7 @@ service:
         - batch
         - resourcedetection
       exporters:
-        - splunk_hec/internal_logs
+        - {{ $referencedExporterName }}
     {{- end }}
 {{- end }}
 

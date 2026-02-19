@@ -178,19 +178,16 @@ collectorLogs:
   # Automatically forwards logs to Splunk via filelog receiver
   forwardToSplunk:
     enabled: true
-    index: "kafka-logs"  # Separate index for collector logs
-    source: "soc4kafka-collector"
-    sourcetype: "otel:collector"
+    exporter: ""  # Uses the "primary" exporter (or omit to use first exporter)
 ```
 
 When enabled, collector logs will be:
 - Written to files in `/var/log/otelcol/` inside the container
 - Available in pod logs via `kubectl logs` (stdout/stderr)
-- Automatically forwarded to Splunk in the `kafka-logs` index (or your specified index)
+- Automatically forwarded to Splunk using the referenced `splunkExporter` (uses its endpoint, token, index, source, sourcetype)
 - Tracked with `file_storage` extension to prevent re-reading on restart
 
 The chart automatically adds:
 - `filelog` receiver to read collector log files
 - `file_storage` extension for checkpointing
-- `splunk_hec/internal_logs` exporter for forwarding to Splunk
-- `logs/internal` pipeline connecting filelog → processors → internal_logs exporter
+- `logs/internal` pipeline connecting filelog → processors → referenced exporter
