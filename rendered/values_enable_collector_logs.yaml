@@ -1,0 +1,58 @@
+kafkaReceivers:
+  - name: main
+    brokers:
+    - "kafka-broker:9092"
+    logs:
+      topics:
+        - "perf4"
+    group_id: "soc4kafka-main1"
+
+  - name: secondary
+    brokers:
+      - "kafka-broker:9092"
+    logs:
+      topics:
+        - "perf2"
+    group_id: "soc4kafka-main2"
+
+# Define multiple Splunk HEC exporters easily
+splunkExporters:
+  - name: primary
+    endpoint: "https://127.0.0.1:8088/services/collector"
+    token: "00000000-0000-0000-0000-000000000000"
+    source: "soc4kafka"
+    sourcetype: "otel:logs"
+    index: "kafka-otel"
+    insecureSkipVerify: true
+
+pipelines:
+  - name: "1"
+    type: logs
+    receivers:
+      - main
+      - secondary
+    exporters:
+      - primary
+    processors:
+      - batch
+      - resourcedetection
+
+replicaCount: 3
+
+collectorLogs:
+  enabled: true
+  level: info  # Options: debug, info, warn, error
+  outputPaths:
+    - /var/log/otelcol/otel-collector.log
+    - stdout
+  errorOutputPaths:
+    - /var/log/otelcol/otel-collector-errors.log
+    - stderr
+  # Forward collector logs to Splunk (enabled by default when collectorLogs.enabled is true)
+  forwardToSplunk:
+    enabled: true
+    exporter: primary
+  # File storage extension for checkpointing (prevents re-reading logs on restart)
+  fileStorage:
+    directory: /var/log/otelcol/checkpoint
+    createDirectory: true

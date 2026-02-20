@@ -1,0 +1,64 @@
+kafkaReceivers:
+  - name: main
+    brokers:
+    - "kafka-broker:9092"
+    logs:
+      topics:
+        - "perf4"
+    group_id: "soc4kafka-main1"
+
+  - name: secondary
+    brokers:
+      - "kafka-broker:9092"
+    logs:
+      topics:
+        - "perf2"
+    group_id: "soc4kafka-main2"
+
+  - name: third
+    brokers:
+      - "kafka-broker:9092"
+    logs:
+      topics:
+        - "perf3"
+    group_id: "soc4kafka-main3"
+
+# Define multiple Splunk HEC exporters easily
+splunkExporters:
+  - name: primary
+    endpoint: "https://127.0.0.1:8088/services/collector"
+    token: "00000000-0000-0000-0000-000000000000"
+    source: "soc4kafka"
+    sourcetype: "otel:logs"
+    index: "kafka-otel"
+    insecureSkipVerify: true
+  - name: secondary
+    endpoint: "https://127.0.0.1:8088/services/collector"
+    token: "00000000-0000-0000-0000-000000000000"
+    source: "soc4kafka"
+    sourcetype: "otel:logs"
+    index: "kafka-otel-second"
+    insecureSkipVerify: true
+
+pipelines:
+  - name: "1"
+    type: logs
+    receivers:
+      - main
+      - secondary
+    exporters:
+      - primary
+    processors:
+      - batch
+      - resourcedetection
+  - name: "2"
+    type: logs
+    receivers:
+      - third
+    exporters:
+      - secondary
+    processors:
+      - batch
+      - resourcedetection
+
+replicaCount: 3

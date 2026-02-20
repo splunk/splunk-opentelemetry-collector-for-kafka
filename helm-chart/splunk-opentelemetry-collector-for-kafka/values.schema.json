@@ -1,0 +1,119 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "properties": {
+    "kafkaReceivers": {
+      "type": "array",
+      "description": "Kafka receivers configuration. At least one receiver is required (validated at template render time).",
+      "items": {
+        "type": "object",
+        "required": ["name"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Unique name for this receiver (used in pipelines)"
+          },
+          "brokers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of Kafka broker addresses (e.g., [\"broker1:9092\", \"broker2:9092\"])"
+          },
+          "logs": {
+            "type": "object",
+            "description": "Logs configuration (topics, encoding, etc.)"
+          },
+          "group_id": {
+            "type": "string",
+            "description": "Kafka consumer group ID"
+          }
+        }
+      }
+    },
+    "splunkExporters": {
+      "type": "array",
+      "description": "Splunk HEC exporters configuration. At least one exporter is required (validated at template render time).",
+      "items": {
+        "type": "object",
+        "required": ["name", "endpoint"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Unique name for this exporter (used in pipelines)"
+          },
+          "endpoint": {
+            "type": "string",
+            "description": "Splunk HEC endpoint URL (e.g., https://splunk-hec:8088/services/collector)"
+          },
+          "token": {
+            "type": "string",
+            "description": "HEC token (or use 'secret' field to reference existing secret)"
+          },
+          "secret": {
+            "type": "string",
+            "description": "Name of existing Kubernetes secret containing 'splunk-hec-token' key"
+          },
+          "source": {
+            "type": "string",
+            "description": "Source field for Splunk events"
+          },
+          "sourcetype": {
+            "type": "string",
+            "description": "Sourcetype for Splunk events"
+          },
+          "index": {
+            "type": "string",
+            "description": "Splunk index name"
+          },
+          "tls": {
+            "type": "object",
+            "description": "TLS configuration"
+          }
+        }
+      }
+    },
+    "pipelines": {
+      "type": "array",
+      "description": "Pipelines configuration. At least one pipeline is required (validated at template render time).",
+      "items": {
+        "type": "object",
+        "required": ["name", "type", "receivers", "exporters"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Unique name for this pipeline"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["logs", "metrics", "traces"],
+            "description": "Pipeline type (logs, metrics, or traces)"
+          },
+          "receivers": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string"
+            },
+            "description": "List of receiver names (must match names in kafkaReceivers)"
+          },
+          "exporters": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string"
+            },
+            "description": "List of exporter names (must match names in splunkExporters)"
+          },
+          "processors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional list of processors (e.g., [\"batch\", \"resourcedetection\"])"
+          }
+        }
+      }
+    }
+  }
+}

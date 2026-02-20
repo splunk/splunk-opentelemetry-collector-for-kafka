@@ -1,0 +1,104 @@
+---
+# Source: splunk-opentelemetry-collector-for-kafka/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: release-name-splunk-opentelemetry-collector-for-kafka
+  labels:
+    helm.sh/chart: splunk-opentelemetry-collector-for-kafka-CURRENT-VERSION
+    app.kubernetes.io/name: splunk-opentelemetry-collector-for-kafka
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/version: "CURRENT-VERSION"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: splunk-opentelemetry-collector-for-kafka
+      app.kubernetes.io/instance: release-name
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: splunk-opentelemetry-collector-for-kafka
+        app.kubernetes.io/instance: release-name
+      annotations:
+        checksum/config: 8008b6e2
+        checksum/secrets: eba9f1c0
+    spec:
+      serviceAccountName: release-name-splunk-opentelemetry-collector-for-kafka
+      securityContext:
+        fsGroup: 999
+        runAsNonRoot: true
+        runAsUser: 999
+      terminationGracePeriodSeconds: 30
+      containers:
+        - name: collector
+          image: "quay.io/signalfx/splunk-otel-collector:CURRENT-VERSION"
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            readOnlyRootFilesystem: false
+            runAsNonRoot: true
+            runAsUser: 999
+          args:
+            - "--config=/etc/otel/config.yaml"
+          env:
+            - name: SPLUNK_HEC_TOKEN_PRIMARY
+              valueFrom:
+                secretKeyRef:
+                  name: release-name-splunk-opentelemetry-collector-for-kafka-hec-primary
+                  key: splunk-hec-token
+            - name: SPLUNK_HEC_TOKEN_SECONDARY
+              valueFrom:
+                secretKeyRef:
+                  name: release-name-splunk-opentelemetry-collector-for-kafka-hec-secondary
+                  key: splunk-hec-token
+          ports:
+            - name: health
+              containerPort: 13133
+              protocol: TCP
+          startupProbe:
+            failureThreshold: 30
+            httpGet:
+              path: /
+              port: 13133
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 13133
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 13133
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 5
+          resources:
+            limits:
+              cpu: 500m
+              memory: 512Mi
+            requests:
+              cpu: 100m
+              memory: 256Mi
+          volumeMounts:
+            - name: config
+              mountPath: /etc/otel
+              readOnly: true
+      volumes:
+        - name: config
+          configMap:
+            name: release-name-splunk-opentelemetry-collector-for-kafka-config

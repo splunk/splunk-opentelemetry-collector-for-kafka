@@ -1,0 +1,75 @@
+kafkaReceivers:
+  - name: plain
+    brokers:
+    - "kafka-broker:9092"
+    logs:
+      topics:
+        - "perf1"
+    auth:
+      plain_text:
+        username: "myuser"
+        secret: "kafka-plain-secret"
+
+  - name: kerberos
+    brokers:
+    - "kafka-broker2:9092"
+    logs:
+      topics:
+        - "perf2"
+    auth:
+      kerberos:
+        secret: "kafka-kerberos-secret"
+
+  - name: sasl
+    brokers:
+    - "kafka-broker3:9092"
+    logs:
+      topics:
+        - "perf3"
+    auth:
+      sasl:
+        username: "myuser"
+        secret: "kafka-sasl-secret"
+
+  - name: sasl_password
+    brokers:
+    - "kafka-broker3:9092"
+    logs:
+      topics:
+        - "perf3"
+    auth:
+      sasl:
+        username: "myuser"
+        password: "kafka-sasl-password"
+    group_id: "group1"
+    conn_idle_timeout: 15s
+    telemetry:
+      metrics:
+        kafka_receiver_records_delay:
+          enabled: true
+
+# Define multiple Splunk HEC exporters easily
+splunkExporters:
+  - name: primary
+    endpoint: "https://127.0.0.1:8088/services/collector"
+    token: "00000000-0000-0000-0000-000000000000"
+    source: "soc4kafka"
+    sourcetype: "otel:logs"
+    index: "kafka-otel"
+    insecureSkipVerify: true
+
+pipelines:
+  - name: base_logs
+    type: logs
+    receivers:
+      - plain
+      - kerberos
+      - sasl
+      - sasl_password
+    exporters:
+      - primary
+    processors:
+      - batch
+      - resourcedetection
+
+replicaCount: 3
