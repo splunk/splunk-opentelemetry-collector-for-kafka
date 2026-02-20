@@ -8,7 +8,7 @@ keywords:
   - splunk
   - kafka
   - opentelemetry
-  - observability
+  - logs
   - hec
 maintainers:
   - name: Splunk

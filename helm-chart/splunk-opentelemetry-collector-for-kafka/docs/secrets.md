@@ -11,7 +11,7 @@ If you provide a `token` value, the chart automatically creates a Kubernetes Sec
 ```yaml
 splunkExporters:
   - name: primary
-    token: "your-hec-token-here"  # Secret will be auto-created
+    token: "your-splunk-hec-token"  # Secret will be auto-created
 ```
 
 The secret will be named `{release-name}-hec-{exporter-name}` with key `splunk-hec-token`.

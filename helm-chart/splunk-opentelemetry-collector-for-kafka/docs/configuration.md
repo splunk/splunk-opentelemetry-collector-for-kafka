@@ -32,7 +32,7 @@ Define one or more Splunk HEC exporters. All standard Splunk HEC exporter config
 splunkExporters:
   - name: primary
     endpoint: "https://splunk-hec:8088/services/collector"
-    token: "YOUR_HEC_TOKEN"
+    token: "your-splunk-hec-token"
     source: "soc4kafka"
     sourcetype: "otel:logs"
     index: "main"

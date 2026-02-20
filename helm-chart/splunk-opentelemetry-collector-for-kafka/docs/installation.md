@@ -18,7 +18,7 @@ kafkaReceivers:
 splunkExporters:
   - name: primary
     endpoint: "https://splunk-hec:8088/services/collector"
-    secret: "my-splunk-hec-secret"
+    token: "your-splunk-hec-token"
     source: "soc4kafka"
     sourcetype: "otel:logs"
     index: "main"
