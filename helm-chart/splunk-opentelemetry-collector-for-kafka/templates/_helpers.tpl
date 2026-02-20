@@ -78,7 +78,7 @@ Includes:
   {{- $secretName := .secret | default (printf "%s-hec-%s" (include "soc4kafka.fullname" $) .name) }}
   {{- if .secret }}
     {{- $secretData = append $secretData (printf "splunk-hec:%s:splunk-hec-token" $secretName) }}
-  {{- else if and .token (not (hasPrefix "${" (toString .token))) }}
+  {{- else if .token }}
     {{- $secretData = append $secretData (printf "splunk-hec:%s:splunk-hec-token:%s" $secretName (toString .token)) }}
   {{- end }}
 {{- end }}

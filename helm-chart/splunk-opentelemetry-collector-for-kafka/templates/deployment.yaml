@@ -74,7 +74,7 @@ spec:
           env:
             {{- range .Values.splunkExporters }}
             {{- $secretName := .secret | default (printf "%s-hec-%s" (include "soc4kafka.fullname" $) .name) }}
-            {{- if or .secret (and .token (not (hasPrefix "${" (toString .token)))) }}
+            {{- if or .secret .token }}
             - name: SPLUNK_HEC_TOKEN_{{ .name | upper | replace "-" "_" }}
               valueFrom:
                 secretKeyRef:
