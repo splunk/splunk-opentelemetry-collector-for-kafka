@@ -136,7 +136,7 @@ service:
                 host: '0.0.0.0'
                 port: 8888
     {{- end }}
-  {{- end }}
+    {{- end }}
   pipelines:
     {{- range .Values.pipelines }}
     {{ .type }}/{{ .name }}:

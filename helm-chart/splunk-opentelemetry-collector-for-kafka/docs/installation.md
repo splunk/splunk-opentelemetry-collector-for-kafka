@@ -12,8 +12,8 @@ kafkaReceivers:
     logs:
       topics:
         - "application-logs"
-        encoding: text
-      group_id: "soc4kafka-main"
+      encoding: text
+    group_id: "soc4kafka-main"
 
 splunkExporters:
   - name: primary
@@ -35,40 +35,24 @@ pipelines:
       - resourcedetection
 ```
 
-2. Add helm repository <TBD>
+2. Add helm repository (TBD)
 
-TBD: Replace . to be the helm repository
 3. Install the chart:
 
 ```bash
-helm upgrade --install soc4kafka . -f values.yaml 
+helm upgrade --install soc4kafka splunk-opentelemetry-collector-for-kafka/splunk-opentelemetry-collector-for-kafka -f values.yaml
 ```
 
-## Using Existing Secrets
-
-If you prefer to manage secrets separately:
-
-1. Create a secret for Splunk HEC token:
-   ```bash
-   kubectl create secret generic my-splunk-hec-secret \
-     --from-literal=splunk-hec-token=YOUR_HEC_TOKEN
-   ```
-
-2. Reference the secret in your `values.yaml` (see example above).
-
-3. Install the chart:
-   ```bash
-   helm install soc4kafka . -f values.yaml
-   ```
+**Note:** For information about managing secrets (auto-created or existing Kubernetes secrets), see [Secret Management](secrets.md).
 
 ## Upgrading
 
 ```bash
 # Update your values.yaml file with new configuration, then upgrade
-helm upgrade soc4kafka . -f values.yaml
+helm upgrade soc4kafka splunk-opentelemetry-collector-for-kafka/splunk-opentelemetry-collector-for-kafka -f values.yaml
 
 # Or use multiple values files (useful for environment-specific overrides)
-helm upgrade soc4kafka . -f values.yaml -f values-prod.yaml
+helm upgrade soc4kafka splunk-opentelemetry-collector-for-kafka/splunk-opentelemetry-collector-for-kafka -f values.yaml -f values-prod.yaml
 ```
 
 **Best Practice:** Always use values files (`-f values.yaml`) instead of `--set` flags. This makes your configuration version-controlled, easier to maintain, and reusable across environments.

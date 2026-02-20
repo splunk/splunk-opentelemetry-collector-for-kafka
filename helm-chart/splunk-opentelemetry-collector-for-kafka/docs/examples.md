@@ -191,3 +191,58 @@ The chart automatically adds:
 - `filelog` receiver to read collector log files
 - `file_storage` extension for checkpointing
 - `logs/internal` pipeline connecting filelog → processors → referenced exporter
+
+## With Metrics Collection Enabled
+
+Enable collection of collector internal metrics and system metrics (CPU, memory, disk, network):
+
+```yaml
+kafkaReceivers:
+  - name: main
+    brokers:
+      - "kafka:9092"
+    logs:
+      topics:
+        - "logs"
+      encoding: text
+    group_id: "soc4kafka"
+
+splunkExporters:
+  - name: primary
+    endpoint: "https://splunk:8088/services/collector"
+    secret: "splunk-hec-secret"
+    source: "kafka"
+    sourcetype: "otel:logs"
+    index: "main"
+  
+  - name: metrics
+    endpoint: "https://splunk:8088/services/collector"
+    secret: "splunk-hec-secret"
+    source: "otel-collector"
+    sourcetype: "otel:metrics"
+    index: "metrics"
+
+pipelines:
+  - name: logs
+    type: logs
+    receivers:
+      - main
+    exporters:
+      - primary
+    processors:
+      - batch
+      - resourcedetection
+
+# Enable metrics collection
+collectorMetrics:
+  enabled: true
+  exporter: "metrics"  # Optional: use specific exporter for metrics (or omit to use first exporter)
+```
+
+When enabled, the chart automatically adds:
+- **Prometheus receiver** - Scrapes the collector's internal telemetry endpoint (port 8888)
+- **Hostmetrics receiver** - Collects system metrics (CPU, memory, disk, network, filesystem, process)
+- **Telemetry service** - Exposes collector metrics via Prometheus endpoint
+- **Metrics pipeline** - Forwards metrics to Splunk using the referenced `splunkExporter`
+
+**Note:** Make sure you have a metrics-type index in Splunk for the metrics data. The service exposes port 8888 for Prometheus scraping if needed.

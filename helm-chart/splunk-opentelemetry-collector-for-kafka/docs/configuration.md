@@ -4,7 +4,7 @@
 
 ### Kafka Receivers
 
-Define one or more Kafka receivers. All standard Kafka receiver configuration options are supported. See [OpenTelemetry Kafka Receiver documentation](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/kafkareceiver) for details.
+Define one or more Kafka receivers. All standard Kafka receiver configuration options are supported. See the [SOC4Kafka design documentation](../../../docs/otel_design.md) for details.
 
 ```yaml
 kafkaReceivers:
@@ -18,21 +18,21 @@ kafkaReceivers:
         - "error-logs"
       encoding: text
     group_id: "soc4kafka-main"
-    auth:
-      # See Secret Management documentation
 ```
 
 **Chart-specific:** The `name` field is required and used to reference the receiver in pipelines.
 
+**Note:** Kafka authentication passwords (plain_text, SASL, or Kerberos) can reference existing Kubernetes secrets using the `secret` field. See [Secret Management](secrets.md) for details.
+
 ### Splunk HEC Exporters
 
-Define one or more Splunk HEC exporters. All standard Splunk HEC exporter configuration options are supported. See [OpenTelemetry Splunk HEC Exporter documentation](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter/splunkhecexporter) for details.
+Define one or more Splunk HEC exporters. All standard Splunk HEC exporter configuration options are supported. See the [SOC4Kafka design documentation](../../../docs/otel_design.md) for details.
 
 ```yaml
 splunkExporters:
   - name: primary
     endpoint: "https://splunk-hec:8088/services/collector"
-    secret: "my-splunk-hec-secret"
+    token: "YOUR_HEC_TOKEN"
     source: "soc4kafka"
     sourcetype: "otel:logs"
     index: "main"
@@ -42,9 +42,11 @@ splunkExporters:
 
 **Chart-specific:** The `name` field is required and used to reference the exporter in pipelines.
 
+**Note:** Instead of providing `token` directly, you can reference an existing Kubernetes secret using the `secret` field. See [Secret Management](secrets.md) for details.
+
 ### Pipelines
 
-Connect receivers to exporters. See [OpenTelemetry Service Pipelines documentation](https://opentelemetry.io/docs/collector/configuration/#service) for details.
+Connect receivers to exporters. See the [SOC4Kafka design documentation](../../../docs/otel_design.md) for details.
 
 ```yaml
 pipelines:

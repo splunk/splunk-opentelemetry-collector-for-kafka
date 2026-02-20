@@ -30,7 +30,7 @@ spec:
         checksum/secrets: {{ include "soc4kafka.secretsHash" . }}
         {{- with .Values.podAnnotations }}
         {{- toYaml . | nindent 8 }}
-        {{- end }}
+      {{- end }}
     spec:
       {{- with .Values.serviceAccount }}
       serviceAccountName: {{ include "soc4kafka.serviceAccountName" $ }}

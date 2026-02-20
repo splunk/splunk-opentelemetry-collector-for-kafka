@@ -1,5 +1,4 @@
 # Default values for splunk-opentelemetry-collector-for-kafka.
-# Deploy on MicroK8s or any Kubernetes cluster with: helm install soc4kafka . -f my-values.yaml
 
 # Collector image (Splunk OTel Collector - same distribution as SOC4Kafka binary)
 image:
