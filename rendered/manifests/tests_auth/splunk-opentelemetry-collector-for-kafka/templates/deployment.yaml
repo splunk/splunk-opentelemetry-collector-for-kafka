@@ -27,7 +27,7 @@ spec:
         app.kubernetes.io/name: splunk-opentelemetry-collector-for-kafka
         app.kubernetes.io/instance: release-name
       annotations:
-        checksum/config: 976efbcd
+        checksum/config: 88f41e1a
         checksum/secrets: 77d308c6
     spec:
       serviceAccountName: release-name-splunk-opentelemetry-collector-for-kafka

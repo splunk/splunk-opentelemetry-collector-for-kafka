@@ -16,22 +16,20 @@ data:
       splunk_hec:
         endpoint: https://127.0.0.1:8088/services/collector
         index: kafka-otel
-        insecureSkipVerify: true
         source: soc4kafka
         sourcetype: otel:logs
         splunk_app_name: soc4kafka
         tls:
-          insecure_skip_verify: false
+          insecure_skip_verify: true
         token: ${SPLUNK_HEC_TOKEN_PRIMARY}
       splunk_hec/secondary:
         endpoint: https://127.0.0.1:8088/services/collector
         index: kafka-otel-second
-        insecureSkipVerify: true
         source: soc4kafka
         sourcetype: otel:logs
         splunk_app_name: soc4kafka
         tls:
-          insecure_skip_verify: false
+          insecure_skip_verify: true
         token: ${SPLUNK_HEC_TOKEN_SECONDARY}
     extensions:
       health_check:

@@ -56,7 +56,8 @@ splunkExporters:
     source: "soc4kafka"
     sourcetype: "otel:logs"
     index: "kafka-otel"
-    insecureSkipVerify: true
+    tls:
+      insecure_skip_verify: true
 
 pipelines:
   - name: base_logs
