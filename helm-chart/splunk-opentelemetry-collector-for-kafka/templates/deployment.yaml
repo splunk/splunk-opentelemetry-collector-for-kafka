@@ -1,0 +1,184 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "soc4kafka.fullname" . }}
+  labels:
+    {{- include "soc4kafka.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  strategy:
+    type: {{ .Values.strategy.type | default "RollingUpdate" }}
+    {{- if eq (.Values.strategy.type | default "RollingUpdate") "RollingUpdate" }}
+    rollingUpdate:
+      maxSurge: {{ .Values.strategy.rollingUpdate.maxSurge | default "25%" }}
+      maxUnavailable: {{ .Values.strategy.rollingUpdate.maxUnavailable | default "25%" }}
+    {{- end }}
+  selector:
+    matchLabels:
+      {{- include "soc4kafka.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "soc4kafka.selectorLabels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      annotations:
+        checksum/config: {{ include "soc4kafka.configMapHash" . }}
+        checksum/secrets: {{ include "soc4kafka.secretsHash" . }}
+        {{- with .Values.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+      {{- with .Values.serviceAccount }}
+      serviceAccountName: {{ include "soc4kafka.serviceAccountName" $ }}
+      {{- end }}
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      {{- if .Values.terminationGracePeriodSeconds }}
+      terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
+      {{- end }}
+      {{- if .Values.collectorLogs.enabled }}
+      {{- $runAsUser := .Values.podSecurityContext.runAsUser | default 999 }}
+      {{- $fsGroup := .Values.podSecurityContext.fsGroup | default 999 }}
+      initContainers:
+        - name: init-log-dirs
+          image: busybox:1.36
+          command: ['sh', '-c']
+          args:
+            - |
+              mkdir -p /var/log/otelcol/checkpoint
+              chown -R {{ $runAsUser }}:{{ $fsGroup }} /var/log/otelcol
+              chmod -R 755 /var/log/otelcol
+          securityContext:
+            runAsUser: 0
+            runAsNonRoot: false
+          volumeMounts:
+            - name: collector-logs
+              mountPath: /var/log/otelcol
+      {{- end }}
+      containers:
+        - name: collector
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          args:
+            - "--config=/etc/otel/config.yaml"
+          env:
+            {{- range .Values.splunkExporters }}
+            {{- $secretName := .secret | default (printf "%s-hec-%s" (include "soc4kafka.fullname" $) .name) }}
+            {{- if or .secret .token }}
+            - name: SPLUNK_HEC_TOKEN_{{ .name | upper | replace "-" "_" }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $secretName }}
+                  key: splunk-hec-token
+            {{- end }}
+            {{- end }}
+            {{- range .Values.kafkaReceivers }}
+            {{- $receiverName := printf "kafka/%s" .name }}
+            {{- if .auth }}
+              {{- if .auth.plain_text }}
+                {{- if .auth.plain_text.secret }}
+                  {{- $envVarName := printf "KAFKA_%s_PLAIN_TEXT_PASSWORD" ($receiverName | upper | replace "/" "_" | replace "-" "_") }}
+                  {{- $secretName := .auth.plain_text.secret }}
+            - name: {{ $envVarName }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $secretName }}
+                  key: password
+                {{- end }}
+              {{- end }}
+              {{- if .auth.sasl }}
+                {{- if .auth.sasl.secret }}
+                  {{- $envVarName := printf "KAFKA_%s_SASL_PASSWORD" ($receiverName | upper | replace "/" "_" | replace "-" "_") }}
+                  {{- $secretName := .auth.sasl.secret }}
+            - name: {{ $envVarName }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $secretName }}
+                  key: password
+                {{- end }}
+              {{- end }}
+              {{- if .auth.kerberos }}
+                {{- if .auth.kerberos.secret }}
+                  {{- $envVarName := printf "KAFKA_%s_KERBEROS_PASSWORD" ($receiverName | upper | replace "/" "_" | replace "-" "_") }}
+                  {{- $secretName := .auth.kerberos.secret }}
+            - name: {{ $envVarName }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $secretName }}
+                  key: password
+                {{- end }}
+              {{- end }}
+            {{- end }}
+            {{- end }}
+            {{- with .Values.extraEnv }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+          ports:
+            - name: health
+              containerPort: 13133
+              protocol: TCP
+            {{- if .Values.collectorMetrics.enabled }}
+            - name: metrics
+              containerPort: 8888
+              protocol: TCP
+            {{- end }}
+          {{- if .Values.startupProbe }}
+          startupProbe:
+            {{- toYaml .Values.startupProbe | nindent 12 }}
+          {{- end }}
+          livenessProbe:
+            {{- toYaml .Values.livenessProbe | nindent 12 }}
+          readinessProbe:
+            {{- toYaml .Values.readinessProbe | nindent 12 }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: config
+              mountPath: /etc/otel
+              readOnly: true
+            {{- if .Values.persistence.enabled }}
+            - name: data
+              mountPath: /var/lib/otelcol
+            {{- end }}
+            {{- if .Values.collectorLogs.enabled }}
+            - name: collector-logs
+              mountPath: /var/log/otelcol
+            {{- end }}
+      volumes:
+        - name: config
+          configMap:
+            name: {{ include "soc4kafka.fullname" . }}-config
+        {{- if .Values.persistence.enabled }}
+        - name: data
+          persistentVolumeClaim:
+            claimName: {{ include "soc4kafka.fullname" . }}
+        {{- end }}
+        {{- if .Values.collectorLogs.enabled }}
+        - name: collector-logs
+          emptyDir:
+            {{- if .Values.collectorLogs.sizeLimit }}
+            sizeLimit: {{ .Values.collectorLogs.sizeLimit }}
+            {{- end }}
+        {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

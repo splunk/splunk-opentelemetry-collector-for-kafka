@@ -1,0 +1,23 @@
+{{- if .Values.service.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "soc4kafka.fullname" . }}
+  labels:
+    {{- include "soc4kafka.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type | default "ClusterIP" }}
+  ports:
+    - port: {{ .Values.service.port | default 13133 }}
+      targetPort: health
+      protocol: TCP
+      name: health
+    {{- if .Values.collectorMetrics.enabled }}
+    - port: 8888
+      targetPort: metrics
+      protocol: TCP
+      name: metrics
+    {{- end }}
+  selector:
+    {{- include "soc4kafka.selectorLabels" . | nindent 4 }}
+{{- end }}

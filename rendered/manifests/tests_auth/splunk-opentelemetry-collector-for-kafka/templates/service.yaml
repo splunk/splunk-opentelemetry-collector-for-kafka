@@ -1,0 +1,22 @@
+---
+# Source: splunk-opentelemetry-collector-for-kafka/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: release-name-splunk-opentelemetry-collector-for-kafka
+  labels:
+    helm.sh/chart: splunk-opentelemetry-collector-for-kafka-CURRENT-VERSION
+    app.kubernetes.io/name: splunk-opentelemetry-collector-for-kafka
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/version: "CURRENT-VERSION"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  type: ClusterIP
+  ports:
+    - port: 13133
+      targetPort: health
+      protocol: TCP
+      name: health
+  selector:
+    app.kubernetes.io/name: splunk-opentelemetry-collector-for-kafka
+    app.kubernetes.io/instance: release-name

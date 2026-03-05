@@ -1,0 +1,240 @@
+# Default values for splunk-opentelemetry-collector-for-kafka.
+
+# Collector image (Splunk OTel Collector - same distribution as SOC4Kafka binary)
+image:
+  repository: quay.io/signalfx/splunk-otel-collector
+  tag: "0.145.0"
+  pullPolicy: IfNotPresent
+
+# Replica count for the collector deployment
+replicaCount: 1
+
+# =============================================================================
+# SIMPLE MODE - Most users configure only this section
+# =============================================================================
+
+# Define multiple Kafka receivers easily
+# Authentication passwords can reference Kubernetes secrets:
+#   - Use a string for literal passwords or env var references (e.g., "${MY_PASSWORD}")
+#   - Use "secret" field to reference a Kubernetes secret (key is always "password")
+#
+# Example with secret reference:
+# kafkaReceivers:
+#   - name: main
+#     brokers:
+#       - "kafka-broker:9092"
+#     logs:
+#       topics:
+#         - "my-topic"
+#     auth:
+#       plain_text:
+#         username: "myuser"
+#         secret: "kafka-auth-secret"  # Kubernetes secret name (key is always "password")
+#       # Or for SASL:
+#       # sasl:
+#       #   username: "myuser"
+#       #   secret: "kafka-sasl-secret"
+#       # Or for Kerberos:
+#       # kerberos:
+#       #   secret: "kafka-kerberos-secret"
+kafkaReceivers: []
+
+# Define multiple Splunk HEC exporters easily
+splunkExporters: []
+# Each exporter can specify its own secret, or one will be automatically created.
+# If secret is not specified, a secret named "{release-name}-hec-{exporter-name}" will be created.
+# All secrets use the key "splunk-hec-token".
+#
+# Example:
+# splunkExporters:
+#   - name: primary
+#     secret: "my-primary-secret"  # Optional: use existing secret
+#     # If not specified, secret "{release-name}-hec-primary" will be auto-created
+#   - name: secondary
+#     secret: "my-secondary-secret"  # Different secret for this exporter
+# Define pipelines - maps receivers to exporters
+
+# Define pipelines - maps receivers to exporters
+pipelines: []
+
+# =============================================================================
+# COMPONENT DEFAULTS - Users can modify these
+# =============================================================================
+
+defaults:
+  extensions:
+    health_check:
+      endpoint: "0.0.0.0:13133"
+
+  receivers:
+    kafka:
+      logs:
+        encoding: text
+      group_id: "soc4kafka-main"
+  processors:
+    batch:
+      timeout: 5s
+      send_batch_size: 1000
+    resourcedetection:
+      detectors: ["system"]
+      system:
+        hostname_sources: ["os"]
+
+  exporters:
+    splunk_hec:
+      tls:
+        insecure_skip_verify: false
+      splunk_app_name: "soc4kafka"
+
+# =============================================================================
+# ADVANCED MODE - Full override capability
+# =============================================================================
+
+# Advanced users can provide raw OTel config that merges over everything
+configOverride: {}
+
+# Enable collection of collector's own logs
+# When enabled, collector logs will be written to files and stdout/stderr
+# Logs are stored in /var/log/otelcol directory (emptyDir volume)
+# When forwardToSplunk is enabled it also forwards logs to Splunk via filelog receiver
+collectorLogs:
+  enabled: false
+  level: info  # Log level: debug, info, warn, error
+  outputPaths:
+    - /var/log/otelcol/otel-collector.log
+    - stdout
+  errorOutputPaths:
+    - /var/log/otelcol/otel-collector-errors.log
+    - stderr
+  # Optional: size limit for the emptyDir volume (e.g., "1Gi", "500Mi")
+  # If not specified, no limit is set (uses node's available space)
+  sizeLimit: ""  # Example: "1Gi"
+  # Configuration for forwarding collector logs to Splunk
+  forwardToSplunk:
+    enabled: true  # When true, adds filelog receiver and pipeline to forward logs to Splunk
+    # Reference to an existing splunkExporter by name (uses it directly, no overrides)
+    exporter: ""  # Optional: name of splunkExporter to use (e.g., "primary")
+    # If not specified, uses the first splunkExporter
+  # File storage extension for checkpointing (prevents re-reading logs on restart)
+  fileStorage:
+    directory: /var/log/otelcol/checkpoint
+    createDirectory: true
+
+# Enable metrics collection (Prometheus scraping and hostmetrics)
+# When enabled, collects collector internal metrics and system metrics (CPU, memory, disk, network)
+# For advanced configuration, use configOverride
+collectorMetrics:
+  enabled: false
+  # Optional: Reference to an existing splunkExporter by name for metrics (uses it directly)
+  # If not specified, uses the first splunkExporter
+  exporter: ""  # Optional: name of splunkExporter to use (e.g., "primary")
+
+# Resource limits and requests
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 100m
+    memory: 256Mi
+
+# Container security context (image runs as splunk-otel-collector uid 999)
+securityContext:
+  runAsNonRoot: true
+  runAsUser: 999
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: false
+  capabilities:
+    drop: [ "ALL" ]
+
+# Pod security context
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 999
+  fsGroup: 999
+
+# Service account
+serviceAccount:
+  create: true
+  name: ""
+  annotations: { }
+
+# Pod annotations and labels
+podAnnotations: { }
+podLabels: { }
+
+# Deployment strategy
+strategy:
+  type: RollingUpdate
+  rollingUpdate:
+    maxSurge: 25%
+    maxUnavailable: 25%
+
+# Termination grace period (important for Kafka consumers to commit offsets gracefully)
+terminationGracePeriodSeconds: 30
+
+# Node selector / tolerations for scheduling (e.g. MicroK8s nodes)
+nodeSelector: { }
+tolerations: [ ]
+affinity: { }
+
+# Extra environment variables for the collector container
+extraEnv: [ ]
+# extraEnv:
+#   - name: OTEL_LOG_LEVEL
+#     value: "debug"
+
+# Service configuration (optional - probes work without it, but useful for monitoring/debugging)
+service:
+  enabled: true  # Set to false if you don't need external access to health endpoint
+  type: ClusterIP
+  port: 13133
+
+# Liveness, readiness, and startup probes
+livenessProbe:
+  httpGet:
+    path: /
+    port: 13133
+  initialDelaySeconds: 30
+  periodSeconds: 10
+  timeoutSeconds: 5
+readinessProbe:
+  httpGet:
+    path: /
+    port: 13133
+  initialDelaySeconds: 5
+  periodSeconds: 10
+  timeoutSeconds: 5
+startupProbe:
+  httpGet:
+    path: /
+    port: 13133
+  initialDelaySeconds: 10
+  periodSeconds: 10
+  timeoutSeconds: 5
+  failureThreshold: 30
+
+# Image pull secrets for private registries
+imagePullSecrets: [ ]
+# imagePullSecrets:
+#   - name: regcred
+
+# Enable persistence for collector state (optional - not required for basic Kafka consumer)
+persistence:
+  enabled: false
+  # storageClass: ""  # Use cluster default
+  size: 1Gi  # Required when persistence.enabled is true
+
+# Horizontal Pod Autoscaler (disable to use fixed replicaCount)
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 70
+  targetMemoryUtilizationPercentage: 80
+
+# Pod Disruption Budget for high availability
+podDisruptionBudget:
+  enabled: false
+  minAvailable: 1
+  # maxUnavailable: 1  # Alternative to minAvailable
