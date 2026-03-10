@@ -146,7 +146,8 @@ service:
         - {{ $receiverName }}
         {{- end }}
       processors:
-        {{- toYaml .processors | nindent 8 }}
+        {{- $procs := .processors | default $.Values.defaults.pipelineProcessors | default (list "batch" "resourcedetection") }}
+        {{- toYaml $procs | nindent 8 }}
       exporters:
         {{- range .exporters }}
         {{- $exporterName := ternary "splunk_hec" (printf "splunk_hec/%s" .) (eq . "primary") }}

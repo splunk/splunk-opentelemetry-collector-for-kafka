@@ -48,6 +48,8 @@ splunkExporters:
 
 Connect receivers to exporters. See the [SOC4Kafka design documentation](../../../docs/otel_design.md) for details.
 
+**Chart-specific:** You can omit `processors`; the chart then uses `defaults.pipelineProcessors` (default: `["batch", "resourcedetection"]`). Override per pipeline or change the default in `values.yaml`.
+
 ```yaml
 pipelines:
   - name: main-logs
@@ -56,6 +58,7 @@ pipelines:
       - main  # Must match a receiver name from kafkaReceivers
     exporters:
       - primary  # Must match an exporter name from splunkExporters
+    # processors is optional; defaults to ["batch", "resourcedetection"] (see defaults.pipelineProcessors)
     processors:
       - batch
       - resourcedetection

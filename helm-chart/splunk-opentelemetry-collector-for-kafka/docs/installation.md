@@ -30,9 +30,7 @@ pipelines:
       - main
     exporters:
       - primary
-    processors:
-      - batch
-      - resourcedetection
+    # processors optional; defaults to ["batch", "resourcedetection"] (defaults.pipelineProcessors in values.yaml)
 ```
 
 2. Add helm repository (TBD)

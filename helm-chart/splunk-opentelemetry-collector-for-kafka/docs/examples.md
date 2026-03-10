@@ -28,9 +28,7 @@ pipelines:
       - main
     exporters:
       - primary
-    processors:
-      - batch
-      - resourcedetection
+    # processors omitted: defaults to ["batch", "resourcedetection"]
 ```
 
 ## Multiple Topics to Multiple Indexes
@@ -89,9 +87,6 @@ pipelines:
       - error-logs
     exporters:
       - error-index
-    processors:
-      - batch
-      - resourcedetection
 ```
 
 ## Authenticated Kafka with Secret Management
@@ -126,9 +121,6 @@ pipelines:
       - secure-main
     exporters:
       - primary
-    processors:
-      - batch
-      - resourcedetection
 ```
 
 ## With Collector Logs Enabled
@@ -161,9 +153,6 @@ pipelines:
       - main
     exporters:
       - primary
-    processors:
-      - batch
-      - resourcedetection
 
 # Enable collector's own logs and forward to Splunk
 collectorLogs:
@@ -229,9 +218,6 @@ pipelines:
       - main
     exporters:
       - primary
-    processors:
-      - batch
-      - resourcedetection
 
 # Enable metrics collection
 collectorMetrics:

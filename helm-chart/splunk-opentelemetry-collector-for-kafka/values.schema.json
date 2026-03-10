@@ -110,7 +110,7 @@
             "items": {
               "type": "string"
             },
-            "description": "Optional list of processors (e.g., [\"batch\", \"resourcedetection\"])"
+            "description": "Optional list of processor names. If omitted, defaults.pipelineProcessors is used (default: [\"batch\", \"resourcedetection\"])"
           }
         }
       }

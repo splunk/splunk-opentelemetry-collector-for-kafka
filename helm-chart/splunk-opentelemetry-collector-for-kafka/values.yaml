@@ -71,6 +71,10 @@ defaults:
       logs:
         encoding: text
       group_id: "soc4kafka-main"
+  # Default processor names applied to each pipeline when processors are not specified
+  pipelineProcessors:
+    - batch
+    - resourcedetection
   processors:
     batch:
       timeout: 5s
