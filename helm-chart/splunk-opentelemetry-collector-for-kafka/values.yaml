@@ -163,7 +163,14 @@ serviceAccount:
 podAnnotations: { }
 podLabels: { }
 
-# Deployment strategy
+# Deployment strategy (default: RollingUpdate with 25% maxSurge/maxUnavailable).
+# During a rollout (e.g. after changing collector config such as index or pipeline),
+# pods are updated in waves. Until all pods are updated, some will run with the old
+# config and some with the new one—so events from different Kafka partitions may
+# be indexed or processed differently during the rollout. Using 25% keeps each wave
+# smaller, so fewer partitions are affected at once. To avoid this inconsistency
+# entirely, you can set strategy.type to Recreate (all pods restart at once; expect
+# a brief period with no ingestion until new pods are ready).
 strategy:
   type: RollingUpdate
   rollingUpdate:

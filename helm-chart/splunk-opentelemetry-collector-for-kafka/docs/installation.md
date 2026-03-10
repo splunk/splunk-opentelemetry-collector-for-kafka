@@ -57,6 +57,14 @@ helm upgrade soc4kafka splunk-opentelemetry-collector-for-kafka/splunk-opentelem
 
 **Best Practice:** Always use values files (`-f values.yaml`) instead of `--set` flags. This makes your configuration version-controlled, easier to maintain, and reusable across environments.
 
+### Rolling updates (default behaviour)
+
+By default, the chart uses a **rolling update** strategy (`maxSurge: 25%`, `maxUnavailable: 25%`). Pods are updated in waves so that the majority stay running during an upgrade.
+
+**Important:** When you change collector configuration (for example, index, pipeline, or Splunk HEC settings) and run `helm upgrade`, only a subset of pods receive the new config at a time. Until the rollout finishes, some pods still run with the old config. As a result, events from different Kafka partitions can be indexed or processed differently during the rollout (e.g. different index or sourcetype). With 25%, fewer partitions are affected in each wave. After all pods are updated, behaviour is consistent again.
+
+If you need strictly sequential or consistent indexing during config changes, you can set `strategy.type: Recreate` in your values. That restarts all pods at once; expect a short period with no ingestion until the new pods are ready.
+
 ## Uninstallation
 
 ```bash
