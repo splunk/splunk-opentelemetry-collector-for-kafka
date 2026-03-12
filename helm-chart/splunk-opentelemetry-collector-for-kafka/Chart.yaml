@@ -15,4 +15,4 @@ maintainers:
     url: https://github.com/splunk/splunk-opentelemetry-collector-for-kafka
 sources:
   - https://github.com/splunk/splunk-opentelemetry-collector-for-kafka
-kubeVersion: ">=1.19.0-0"
+kubeVersion: ">=1.23.0-0"
