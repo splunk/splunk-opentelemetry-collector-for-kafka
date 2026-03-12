@@ -45,6 +45,14 @@ helm upgrade --install soc4kafka splunk-opentelemetry-collector-for-kafka/splunk
 - [Secret Management](docs/secrets.md) - Managing secrets for Splunk HEC tokens and Kafka authentication
 - [Troubleshooting](docs/troubleshooting.md) - Common issues and solutions
 
+## Platform compatibility
+
+This Helm chart uses **only standard Kubernetes APIs** (no vendor-specific CRDs or APIs) and is designed to be **portable** across distributions. It may require **configuration adjustments** for your environment.
+
+The chart requires **Kubernetes 1.23 or later** (see `kubeVersion` in Chart.yaml).
+
+We have tested the chart on a **limited set of platforms** only. If the chart does not work in your environment, we encourage you to **open an issue** in the project repository so we can track compatibility and consider improvements.
+
 ## Features
 
 - **Simple Configuration** - Define Kafka receivers, Splunk exporters, and pipelines in `values.yaml`

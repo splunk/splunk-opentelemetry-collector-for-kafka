@@ -109,7 +109,7 @@ collectorLogs:
 - Logs are written to files and stdout/stderr
 - Logs are automatically forwarded to Splunk via `filelog` receiver
 - `file_storage` extension tracks read position to prevent re-reading logs on restart
-- Internal logs are sent to a separate Splunk index for easier analysis
+- Internal logs are sent using the referenced Splunk exporter (by default the first one); you can use a dedicated exporter to send them to a separate index for easier analysis
 - Uses the first `splunkExporter`'s endpoint and secret by default (can be overridden)
 
 **Note:** Log files are stored in an `emptyDir` volume, which means they are ephemeral and will be lost when the pod is deleted. However, logs are forwarded to Splunk, so they are preserved there.
