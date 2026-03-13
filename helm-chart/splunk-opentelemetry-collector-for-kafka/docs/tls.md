@@ -14,7 +14,7 @@ Use a custom CA certificate to verify the Kafka broker when the broker uses a pr
 kafkaReceivers:
   - name: third
     brokers:
-      - "ec2-52-36-203-237.us-west-2.compute.amazonaws.com:9093"
+      - "kafka-broker-1:9093"
     logs:
       topics:
         - "perf3"
@@ -34,6 +34,13 @@ kafkaReceivers:
 |--------|------|-------------|
 | `insecure_skip_verify` | boolean | When `true`, skips verification of the broker's TLS certificate. Use only for development or testing. Default: `false`. |
 | `ca_pem` | string | PEM-encoded CA certificate(s) used to verify the broker's certificate. Use for brokers signed by a private or corporate CA. |
+| `ca_file` | string | Path to the CA cert. For a client this verifies the server certificate. Use with a mounted secret when you prefer file path over inline `ca_pem`. |
+| `cert_file` | string | Path to the TLS cert to use for TLS required connections. Should only be used if `insecure` is set to false. |
+| `cert_pem` | string | Alternative to `cert_file`. Provide the certificate contents as a string instead of a filepath. |
+| `key_file` | string | Path to the TLS key to use for TLS required connections. Should only be used if `insecure` is set to false. |
+| `key_pem` | string | Alternative to `key_file`. Provide the key contents as a string instead of a filepath. |
+
+Additional TLS settings (e.g. `insecure`, `curve_preferences`, `include_system_ca_certs_pool`, `min_version`, `max_version`, `cipher_suites`, `reload_interval`; for exporters also `server_name_override`) are supported by the collector and passed through to the config. For the full reference, see the [OpenTelemetry Collector TLS Configuration Settings](https://github.com/open-telemetry/opentelemetry-collector/blob/main/config/configtls/README.md).
 
 ### Security recommendations
 
@@ -64,7 +71,7 @@ You can mount a Secret containing the CA certificate using `extraVolumes` and `e
 
    kafkaReceivers:
      - name: main
-       brokers: ["kafka:9093"]
+       brokers: ["kafka-broker-1:9093"]
        tls:
          insecure_skip_verify: false
          ca_file: /etc/ssl/kafka/ca.pem
