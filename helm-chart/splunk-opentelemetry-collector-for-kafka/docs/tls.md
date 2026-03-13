@@ -40,7 +40,7 @@ kafkaReceivers:
 | `key_file` | string | Path to the TLS key to use for TLS required connections. Should only be used if `insecure` is set to false. |
 | `key_pem` | string | Alternative to `key_file`. Provide the key contents as a string instead of a filepath. |
 
-Additional TLS settings (e.g. `insecure`, `curve_preferences`, `include_system_ca_certs_pool`, `min_version`, `max_version`, `cipher_suites`, `reload_interval`; for exporters also `server_name_override`) are supported by the collector and passed through to the config. For the full reference, see the [OpenTelemetry Collector TLS Configuration Settings](https://github.com/open-telemetry/opentelemetry-collector/blob/main/config/configtls/README.md).
+Additional TLS settings are supported by the collector and passed through to the config. For the full reference, see the [OpenTelemetry Collector TLS Configuration Settings](https://github.com/open-telemetry/opentelemetry-collector/blob/main/config/configtls/README.md).
 
 ### Security recommendations
 
@@ -80,16 +80,9 @@ You can mount a Secret containing the CA certificate using `extraVolumes` and `e
 
    Note: Secret keys are mounted as files; if your secret key is `ca.pem`, the path is `/<mountPath>/ca.pem`.
 
-### Using a CA from a secret (inline ca_pem)
-
-To avoid mounting a file, you can inject the CA PEM into the `ca_pem` field at deploy time:
-
-- **External Secrets / Sealed Secrets / Vault:** Store the CA in a secret and use your tooling to inject the secret value into the `ca_pem` field in your Helm values before or during `helm upgrade`.
-- **CI/CD:** Have your pipeline read the CA from a secret store and write it into the values (or a generated values file) used for the release.
-
 ## Splunk HEC Exporter TLS
 
-The Splunk HEC exporter uses TLS when the `endpoint` URL uses `https://`. The **same `tls` options** as for Kafka receivers apply (see the [TLS options](#tls-options) table above): `insecure_skip_verify`, `ca_pem`, `ca_file`, and any other options supported by the collector are passed through.
+The Splunk HEC exporter uses TLS when the `endpoint` URL uses `https://`. The **same `tls` options** as for Kafka receivers apply (see the [TLS options](#tls-options) table above).
 
 Example with custom CA or relaxed verification:
 
@@ -99,7 +92,6 @@ splunkExporters:
     endpoint: "https://splunk-hec:8088/services/collector"
     token: "your-token"
     tls:
-      insecure_skip_verify: false   # Set true only for self-signed / dev
       # ca_pem: | ...               # Optional: PEM for private CA
       # ca_file: /etc/ssl/hec/ca.pem   # Optional: path if mounted via extraVolumes/extraVolumeMounts
 ```
