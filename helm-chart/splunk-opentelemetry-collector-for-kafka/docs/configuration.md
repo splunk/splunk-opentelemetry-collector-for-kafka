@@ -24,6 +24,8 @@ kafkaReceivers:
 
 **Note:** Kafka authentication passwords (plain_text, SASL, or Kerberos) can reference existing Kubernetes secrets using the `secret` field. See [Secret Management](secrets.md) for details.
 
+**TLS:** For TLS-enabled Kafka brokers (e.g. port 9093), add a `tls` block with `insecure_skip_verify` and optionally `ca_pem` (PEM-encoded CA certificate). See [TLS Configuration](tls.md) for full details and examples.
+
 ### Splunk HEC Exporters
 
 Define one or more Splunk HEC exporters. All standard Splunk HEC exporter configuration options are supported. See the [SOC4Kafka design documentation](../../../docs/otel_design.md) for details.
@@ -43,6 +45,8 @@ splunkExporters:
 **Chart-specific:** The `name` field is required and used to reference the exporter in pipelines.
 
 **Note:** Instead of providing `token` directly, you can reference an existing Kubernetes secret using the `secret` field. See [Secret Management](secrets.md) for details.
+
+**TLS:** For HTTPS HEC endpoints, TLS verification can be controlled via the `tls.insecure_skip_verify` option. See [TLS Configuration](tls.md) for details.
 
 ### Pipelines
 
@@ -68,6 +72,7 @@ pipelines:
 
 See [values.yaml](../values.yaml) for all available configuration options. Key areas:
 
+- **TLS** ([tls.md](tls.md)): Configure TLS for Kafka receivers and Splunk HEC exporters (e.g. `ca_pem`, `insecure_skip_verify`)
 - **Component Defaults** (`defaults`): Override default OpenTelemetry component settings
 - **Config Override** (`configOverride`): Provide complete OpenTelemetry config override
 - **Resources** (`resources`): Set CPU and memory limits/requests

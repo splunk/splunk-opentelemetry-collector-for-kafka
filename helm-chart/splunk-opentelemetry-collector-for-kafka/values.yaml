@@ -37,6 +37,13 @@ replicaCount: 1
 #       # Or for Kerberos:
 #       # kerberos:
 #       #   secret: "kafka-kerberos-secret"
+#     # TLS for Kafka brokers (e.g. port 9093). See docs/tls.md.
+#     tls:
+#       insecure_skip_verify: false
+#       ca_pem: |
+#         -----BEGIN CERTIFICATE-----
+#         ...
+#         -----END CERTIFICATE-----
 kafkaReceivers: []
 
 # Define multiple Splunk HEC exporters easily
@@ -194,6 +201,20 @@ extraEnv: [ ]
 # extraEnv:
 #   - name: OTEL_LOG_LEVEL
 #     value: "debug"
+
+# Extra volumes and volume mounts for the collector container (e.g. mount Kafka CA from a secret for tls.ca_file).
+# extraVolumes are defined at the pod level; extraVolumeMounts are mounted into the collector container.
+extraVolumes: [ ]
+extraVolumeMounts: [ ]
+# Example: mount a secret containing Kafka CA certificate for TLS (use with tls.ca_file in kafkaReceivers):
+# extraVolumes:
+#   - name: kafka-ca
+#     secret:
+#       secretName: kafka-ca
+# extraVolumeMounts:
+#   - name: kafka-ca
+#     mountPath: /etc/ssl/kafka
+#     readOnly: true
 
 # Service configuration (optional - probes work without it, but useful for monitoring/debugging)
 service:

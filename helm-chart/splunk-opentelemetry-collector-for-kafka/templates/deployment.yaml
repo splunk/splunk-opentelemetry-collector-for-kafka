@@ -154,6 +154,9 @@ spec:
             - name: collector-logs
               mountPath: /var/log/otelcol
             {{- end }}
+            {{- with .Values.extraVolumeMounts }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
       volumes:
         - name: config
           configMap:
@@ -169,6 +172,9 @@ spec:
             {{- if .Values.collectorLogs.sizeLimit }}
             sizeLimit: {{ .Values.collectorLogs.sizeLimit }}
             {{- end }}
+        {{- end }}
+        {{- with .Values.extraVolumes }}
+        {{- toYaml . | nindent 8 }}
         {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
