@@ -1,6 +1,6 @@
 # TLS Configuration
 
-This document describes how to configure TLS for the Splunk OpenTelemetry Collector for Kafka, including connecting to TLS-enabled Kafka brokers and (optionally) securing the connection to Splunk HEC.
+This document describes how to configure TLS for **Kafka receivers** (e.g. port 9093) and **Splunk HEC exporters**. Both use the same `tls` options; the options table and patterns below apply to each.
 
 ## Kafka Receiver TLS
 
@@ -87,9 +87,11 @@ To avoid mounting a file, you can inject the CA PEM into the `ca_pem` field at d
 - **External Secrets / Sealed Secrets / Vault:** Store the CA in a secret and use your tooling to inject the secret value into the `ca_pem` field in your Helm values before or during `helm upgrade`.
 - **CI/CD:** Have your pipeline read the CA from a secret store and write it into the values (or a generated values file) used for the release.
 
-## Splunk HEC exporter TLS
+## Splunk HEC Exporter TLS
 
-The Splunk HEC exporter uses TLS when the `endpoint` URL scheme is `https://`. You can control certificate verification for the HEC endpoint:
+The Splunk HEC exporter uses TLS when the `endpoint` URL uses `https://`. The **same `tls` options** as for Kafka receivers apply (see the [TLS options](#tls-options) table above): `insecure_skip_verify`, `ca_pem`, `ca_file`, and any other options supported by the collector are passed through.
+
+Example with custom CA or relaxed verification:
 
 ```yaml
 splunkExporters:
@@ -97,11 +99,10 @@ splunkExporters:
     endpoint: "https://splunk-hec:8088/services/collector"
     token: "your-token"
     tls:
-      insecure_skip_verify: false
+      insecure_skip_verify: false   # Set true only for self-signed / dev
+      # ca_pem: | ...               # Optional: PEM for private CA
+      # ca_file: /etc/ssl/hec/ca.pem   # Optional: path if mounted via extraVolumes/extraVolumeMounts
 ```
-
-- **`insecure_skip_verify: false`** (default): The collector verifies the HEC server's certificate using the system trust store. Use this in production.
-- **`insecure_skip_verify: true`**: Skips certificate verification. Use only for development or when the HEC server uses a self-signed certificate and you cannot add its CA to the trust store.
 
 ## See also
 

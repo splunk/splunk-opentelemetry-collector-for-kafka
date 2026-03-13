@@ -46,7 +46,7 @@ splunkExporters:
 
 **Note:** Instead of providing `token` directly, you can reference an existing Kubernetes secret using the `secret` field. See [Secret Management](secrets.md) for details.
 
-**TLS:** For HTTPS HEC endpoints, TLS verification can be controlled via the `tls.insecure_skip_verify` option. See [TLS Configuration](tls.md) for details.
+**TLS:** Use `https://` in the endpoint for TLS. The same `tls` options as for Kafka apply (`insecure_skip_verify`, `ca_pem`, `ca_file`, etc.). See [TLS Configuration](tls.md).
 
 ### Pipelines
 
@@ -72,7 +72,7 @@ pipelines:
 
 See [values.yaml](../values.yaml) for all available configuration options. Key areas:
 
-- **TLS** ([tls.md](tls.md)): Configure TLS for Kafka receivers and Splunk HEC exporters (e.g. `ca_pem`, `insecure_skip_verify`)
+- **TLS** ([tls.md](tls.md)): Configure TLS for Kafka receivers and Splunk HEC exporters (same options: `ca_pem`, `ca_file`, `insecure_skip_verify`)
 - **Component Defaults** (`defaults`): Override default OpenTelemetry component settings
 - **Config Override** (`configOverride`): Provide complete OpenTelemetry config override
 - **Resources** (`resources`): Set CPU and memory limits/requests
