@@ -42,22 +42,37 @@ kafkaReceivers:
 
 Additional TLS settings are supported by the collector and passed through to the config. For the full reference, see the [OpenTelemetry Collector TLS Configuration Settings](https://github.com/open-telemetry/opentelemetry-collector/blob/main/config/configtls/README.md).
 
-### Security recommendations
+## Splunk HEC Exporter TLS
 
-- **Production:** Set `insecure_skip_verify: false` and provide the broker's CA via `ca_pem`. This ensures the collector only connects to brokers that present a certificate signed by your CA.
-- **Development/testing:** You may set `insecure_skip_verify: true` for self-signed or internal brokers. Do not use this in production, as it is vulnerable to man-in-the-middle attacks.
+The Splunk HEC exporter uses TLS when the `endpoint` URL uses `https://`. The **same `tls` options** as for Kafka receivers apply (see the [TLS options](#tls-options) table above).
 
-### Using a CA from a Kubernetes secret (file path)
+Example with custom CA or relaxed verification:
 
-You can mount a Secret containing the CA certificate using `extraVolumes` and `extraVolumeMounts` in your values, then reference it with `ca_file` in the Kafka receiver (if the receiver supports it):
+```yaml
+splunkExporters:
+  - name: primary
+    endpoint: "https://splunk-hec:8088/services/collector"
+    token: "your-token"
+    tls:
+      # ca_pem: | ...               # Optional: PEM for private CA
+      # ca_file: /etc/ssl/hec/ca.pem   # Optional: path if mounted via extraVolumes/extraVolumeMounts
+```
 
-1. Create a Secret with the CA certificate:
+## Using a CA from a Kubernetes secret (file path)
+
+You can mount a Secret containing the CA certificate using `extraVolumes` and `extraVolumeMounts` in your values, then reference it with `tls.ca_file` in the Kafka receiver or Splunk HEC exporter. The same approach works for **`cert_file`** and **`key_file`** (client certificate and key for mTLS): put the cert and key in the secret, mount the secret, and set `tls.cert_file` and `tls.key_file` to the paths inside the container.
+
+1. Create a Secret with the CA certificate (and optionally client cert/key; use a name that matches your use case, e.g. `kafka-ca` or `hec-ca`):
 
    ```bash
    kubectl create secret generic kafka-ca --from-file=ca.pem=/path/to/ca.pem
+   # or for HEC:
+   kubectl create secret generic hec-ca --from-file=ca.pem=/path/to/hec-ca.pem
    ```
 
-2. In your Helm values, add the volume and mount, and set `tls.ca_file` to the path inside the container:
+2. In your Helm values, add the volume and mount, and set `tls.ca_file` to the path inside the container.
+
+   **Kafka receiver example:**
 
    ```yaml
    extraVolumes:
@@ -78,23 +93,35 @@ You can mount a Secret containing the CA certificate using `extraVolumes` and `e
        # ... logs, group_id, etc.
    ```
 
-   Note: Secret keys are mounted as files; if your secret key is `ca.pem`, the path is `/<mountPath>/ca.pem`.
+   **Splunk HEC exporter example:**
 
-## Splunk HEC Exporter TLS
+   ```yaml
+   extraVolumes:
+     - name: hec-ca
+       secret:
+         secretName: hec-ca
+   extraVolumeMounts:
+     - name: hec-ca
+       mountPath: /etc/ssl/hec
+       readOnly: true
 
-The Splunk HEC exporter uses TLS when the `endpoint` URL uses `https://`. The **same `tls` options** as for Kafka receivers apply (see the [TLS options](#tls-options) table above).
+   splunkExporters:
+     - name: primary
+       endpoint: "https://splunk-hec:8088/services/collector"
+       token: "your-token"
+       tls:
+         insecure_skip_verify: false
+         ca_file: /etc/ssl/hec/ca.pem
+   ```
 
-Example with custom CA or relaxed verification:
+   Secret keys are mounted as files; if your secret key is `ca.pem`, the path is `/<mountPath>/ca.pem`. The same volume can hold multiple files (e.g. `ca.pem`, `cert.pem`, `key.pem`); reference each in `tls` as `ca_file`, `cert_file`, and `key_file`. You can define both Kafka and HEC volumes/mounts in the same values file if you need custom CAs (or client certs) for each.
 
-```yaml
-splunkExporters:
-  - name: primary
-    endpoint: "https://splunk-hec:8088/services/collector"
-    token: "your-token"
-    tls:
-      # ca_pem: | ...               # Optional: PEM for private CA
-      # ca_file: /etc/ssl/hec/ca.pem   # Optional: path if mounted via extraVolumes/extraVolumeMounts
-```
+
+## Security recommendations
+
+- **Production:** Set `insecure_skip_verify: false` and provide the broker's CA via `ca_pem`. This ensures the collector only connects to brokers that present a certificate signed by your CA.
+- **Development/testing:** You may set `insecure_skip_verify: true` for self-signed or internal brokers. Do not use this in production, as it is vulnerable to man-in-the-middle attacks.
+
 
 ## See also
 
