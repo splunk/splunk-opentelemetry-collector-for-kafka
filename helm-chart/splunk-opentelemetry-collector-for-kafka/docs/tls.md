@@ -90,7 +90,6 @@ You can mount a Secret containing the CA certificate using `extraVolumes` and `e
        tls:
          insecure_skip_verify: false
          ca_file: /etc/ssl/kafka/ca.pem
-       # ... logs, group_id, etc.
    ```
 
    **Splunk HEC exporter example:**
@@ -119,8 +118,7 @@ You can mount a Secret containing the CA certificate using `extraVolumes` and `e
 
 ## Security recommendations
 
-- **Production:** Set `insecure_skip_verify: false` so the server certificate is verified. When the broker uses a private or corporate CA, provide that CA via `ca_pem` or `ca_file` so the collector only connects to brokers whose certificate is signed by your CA.
-- **Development/testing:** You may set `insecure_skip_verify: true` for self-signed or internal brokers. Do not use this in production, as it is vulnerable to man-in-the-middle attacks.
+You may set `insecure_skip_verify: true` for self-signed or internal brokers. Do not use this in production, as it is vulnerable to man-in-the-middle attacks.
 
 
 ## See also
