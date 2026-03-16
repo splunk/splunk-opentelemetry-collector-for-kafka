@@ -63,7 +63,7 @@ The full documentation for the processor can be found at [this link](https://git
 transform:
    error_mode: ignore
    log_statements:
-     - set(log.attributes["extracted_ts"], ExtractPatterns(log.body, "<timestamp_tegex>"))
+     - set(log.attributes["extracted_ts"], ExtractPatterns(log.body, "<timestamp_regex>"))
      - set(log.time, Time(log.attributes["extracted_ts"]["timestamp"], "<format>", "<timezone>"))
      - delete_key(log.attributes, "extracted_ts")
 ```
