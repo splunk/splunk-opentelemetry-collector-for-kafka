@@ -103,7 +103,9 @@ kafkaReceivers:
         - "perf3"
     group_id: "soc4kafka-main3"
     tls:
-      insecure_skip_verify: true   # Use false in production; provide ca_pem for broker CA
+      insecure_skip_verify: true   # Use false in production;
+      
+      # provide ca_pem for broker CA
       ca_pem: |
         -----BEGIN CERTIFICATE-----
         ...
