@@ -33,7 +33,11 @@ pipelines:
     # processors optional; defaults to ["batch", "resourcedetection"] (defaults.pipelineProcessors in values.yaml)
 ```
 
-2. Add helm repository (TBD)
+2. Add helm repository:
+
+```bash
+helm repo add splunk-opentelemetry-collector-for-kafka https://splunk.github.io/splunk-opentelemetry-collector-for-kafka
+```
 
 3. Install the chart:
 
