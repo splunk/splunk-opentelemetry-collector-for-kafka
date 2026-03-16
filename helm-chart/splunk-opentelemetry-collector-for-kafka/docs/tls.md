@@ -60,7 +60,7 @@ splunkExporters:
 
 ## Using a CA from a Kubernetes secret (file path)
 
-You can mount a Secret containing the CA certificate using `extraVolumes` and `extraVolumeMounts` in your values, then reference it with `tls.ca_file` in the Kafka receiver or Splunk HEC exporter. The same approach works for **`cert_file`** and **`key_file`** (client certificate and key for mTLS): put the cert and key in the secret, mount the secret, and set `tls.cert_file` and `tls.key_file` to the paths inside the container.
+You can mount a Secret containing the CA certificate using `extraVolumes` and `extraVolumeMounts` in your values, then reference it with `tls.ca_file` in the Kafka receiver or Splunk HEC exporter. The same approach works for **`cert_file`** and **`key_file`**.
 
 1. Create a Secret with the CA certificate (and optionally client cert/key; use a name that matches your use case, e.g. `kafka-ca` or `hec-ca`):
 
@@ -114,12 +114,12 @@ You can mount a Secret containing the CA certificate using `extraVolumes` and `e
          ca_file: /etc/ssl/hec/ca.pem
    ```
 
-   Secret keys are mounted as files; if your secret key is `ca.pem`, the path is `/<mountPath>/ca.pem`. The same volume can hold multiple files (e.g. `ca.pem`, `cert.pem`, `key.pem`); reference each in `tls` as `ca_file`, `cert_file`, and `key_file`. You can define both Kafka and HEC volumes/mounts in the same values file if you need custom CAs (or client certs) for each.
+   Secret keys are mounted as files; if your secret key is `ca.pem`, the path is `/<mountPath>/ca.pem`. The same volume can hold multiple files (e.g. `ca.pem`, `cert.pem`, `key.pem`); reference each in `tls` as `ca_file`, `cert_file`, and `key_file`.
 
 
 ## Security recommendations
 
-- **Production:** Set `insecure_skip_verify: false` and provide the broker's CA via `ca_pem`. This ensures the collector only connects to brokers that present a certificate signed by your CA.
+- **Production:** Set `insecure_skip_verify: false` so the server certificate is verified. When the broker uses a private or corporate CA, provide that CA via `ca_pem` or `ca_file` so the collector only connects to brokers whose certificate is signed by your CA.
 - **Development/testing:** You may set `insecure_skip_verify: true` for self-signed or internal brokers. Do not use this in production, as it is vulnerable to man-in-the-middle attacks.
 
 
