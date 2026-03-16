@@ -14,20 +14,21 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      - name: Extract Version
-        id: get_version
-        run: |
-          # Extract version from the commit message (e.g., "Prepare release v0.145.0")
-          VERSION=$(echo "${{ github.event.head_commit.message }}" | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')
-          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+      - name: Run chart-releaser
+        uses: helm/chart-releaser-action@v1.7.0
+        with:
+          charts_dir: helm-chart
+        env:
+          CR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Create GitHub Release
+      - name: Set release notes
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          VERSION: ${{ steps.get_version.outputs.VERSION }}
         run: |
-          # Create the tag and release
-          gh release create "v$VERSION" \
-            --title "v$VERSION" \
-            --notes "This SOC4Kafka release adopts [the Splunk OpenTelemetry Collector v$VERSION](https://github.com/signalfx/splunk-otel-collector/releases/tag/v$VERSION)"
+          VERSION=$(echo "${{ github.event.head_commit.message }}" | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')
+          RELEASE_TAG="splunk-opentelemetry-collector-for-kafka-${VERSION}"
+          gh release edit "$RELEASE_TAG" \
+            --notes "This SOC4Kafka release adopts [the Splunk OpenTelemetry Collector v${VERSION}](https://github.com/signalfx/splunk-otel-collector/releases/tag/v${VERSION})"
