@@ -23,7 +23,6 @@ Splunk OTel Collector for Kafka lets you subscribe to a Kafka topic and stream t
 
 Not supported features which are available in previous version of Splunk Connect for Kafka but are not available in SOC4Kafka collector:
 - Acknowledgment support - Not supported
-- Load balancing - Not supported
 - Protobuf encoding - Not supported
 
 ## How to start with SOC4Kafka?
@@ -176,7 +175,11 @@ You can unlock a range of powerful features by adjusting the configuration, such
 
 ## Scaling 
 
-For scaling check [this guide](docs/scaling.md).
+SOC4Kafka supports horizontal scaling, allowing you to run multiple collector instances to handle increased Kafka message throughput. For more details check [this guide](docs/scaling.md).
+
+## Load Balancing
+
+SOC4Kafka supports load balancing across multiple collector instances, distributing the Kafka message processing workload evenly to improve reliability and performance. For more details check [this guide](docs/loadbalancing.md).
 
 ## Migration 
 

@@ -2,8 +2,11 @@
 
 Welcome to the Quickstart Guide! This guide will help you get up and running with SOC4Kafka in just a few simple steps.
 
+> **Note:** This guide covers the setup of a simple, basic configuration to get you started quickly. Once the `values.yaml` file is generated, it can be further adjusted and customized to suit your specific needs. For more advanced configuration options, please refer to the [documentation](../docs).
+
 ### Prerequisites
 **NOTE:** This guide is applicable for Linux and macOS systems. Windows is not supported.
+
 
 
 Before you begin, ensure you have the following prerequisites in place:
