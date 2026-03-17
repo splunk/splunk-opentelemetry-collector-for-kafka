@@ -32,6 +32,6 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           VERSION=$(echo "${{ github.event.head_commit.message }}" | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')
-          RELEASE_TAG="splunk-opentelemetry-collector-for-kafka-${VERSION}"
+          RELEASE_TAG="v$VERSION"
           gh release edit "$RELEASE_TAG" \
             --notes "This SOC4Kafka release adopts [the Splunk OpenTelemetry Collector v${VERSION}](https://github.com/signalfx/splunk-otel-collector/releases/tag/v${VERSION})"
