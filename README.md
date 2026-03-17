@@ -27,7 +27,12 @@ Not supported features which are available in previous version of Splunk Connect
 - Protobuf encoding - Not supported
 
 ## How to start with SOC4Kafka?
-Follow the steps below to get started with SOC4Kafka. Or check our [Quickstart Guide](docs/quickstart_guide.md) for an automated installation using Ansible.
+
+Choose an installation method that fits your environment:
+
+- **Kubernetes (Helm):** Use the [Helm chart](helm-chart/splunk-opentelemetry-collector-for-kafka/README.md) to deploy SOC4Kafka on Kubernetes. See the chart [Installation Guide](helm-chart/splunk-opentelemetry-collector-for-kafka/docs/installation.md) for install and upgrade steps.
+- **Automated (Ansible):** See the [Quickstart Guide](docs/quickstart_guide.md) for automated installation.
+- **Manual:** Follow the steps below to run the collector from a downloaded package and config file.
 
 ### Download Splunk OTel Collector package
 
