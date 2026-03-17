@@ -26,6 +26,7 @@ jobs:
           charts_dir: helm-chart
         env:
           CR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CR_RELEASE_NAME_TEMPLATE: "v{{ .Version }}"
 
       - name: Set release notes
         env:
