@@ -17,18 +17,22 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Configure Git
+        run: git config user.name "$GITHUB_ACTOR" && git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+
       - name: Run chart-releaser
         uses: helm/chart-releaser-action@v1.7.0
         with:
           charts_dir: helm-chart
         env:
           CR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CR_RELEASE_NAME_TEMPLATE: "v{{ .Version }}"
 
       - name: Set release notes
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           VERSION=$(echo "${{ github.event.head_commit.message }}" | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')
-          RELEASE_TAG="splunk-opentelemetry-collector-for-kafka-${VERSION}"
+          RELEASE_TAG="v$VERSION"
           gh release edit "$RELEASE_TAG" \
             --notes "This SOC4Kafka release adopts [the Splunk OpenTelemetry Collector v${VERSION}](https://github.com/signalfx/splunk-otel-collector/releases/tag/v${VERSION})"
