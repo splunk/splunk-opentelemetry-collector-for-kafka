@@ -89,6 +89,48 @@ pipelines:
       - error-index
 ```
 
+## Kafka with TLS (e.g. port 9093)
+
+When connecting to TLS-enabled Kafka brokers, add a `tls` block. Use `ca_pem` for a custom CA and set `insecure_skip_verify` only for development:
+
+```yaml
+kafkaReceivers:
+  - name: third
+    brokers:
+      - "secure-kafka:9093"
+    logs:
+      topics:
+        - "perf3"
+    group_id: "soc4kafka-main3"
+    tls:
+      insecure_skip_verify: true   # Use false in production;
+      
+      # provide ca_pem for broker CA
+      ca_pem: |
+        -----BEGIN CERTIFICATE-----
+        ...
+        G8jotQpS1QbFzo8o3fRN/xQ=
+        -----END CERTIFICATE-----
+
+splunkExporters:
+  - name: primary
+    endpoint: "https://splunk:8088/services/collector"
+    secret: "splunk-hec-secret"
+    source: "kafka"
+    sourcetype: "otel:logs"
+    index: "main"
+
+pipelines:
+  - name: logs
+    type: logs
+    receivers:
+      - third
+    exporters:
+      - primary
+```
+
+See [TLS Configuration](tls.md) for all options and security recommendations.
+
 ## Authenticated Kafka with Secret Management
 
 ```yaml

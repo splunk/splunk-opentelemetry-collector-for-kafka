@@ -27,6 +27,10 @@
           "group_id": {
             "type": "string",
             "description": "Kafka consumer group ID"
+          },
+          "tls": {
+            "type": "object",
+            "description": "TLS configuration for Kafka broker connection (e.g. when using port 9093). Passed through to the receiver; common options include insecure_skip_verify, ca_pem, ca_file. See docs/tls.md."
           }
         }
       }

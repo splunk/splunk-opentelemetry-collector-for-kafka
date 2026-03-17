@@ -41,6 +41,7 @@ helm upgrade --install soc4kafka splunk-opentelemetry-collector-for-kafka/splunk
 
 - [Installation Guide](docs/installation.md) - How to install and upgrade the chart
 - [Configuration](docs/configuration.md) - Detailed configuration options
+- [TLS Configuration](docs/tls.md) - TLS for Kafka receivers and Splunk HEC exporters
 - [Examples](docs/examples.md) - Example configurations for common scenarios
 - [Secret Management](docs/secrets.md) - Managing secrets for Splunk HEC tokens and Kafka authentication
 - [Troubleshooting](docs/troubleshooting.md) - Common issues and solutions
