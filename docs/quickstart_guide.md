@@ -5,7 +5,7 @@ Welcome to the Quickstart Guide! This guide will help you get up and running wit
 > **Note:** This guide covers the setup of a simple, basic configuration to get you started quickly. Once the `values.yaml` file is generated, it can be further adjusted and customized to suit your specific needs. For more advanced configuration options, please refer to the [documentation](../docs).
 
 ### Prerequisites
-**NOTE:** This guide is applicable for Linux and macOS systems. Windows is not supported.
+> **NOTE:** This guide is applicable for Linux and macOS systems. Windows is not supported.
 
 
 

@@ -9,7 +9,7 @@ Splunk Connect for Kafka [(kafka-connect-splunk)](https://github.com/splunk/kafk
    - Tested with following versions: 3.7.0, 3.8.0, 3.9.0, 4.0.0
 2. A Splunk environment of version 9.x and above, configured with valid [HTTP Event Collector (HEC)](https://dev.splunk.com/enterprise/docs/devtools/httpeventcollector/) token.
 
-NOTE: HEC Acknowledgements are not supported in SOC4Kafka
+> **NOTE:** HEC Acknowledgements are not supported in SOC4Kafka
 
 ## Support technologies
 
@@ -150,7 +150,7 @@ To run SOC4Kafka Connect, use the base package along with a completed configurat
 ./<otel_package> --config <config_file>
 ```
 
-**NOTE**: Ensure the file has executable permissions before running the command. On Linux-based systems you can add executable permissions using the following command:
+> **NOTE**: Ensure the file has executable permissions before running the command. On Linux-based systems you can add executable permissions using the following command:
 
 ```commandline
 chmod a+x <otel_package>
