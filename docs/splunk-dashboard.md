@@ -37,7 +37,7 @@ Make sure that for the last two charts, the appropriate topic is selected for ea
 
 ### CPU, Memory, Disk, Network
 
-The next four tabs present data associated with the system metrics of machines running SOCK4Kafka instances.
+The next four tabs present data associated with the system metrics of machines running SOC4Kafka instances.
 
 The first one, **CPU**, includes: the number of CPU logical cores, process CPU utilization, and system CPU utilization. Please note that you can choose which types of tasks should be included in data statistics. The default is system and CPU mode, but if you are interested in other tasks, you can select them here.
 
@@ -184,7 +184,7 @@ service:
 
 ### Create Dashboard in Splunk
 
-**NOTE:** This dashboard is available only for Splunk version 9.4.0 and higher
+> **NOTE:** This dashboard is available only for Splunk version 9.4.0 and higher
 
 1. In Splunk, open **Search & Reporting -> Dashboards**
 2. Click on **Create New Dashboard** and create a new dashboard. Make sure to choose **Dashboard Studio** and **Grid** options.
