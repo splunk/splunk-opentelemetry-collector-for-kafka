@@ -52,6 +52,8 @@ spec:
           containerPort: 8089
           protocol: TCP
       env:
+        - name: SPLUNK_GENERAL_TERMS
+          value: --accept-sgt-current-at-splunk-com
         - name: SPLUNK_START_ARGS
           value: --accept-license
         - name: SPLUNK_USER
