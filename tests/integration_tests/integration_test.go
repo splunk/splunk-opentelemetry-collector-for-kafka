@@ -63,8 +63,8 @@ func testMultipleTopics(t *testing.T) {
 	common.SendMessageToKafkaTopic(t, topic1, event1)
 	common.SendMessageToKafkaTopic(t, topic2, event2)
 
-	searchQuery := fmt.Sprintf("%sindex=%s sourcetype=%s source=%s",
-		common.EventSearchQueryString, index, sourcetype, source)
+	searchQuery := fmt.Sprintf("%sindex=%s sourcetype=%s source=%s (\"%s\" OR \"%s\")",
+		common.EventSearchQueryString, index, sourcetype, source, event1, event2)
 	startTime := "-5m@m"
 
 	require.Eventually(t, func() bool {

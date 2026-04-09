@@ -22,6 +22,7 @@ permissions:
 env:
   GO_VERSION: 1.24.4
   SEGMENT_DOWNLOAD_TIMEOUT_MINS: 2
+  MICROK8S_CHANNEL: "1.34/stable"
   CI_SPLUNK_VERSION: "10.0.0"
   CI_SPLUNK_HOST: localhost
   CI_SPLUNK_USERNAME: admin
@@ -51,7 +52,7 @@ jobs:
       # -- microk8s --------------------------------------------------------
       - name: Install microk8s
         run: |
-          sudo snap install microk8s --classic --channel=1.34/stable
+          sudo snap install microk8s --classic --channel=${{ env.MICROK8S_CHANNEL }}
           sudo microk8s status --wait-ready
           sudo microk8s enable dns helm3
 
@@ -67,7 +68,7 @@ jobs:
       # -- Kafka -----------------------------------------------------------
       - name: Deploy Kafka
         run: |
-          sed -i "s/__NODE_IP__/${NODE_IP}/g" ci_scripts/k8s-kafka.yml
+          sed -i "s|__NODE_IP__|${NODE_IP}|g" ci_scripts/k8s-kafka.yml
           sudo microk8s kubectl apply -f ci_scripts/k8s-kafka.yml
 
           echo "Waiting for Zookeeper..."
@@ -76,20 +77,20 @@ jobs:
           echo "Waiting for Kafka..."
           sudo microk8s kubectl wait --for=condition=Ready pod/kafka --timeout=120s
 
-          # Extra connectivity check from the host (hostNetwork)
+          # Connectivity check from the host (hostNetwork)
           for i in $(seq 1 30); do
             nc -z localhost 9092 && echo "Kafka is reachable on localhost:9092" && break
             echo "Waiting for Kafka to be reachable ($i/30)..."
             sleep 5
           done
+          nc -z localhost 9092 || { echo "ERROR: Kafka not reachable after 150s"; exit 1; }
 
       # -- Splunk ----------------------------------------------------------
       - name: Deploy Splunk
         run: |
-          # Substitute version and credentials into the manifest
-          sed -i "s|splunk/splunk:10.0.0|splunk/splunk:${CI_SPLUNK_VERSION}|g" ci_scripts/k8s-splunk.yml
-          sed -i "s|value: helloworld|value: ${CI_SPLUNK_PASSWORD}|g"          ci_scripts/k8s-splunk.yml
-          sed -i "s|value: 00000000-0000-0000-0000-0000000000000|value: ${CI_SPLUNK_HEC_TOKEN}|g" ci_scripts/k8s-splunk.yml
+          sed -i "s|__SPLUNK_IMAGE__|splunk/splunk:${CI_SPLUNK_VERSION}|g"  ci_scripts/k8s-splunk.yml
+          sed -i "s|__SPLUNK_PASSWORD__|${CI_SPLUNK_PASSWORD}|g"            ci_scripts/k8s-splunk.yml
+          sed -i "s|__SPLUNK_HEC_TOKEN__|${CI_SPLUNK_HEC_TOKEN}|g"         ci_scripts/k8s-splunk.yml
 
           sudo microk8s kubectl apply -f ci_scripts/k8s-splunk.yml
 
@@ -115,6 +116,25 @@ jobs:
       # -- SOC4Kafka chart -------------------------------------------------
       - name: Deploy SOC4Kafka chart
         run: ci_scripts/deploy_collector.sh
+
+      - name: Wait for collector consumer readiness
+        run: |
+          echo "Waiting for collector to subscribe to Kafka topics..."
+          COLLECTOR_POD=$(sudo microk8s kubectl get pods -l app.kubernetes.io/instance=ci-soc4kafka -o jsonpath='{.items[0].metadata.name}')
+          TIMEOUT=60
+          START=$(date +%s)
+          while true; do
+            ELAPSED=$(( $(date +%s) - START ))
+            if sudo microk8s kubectl logs "${COLLECTOR_POD}" --tail=50 2>/dev/null | grep -q 'Starting receiver'; then
+              echo "Collector receivers started. (${ELAPSED}s)"
+              break
+            fi
+            if [ "${ELAPSED}" -ge "${TIMEOUT}" ]; then
+              echo "WARN: Timed out waiting for receiver start log, proceeding anyway."
+              break
+            fi
+            sleep 5
+          done
 
       - name: Verify deployment
         run: |

@@ -40,7 +40,7 @@ spec:
     runAsGroup: 0
   containers:
     - name: splunk
-      image: docker.io/splunk/splunk:10.0.0
+      image: docker.io/__SPLUNK_IMAGE__
       ports:
         - name: web-interface
           containerPort: 8000
@@ -59,11 +59,29 @@ spec:
         - name: SPLUNK_USER
           value: root
         - name: SPLUNK_PASSWORD
-          value: helloworld
+          value: __SPLUNK_PASSWORD__
         - name: SPLUNK_LAUNCH_CONF
           value: OPTIMISTIC_ABOUT_FILE_LOCKING=1
         - name: SPLUNK_HEC_TOKEN
-          value: 00000000-0000-0000-0000-0000000000000
+          value: __SPLUNK_HEC_TOKEN__
+      resources:
+        requests:
+          cpu: 500m
+          memory: 1Gi
+        limits:
+          memory: 2Gi
+      readinessProbe:
+        tcpSocket:
+          port: 8089
+        initialDelaySeconds: 30
+        periodSeconds: 10
+        timeoutSeconds: 5
+      livenessProbe:
+        tcpSocket:
+          port: 8089
+        initialDelaySeconds: 60
+        periodSeconds: 15
+        timeoutSeconds: 5
       volumeMounts:
         - name: config-volume
           mountPath: /tmp/defaults/

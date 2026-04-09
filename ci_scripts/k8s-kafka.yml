@@ -18,6 +18,12 @@ spec:
           value: "2181"
         - name: ZOOKEEPER_TICK_TIME
           value: "2000"
+      resources:
+        requests:
+          cpu: 100m
+          memory: 256Mi
+        limits:
+          memory: 512Mi
       readinessProbe:
         exec:
           command: ["sh", "-c", "echo ruok | nc localhost 2181"]
@@ -64,6 +70,12 @@ spec:
           value: "EXTERNAL"
         - name: KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR
           value: "1"
+      resources:
+        requests:
+          cpu: 250m
+          memory: 512Mi
+        limits:
+          memory: 1Gi
       readinessProbe:
         exec:
           command:
