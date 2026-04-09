@@ -53,23 +53,14 @@ jobs:
         run: |
           sudo snap install microk8s --classic --channel=1.34/stable
           sudo microk8s status --wait-ready
-          sudo usermod -a -G microk8s "$USER"
-
-          # Alias kubectl / helm so subsequent steps work without sudo
           sudo microk8s enable dns helm3
-          sudo snap alias microk8s.kubectl kubectl
-          sudo snap alias microk8s.helm3 helm
-
-          mkdir -p "$HOME/.kube"
-          sudo microk8s config > "$HOME/.kube/config"
-          chmod 600 "$HOME/.kube/config"
 
           echo "Waiting for node to be Ready..."
-          kubectl wait --for=condition=Ready node --all --timeout=120s
-          kubectl get nodes -o wide
+          sudo microk8s kubectl wait --for=condition=Ready node --all --timeout=120s
+          sudo microk8s kubectl get nodes -o wide
 
           # Export the node IP for subsequent steps (Kafka needs it for advertised listeners)
-          NODE_IP=$(kubectl get nodes -o jsonpath='{.items[0].status.addresses[?(@.type=="InternalIP")].address}')
+          NODE_IP=$(sudo microk8s kubectl get nodes -o jsonpath='{.items[0].status.addresses[?(@.type=="InternalIP")].address}')
           echo "NODE_IP=${NODE_IP}" >> "$GITHUB_ENV"
           echo "Resolved node internal IP: ${NODE_IP}"
 
@@ -77,13 +68,13 @@ jobs:
       - name: Deploy Kafka
         run: |
           sed -i "s/__NODE_IP__/${NODE_IP}/g" ci_scripts/k8s-kafka.yml
-          kubectl apply -f ci_scripts/k8s-kafka.yml
+          sudo microk8s kubectl apply -f ci_scripts/k8s-kafka.yml
 
           echo "Waiting for Zookeeper..."
-          kubectl wait --for=condition=Ready pod/zookeeper --timeout=120s
+          sudo microk8s kubectl wait --for=condition=Ready pod/zookeeper --timeout=120s
 
           echo "Waiting for Kafka..."
-          kubectl wait --for=condition=Ready pod/kafka --timeout=120s
+          sudo microk8s kubectl wait --for=condition=Ready pod/kafka --timeout=120s
 
           # Extra connectivity check from the host (hostNetwork)
           for i in $(seq 1 30); do
@@ -100,21 +91,21 @@ jobs:
           sed -i "s|value: helloworld|value: ${CI_SPLUNK_PASSWORD}|g"          ci_scripts/k8s-splunk.yml
           sed -i "s|value: 00000000-0000-0000-0000-0000000000000|value: ${CI_SPLUNK_HEC_TOKEN}|g" ci_scripts/k8s-splunk.yml
 
-          kubectl apply -f ci_scripts/k8s-splunk.yml
+          sudo microk8s kubectl apply -f ci_scripts/k8s-splunk.yml
 
           echo "Waiting for Splunk to initialize..."
           TIMEOUT=180
           START=$(date +%s)
           while true; do
             ELAPSED=$(( $(date +%s) - START ))
-            LOGS=$(kubectl logs splunk --tail=5 2>/dev/null || true)
+            LOGS=$(sudo microk8s kubectl logs splunk --tail=5 2>/dev/null || true)
             if echo "${LOGS}" | grep -q 'Ansible playbook complete'; then
               echo "Splunk is fully initialized! (${ELAPSED}s)"
               break
             fi
             if [ "${ELAPSED}" -ge "${TIMEOUT}" ]; then
               echo "ERROR: Splunk did not initialize within ${TIMEOUT}s"
-              kubectl logs splunk --tail=50
+              sudo microk8s kubectl logs splunk --tail=50
               exit 1
             fi
             echo "  still waiting... (${ELAPSED}s)"
@@ -128,12 +119,12 @@ jobs:
       - name: Verify deployment
         run: |
           echo "=== Pods ==="
-          kubectl get pods -o wide
+          sudo microk8s kubectl get pods -o wide
           echo "=== Collector ConfigMap ==="
-          kubectl get configmap -l app.kubernetes.io/instance=ci-soc4kafka -o yaml | head -80
+          sudo microk8s kubectl get configmap -l app.kubernetes.io/instance=ci-soc4kafka -o yaml | head -80
           echo "=== Collector logs (last 30 lines) ==="
-          COLLECTOR_POD=$(kubectl get pods -l app.kubernetes.io/instance=ci-soc4kafka -o jsonpath='{.items[0].metadata.name}')
-          kubectl logs "${COLLECTOR_POD}" --tail=30 || true
+          COLLECTOR_POD=$(sudo microk8s kubectl get pods -l app.kubernetes.io/instance=ci-soc4kafka -o jsonpath='{.items[0].metadata.name}')
+          sudo microk8s kubectl logs "${COLLECTOR_POD}" --tail=30 || true
 
       # -- Integration tests -----------------------------------------------
       - name: Run K8s Integration Tests
@@ -149,36 +140,36 @@ jobs:
           mkdir -p /tmp/k8s-debug
 
           echo "=== Node info ===" > /tmp/k8s-debug/cluster-info.txt
-          kubectl get nodes -o wide >> /tmp/k8s-debug/cluster-info.txt 2>&1
+          sudo microk8s kubectl get nodes -o wide >> /tmp/k8s-debug/cluster-info.txt 2>&1
 
           echo "=== All pods ===" >> /tmp/k8s-debug/cluster-info.txt
-          kubectl get pods -A -o wide >> /tmp/k8s-debug/cluster-info.txt 2>&1
+          sudo microk8s kubectl get pods -A -o wide >> /tmp/k8s-debug/cluster-info.txt 2>&1
 
           echo "=== Pod descriptions ===" > /tmp/k8s-debug/pod-descriptions.txt
-          kubectl describe pods >> /tmp/k8s-debug/pod-descriptions.txt 2>&1
+          sudo microk8s kubectl describe pods >> /tmp/k8s-debug/pod-descriptions.txt 2>&1
 
           echo "=== Events ===" > /tmp/k8s-debug/events.txt
-          kubectl get events --sort-by='.lastTimestamp' >> /tmp/k8s-debug/events.txt 2>&1
+          sudo microk8s kubectl get events --sort-by='.lastTimestamp' >> /tmp/k8s-debug/events.txt 2>&1
 
           # Collector logs
-          COLLECTOR_POD=$(kubectl get pods -l app.kubernetes.io/instance=ci-soc4kafka -o jsonpath='{.items[0].metadata.name}' 2>/dev/null || echo "")
+          COLLECTOR_POD=$(sudo microk8s kubectl get pods -l app.kubernetes.io/instance=ci-soc4kafka -o jsonpath='{.items[0].metadata.name}' 2>/dev/null || echo "")
           if [ -n "${COLLECTOR_POD}" ]; then
-            kubectl logs "${COLLECTOR_POD}" > /tmp/k8s-debug/collector.log 2>&1
+            sudo microk8s kubectl logs "${COLLECTOR_POD}" > /tmp/k8s-debug/collector.log 2>&1
           fi
 
           # Splunk logs
-          kubectl logs splunk --tail=200 > /tmp/k8s-debug/splunk.log 2>&1
+          sudo microk8s kubectl logs splunk --tail=200 > /tmp/k8s-debug/splunk.log 2>&1
 
           # Kafka logs
-          kubectl logs kafka --tail=200 > /tmp/k8s-debug/kafka.log 2>&1
+          sudo microk8s kubectl logs kafka --tail=200 > /tmp/k8s-debug/kafka.log 2>&1
 
       - name: Print collector logs on failure
         if: always() && (steps.run-integration-tests.outcome == 'failure' || env.KUBERNETES_DEBUG_INFO == 'true')
         run: |
-          COLLECTOR_POD=$(kubectl get pods -l app.kubernetes.io/instance=ci-soc4kafka -o jsonpath='{.items[0].metadata.name}' 2>/dev/null || echo "")
+          COLLECTOR_POD=$(sudo microk8s kubectl get pods -l app.kubernetes.io/instance=ci-soc4kafka -o jsonpath='{.items[0].metadata.name}' 2>/dev/null || echo "")
           if [ -n "${COLLECTOR_POD}" ]; then
             echo "=== SOC4Kafka collector logs ==="
-            kubectl logs "${COLLECTOR_POD}" | head -n 2000
+            sudo microk8s kubectl logs "${COLLECTOR_POD}" | head -n 2000
           fi
 
       - name: Upload K8s debug info
