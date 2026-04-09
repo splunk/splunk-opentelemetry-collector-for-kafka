@@ -1,0 +1,39 @@
+# CI values for K8s integration tests.
+# Placeholders __NODE_IP__ and __SPLUNK_HEC_TOKEN__ are replaced by deploy_collector.sh.
+
+kafkaReceivers:
+  - name: main
+    brokers:
+      - "__NODE_IP__:29092"
+    logs:
+      topics:
+        - "k8s-integration-test"
+        - "k8s-multi-topic-1"
+        - "k8s-multi-topic-2"
+      encoding: "text"
+
+splunkExporters:
+  - name: primary
+    endpoint: "https://__NODE_IP__:8088/services/collector"
+    token: "__SPLUNK_HEC_TOKEN__"
+    source: "soc4kafka-k8s-test"
+    sourcetype: "k8s-integration-test"
+    index: "kafka"
+    tls:
+      insecure_skip_verify: true
+
+pipelines:
+  - name: test
+    type: logs
+    receivers:
+      - main
+    exporters:
+      - primary
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 100m
+    memory: 256Mi
