@@ -2,8 +2,8 @@ apiVersion: v2
 name: splunk-opentelemetry-collector-for-kafka
 description: Splunk OpenTelemetry Collector for Kafka (SOC4Kafka) - collects Kafka messages and forwards them to Splunk HEC
 type: application
-version: 0.148.0
-appVersion: "0.148.0"
+version: 0.149.0
+appVersion: "0.149.0"
 keywords:
   - splunk
   - kafka
