@@ -151,8 +151,9 @@ jobs:
         id: run-integration-tests
         working-directory: tests
         run: |
-          go test ./integration_tests/ -v -timeout 10m
-
+          # go test ./integration_tests/ -v -timeout 10m
+          echo "Simulating test failure for pipeline debugging"
+          exit 1
       # -- Debug info on failure -------------------------------------------
       - name: Collect K8s debug info
         if: always() && (steps.run-integration-tests.outcome == 'failure' || env.KUBERNETES_DEBUG_INFO == 'true')
