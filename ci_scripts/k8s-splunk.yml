@@ -6,26 +6,27 @@ metadata:
 data:
   default.yml: |
     splunk:
+      hec:
+        enable: True
+        ssl: True
+        port: 8088
+        token: __SPLUNK_HEC_TOKEN__
       conf:
-        server:
-          content:
-            diskUsage:
-              minFreeSpace: 1000
-        indexes:
-          directory: /opt/splunk/etc/apps/search/local
-          content:
-            kafka:
-              coldPath: $SPLUNK_DB/kafka/colddb
-              datatype: event
-              homePath: $SPLUNK_DB/kafka/db
-              maxTotalDataSizeMB: 512000
-              thawedPath: $SPLUNK_DB/kafka/thaweddb
-            kafka-header-index:
-              coldPath: $SPLUNK_DB/kafka-header-index/colddb
-              datatype: event
-              homePath: $SPLUNK_DB/kafka-header-index/db
-              maxTotalDataSizeMB: 512000
-              thawedPath: $SPLUNK_DB/kafka-header-index/thaweddb
+        - key: server
+          value:
+            content:
+              diskUsage:
+                minFreeSpace: 1000
+        - key: indexes
+          value:
+            directory: /opt/splunk/etc/apps/search/local
+            content:
+              kafka:
+                coldPath: $SPLUNK_DB/kafka/colddb
+                datatype: event
+                homePath: $SPLUNK_DB/kafka/db
+                maxTotalDataSizeMB: 512000
+                thawedPath: $SPLUNK_DB/kafka/thaweddb
 ---
 apiVersion: v1
 kind: Pod
@@ -56,30 +57,29 @@ spec:
           value: --accept-sgt-current-at-splunk-com
         - name: SPLUNK_START_ARGS
           value: --accept-license
-        - name: SPLUNK_USER
-          value: root
         - name: SPLUNK_PASSWORD
           value: __SPLUNK_PASSWORD__
-        - name: SPLUNK_LAUNCH_CONF
-          value: OPTIMISTIC_ABOUT_FILE_LOCKING=1
-        - name: SPLUNK_HEC_TOKEN
-          value: __SPLUNK_HEC_TOKEN__
       resources:
         requests:
           cpu: 500m
           memory: 1Gi
         limits:
           memory: 2Gi
-      readinessProbe:
+      startupProbe:
         tcpSocket:
           port: 8089
         initialDelaySeconds: 30
         periodSeconds: 10
         timeoutSeconds: 5
+        failureThreshold: 30
+      readinessProbe:
+        tcpSocket:
+          port: 8089
+        periodSeconds: 10
+        timeoutSeconds: 5
       livenessProbe:
         tcpSocket:
           port: 8089
-        initialDelaySeconds: 60
         periodSeconds: 15
         timeoutSeconds: 5
       volumeMounts:

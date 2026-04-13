@@ -22,8 +22,6 @@ permissions:
 env:
   GO_VERSION: 1.24.4
   SEGMENT_DOWNLOAD_TIMEOUT_MINS: 2
-  MICROK8S_CHANNEL: "1.33/stable"
-  CI_SPLUNK_VERSION: "10.0.0"
   CI_SPLUNK_HOST: localhost
   CI_SPLUNK_USERNAME: admin
   CI_SPLUNK_HEC_TOKEN: "00000000-0000-0000-0000-0000000000000"
@@ -36,8 +34,25 @@ env:
 jobs:
   integration-test:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        CI_SPLUNK_VERSION:
+          - "10.2.2"
+          - "9.4.10"
+        MICROK8S_CHANNEL:
+          - "1.35/stable"
+          - "1.34/stable"
+          - "1.33/stable"
+          - "1.32/stable"
+          - "1.31/stable"
+          - "1.30/stable"
+          - "1.29/stable"
+          - "1.28/stable"
+          - "1.27/stable"
     env:
-      CI_SPLUNK_HEADER_TEST_INDEX: kafka-header-index
+      CI_SPLUNK_VERSION: ${{ matrix.CI_SPLUNK_VERSION }}
+      MICROK8S_CHANNEL: ${{ matrix.MICROK8S_CHANNEL }}
 
     steps:
       - name: Checkout
@@ -95,7 +110,7 @@ jobs:
           sudo microk8s kubectl apply -f ci_scripts/k8s-splunk.yml
 
           echo "Waiting for Splunk to initialize..."
-          TIMEOUT=180
+          TIMEOUT=400
           START=$(date +%s)
           while true; do
             ELAPSED=$(( $(date +%s) - START ))
@@ -106,12 +121,46 @@ jobs:
             fi
             if [ "${ELAPSED}" -ge "${TIMEOUT}" ]; then
               echo "ERROR: Splunk did not initialize within ${TIMEOUT}s"
-              sudo microk8s kubectl logs splunk --tail=50
+              echo "=== Splunk pod status ==="
+              sudo microk8s kubectl get pod splunk -o wide
+              sudo microk8s kubectl describe pod splunk
+              echo "=== Splunk logs (last 100 lines) ==="
+              sudo microk8s kubectl logs splunk --tail=100
               exit 1
             fi
             echo "  still waiting... (${ELAPSED}s)"
             sleep 10
           done
+
+      - name: Configure Splunk HEC
+        run: |
+          echo "Configuring HEC default token with index=kafka..."
+          HTTP_CODE=$(curl -sk -o /tmp/hec_cfg_resp.json -w "%{http_code}" \
+            -u "${CI_SPLUNK_USERNAME}:${CI_SPLUNK_PASSWORD}" \
+            https://localhost:8089/servicesNS/nobody/splunk_httpinput/data/inputs/http/splunk_hec_token \
+            -d index=kafka \
+            -d indexes=kafka,main \
+            -d output_mode=json)
+          echo "HEC config response (HTTP ${HTTP_CODE}):"
+          python3 -m json.tool /tmp/hec_cfg_resp.json 2>/dev/null || cat /tmp/hec_cfg_resp.json
+
+          if [ "${HTTP_CODE}" -lt 200 ] || [ "${HTTP_CODE}" -ge 300 ]; then
+            echo "Default HEC token not found, creating a new one..."
+            HTTP_CODE=$(curl -sk -o /tmp/hec_create_resp.json -w "%{http_code}" \
+              -u "${CI_SPLUNK_USERNAME}:${CI_SPLUNK_PASSWORD}" \
+              https://localhost:8089/services/data/inputs/http \
+              -d name=splunk_hec_token \
+              -d index=kafka \
+              -d indexes=kafka,main \
+              -d token="${CI_SPLUNK_HEC_TOKEN}" \
+              -d output_mode=json)
+            echo "HEC create response (HTTP ${HTTP_CODE}):"
+            python3 -m json.tool /tmp/hec_create_resp.json 2>/dev/null || cat /tmp/hec_create_resp.json
+            if [ "${HTTP_CODE}" -lt 200 ] || [ "${HTTP_CODE}" -ge 300 ]; then
+              echo "ERROR: Failed to create HEC token (HTTP ${HTTP_CODE})"
+              exit 1
+            fi
+          fi
 
       # -- SOC4Kafka chart -------------------------------------------------
       - name: Deploy SOC4Kafka chart
@@ -135,16 +184,6 @@ jobs:
             fi
             sleep 5
           done
-
-      - name: Verify deployment
-        run: |
-          echo "=== Pods ==="
-          sudo microk8s kubectl get pods -o wide
-          echo "=== Collector ConfigMap ==="
-          sudo microk8s kubectl get configmap -l app.kubernetes.io/instance=ci-soc4kafka -o yaml | head -80
-          echo "=== Collector logs (last 30 lines) ==="
-          COLLECTOR_POD=$(sudo microk8s kubectl get pods -l app.kubernetes.io/instance=ci-soc4kafka -o jsonpath='{.items[0].metadata.name}')
-          sudo microk8s kubectl logs "${COLLECTOR_POD}" --tail=30 || true
 
       # -- Integration tests -----------------------------------------------
       - name: Run K8s Integration Tests
@@ -195,6 +234,6 @@ jobs:
         if: always() && (steps.run-integration-tests.outcome == 'failure' || env.KUBERNETES_DEBUG_INFO == 'true')
         uses: actions/upload-artifact@v4
         with:
-          name: k8s-debug-info
+          name: k8s-debug-info-splunk-${{ matrix.CI_SPLUNK_VERSION }}-k8s-${{ matrix.MICROK8S_CHANNEL }}
           path: /tmp/k8s-debug/
           retention-days: 5

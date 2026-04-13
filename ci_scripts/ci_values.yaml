@@ -5,6 +5,7 @@ kafkaReceivers:
   - name: main
     brokers:
       - "__NODE_IP__:29092"
+    initial_offset: earliest
     logs:
       topics:
         - "k8s-integration-test"

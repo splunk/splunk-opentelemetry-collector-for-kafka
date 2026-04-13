@@ -5,16 +5,8 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CHART_DIR="${SCRIPT_DIR}/../helm-chart/splunk-opentelemetry-collector-for-kafka"
 VALUES_FILE="${SCRIPT_DIR}/ci_values.yaml"
 
-CI_SPLUNK_HEC_TOKEN="${CI_SPLUNK_HEC_TOKEN:-00000000-0000-0000-0000-0000000000000}"
-
-# Resolve the node IP so pods (without hostNetwork) can reach
-# Kafka and Splunk pods (which use hostNetwork).
-NODE_IP=$(sudo microk8s kubectl get nodes -o jsonpath='{.items[0].status.addresses[?(@.type=="InternalIP")].address}')
-if [ -z "${NODE_IP}" ]; then
-  echo "ERROR: Could not resolve node IP"
-  exit 1
-fi
-echo "Resolved node IP: ${NODE_IP}"
+: "${CI_SPLUNK_HEC_TOKEN:?CI_SPLUNK_HEC_TOKEN is not set}"
+: "${NODE_IP:?NODE_IP is not set — must be exported by the calling workflow}"
 
 # Prepare values with substituted placeholders (pipe delimiter avoids issues with / in values)
 TEMP_VALUES=$(mktemp /tmp/ci_values.XXXXXX.yaml)
