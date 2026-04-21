@@ -3,7 +3,7 @@
 # Collector image (Splunk OTel Collector - same distribution as SOC4Kafka binary)
 image:
   repository: quay.io/signalfx/splunk-otel-collector
-  tag: "0.149.0"
+  tag: "0.150.0"
   pullPolicy: IfNotPresent
 
 # Replica count for the collector deployment
