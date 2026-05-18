@@ -2,6 +2,29 @@ apiVersion: v1
 entries:
   splunk-opentelemetry-collector-for-kafka:
   - apiVersion: v2
+    appVersion: 0.151.0
+    created: "2026-05-18T08:03:40.099295834Z"
+    description: Splunk OpenTelemetry Collector for Kafka (SOC4Kafka) - collects Kafka
+      messages and forwards them to Splunk HEC
+    digest: 5ed7ba24918533eab32da9c2811f78ef960f2d9bb6f1daa49b4c1bb90e7c54f6
+    keywords:
+    - splunk
+    - kafka
+    - opentelemetry
+    - logs
+    - hec
+    kubeVersion: '>=1.23.0-0'
+    maintainers:
+    - name: Splunk
+      url: https://github.com/splunk/splunk-opentelemetry-collector-for-kafka
+    name: splunk-opentelemetry-collector-for-kafka
+    sources:
+    - https://github.com/splunk/splunk-opentelemetry-collector-for-kafka
+    type: application
+    urls:
+    - https://github.com/splunk/splunk-opentelemetry-collector-for-kafka/releases/download/v0.151.0/splunk-opentelemetry-collector-for-kafka-0.151.0.tgz
+    version: 0.151.0
+  - apiVersion: v2
     appVersion: 0.150.0
     created: "2026-05-14T07:09:11.850377778Z"
     description: Splunk OpenTelemetry Collector for Kafka (SOC4Kafka) - collects Kafka
@@ -139,4 +162,4 @@ entries:
     urls:
     - https://github.com/splunk/splunk-opentelemetry-collector-for-kafka/releases/download/v0.146.0/splunk-opentelemetry-collector-for-kafka-0.146.0.tgz
     version: 0.146.0
-generated: "2026-05-14T07:09:11.850402488Z"
+generated: "2026-05-18T08:03:40.099324677Z"
