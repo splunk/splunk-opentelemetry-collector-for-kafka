@@ -155,7 +155,8 @@ jobs:
           CURRENT_VERSION_V_ESCAPED="v${CURRENT_VERSION_ESCAPED}"
           find . -type f \
             -not -path './.git/*' \
-            -not -path './.github/*' \
+            -not -path './.github/docker*' \
+            -not -path './.github/workflows*' \
             -not -path './node_modules/*' \
             -not -name '*.sum' \
             -not -name 'go.sum' \
