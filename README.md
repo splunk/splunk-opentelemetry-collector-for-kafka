@@ -79,7 +79,7 @@ exporters:
       block_on_overflow: true
       sizer: items
       batch:
-        min_size: 8192
+        min_size: 1000
 
 service:
   pipelines:
@@ -145,7 +145,7 @@ exporters:
       block_on_overflow: true
       sizer: items
       batch:
-        min_size: 8192
+        min_size: 1000
 
 service:
   pipelines:

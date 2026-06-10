@@ -47,7 +47,7 @@ splunkExporters:
       block_on_overflow: true
       sizer: items
       batch:
-        min_size: 8192
+        min_size: 1000
 ```
 
 **Chart-specific:** The `name` field is required and used to reference the exporter in pipelines.
@@ -187,7 +187,7 @@ defaults:
         block_on_overflow: true
         sizer: items
         batch:
-          min_size: 8192
+          min_size: 1000
 
 # If you specify in defaults but also in configOverride:
 configOverride:
