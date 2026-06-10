@@ -121,33 +121,6 @@
           }
         }
       }
-    },
-    "defaults": {
-      "type": "object",
-      "description": "Default OpenTelemetry component configuration applied by the chart",
-      "properties": {
-        "pipelineProcessors": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "default": ["resourcedetection"],
-          "description": "Default processor names applied to each pipeline when processors are not specified"
-        },
-        "exporters": {
-          "type": "object",
-          "properties": {
-            "splunk_hec": {
-              "type": "object",
-              "properties": {
-                "sending_queue": {
-                  "$ref": "#/definitions/sendingQueue"
-                }
-              }
-            }
-          }
-        }
-      }
     }
   },
   "definitions": {
