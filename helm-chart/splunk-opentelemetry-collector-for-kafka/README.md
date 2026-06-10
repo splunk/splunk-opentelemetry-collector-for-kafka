@@ -22,6 +22,9 @@ splunkExporters:
     source: "soc4kafka"
     sourcetype: "otel:logs"
     index: "main"
+    # Optional; defaults are already applied from defaults.exporters.splunk_hec.
+    sending_queue:
+      block_on_overflow: true
 
 pipelines:
   - name: main-logs
@@ -30,7 +33,7 @@ pipelines:
       - main
     exporters:
       - primary
-    # processors optional; defaults to ["batch", "resourcedetection"] (see defaults.pipelineProcessors)
+    # processors optional; defaults to ["resourcedetection"] (see defaults.pipelineProcessors)
 ```
 
 ```bash

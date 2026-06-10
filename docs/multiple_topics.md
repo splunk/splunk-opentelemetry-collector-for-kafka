@@ -22,8 +22,6 @@ receivers:
       topics: 
         - "example-topic-b-1"
       encoding: "text"
-processors:
- batch:
 
 exporters:
   splunk_hec/a:
@@ -46,10 +44,8 @@ service:
   pipelines:
     logs/a:
       receivers: [kafka/example_topic_a]
-      processors: [batch]
       exporters: [splunk_hec/a]
     logs/b:
      receivers: [kafka/example_topic_b]
-     processors: [batch]
      exporters: [splunk_hec/b]
 ```

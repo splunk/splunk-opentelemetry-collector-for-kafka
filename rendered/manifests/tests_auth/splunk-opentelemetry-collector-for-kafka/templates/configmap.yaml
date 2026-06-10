@@ -16,6 +16,14 @@ data:
       splunk_hec:
         endpoint: https://127.0.0.1:8088/services/collector
         index: kafka-otel
+        sending_queue:
+          batch:
+            min_size: 8192
+          block_on_overflow: true
+          enabled: true
+          num_consumers: 10
+          queue_size: 10000
+          sizer: items
         source: soc4kafka
         sourcetype: otel:logs
         splunk_app_name: soc4kafka
@@ -26,9 +34,6 @@ data:
       health_check:
         endpoint: 0.0.0.0:13133
     processors:
-      batch:
-        send_batch_size: 1000
-        timeout: 5s
       resourcedetection:
         detectors:
         - system
@@ -96,7 +101,6 @@ data:
           exporters:
           - splunk_hec
           processors:
-          - batch
           - resourcedetection
           receivers:
           - kafka/plain

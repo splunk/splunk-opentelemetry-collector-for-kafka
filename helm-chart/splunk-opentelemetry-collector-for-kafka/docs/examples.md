@@ -28,7 +28,7 @@ pipelines:
       - main
     exporters:
       - primary
-    # processors omitted: defaults to ["batch", "resourcedetection"]
+    # processors omitted: defaults to ["resourcedetection"]
 ```
 
 ## Multiple Topics to Multiple Indexes
@@ -78,7 +78,6 @@ pipelines:
     exporters:
       - main-index
     processors:
-      - batch
       - resourcedetection
   
   - name: error-pipeline

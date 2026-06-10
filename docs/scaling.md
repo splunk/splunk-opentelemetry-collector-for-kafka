@@ -23,9 +23,6 @@ receivers:
       encoding: "text"
     group_id: <GROUP ID>
 
-processors:
- batch:
-
 exporters:
   splunk_hec:
     token: "your-splunk-hec-token"
@@ -34,12 +31,19 @@ exporters:
     sourcetype: kafka-otel
     index: kafka_otel
     splunk_app_name: "soc4kafka"
+    sending_queue:
+      enabled: true
+      num_consumers: 10
+      queue_size: 10000
+      block_on_overflow: true
+      sizer: items
+      batch:
+        min_size: 8192
 
 service:
   pipelines:
     logs:
       receivers: [kafka]
-      processors: [batch]
       exporters: [splunk_hec]
 ```
 

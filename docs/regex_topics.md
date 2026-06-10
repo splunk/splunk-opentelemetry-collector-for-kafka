@@ -28,8 +28,6 @@ receivers:
         - ^<Regex-Topic-To-Exclude-Pattern>
       encoding: <Encoding>
 
-processors:
-  batch:
 
 exporters:
   splunk_hec:
@@ -44,7 +42,6 @@ service:
   pipelines:
     logs:
       receivers: [kafka]
-      processors: [batch]
       exporters: [splunk_hec]
 ```
 

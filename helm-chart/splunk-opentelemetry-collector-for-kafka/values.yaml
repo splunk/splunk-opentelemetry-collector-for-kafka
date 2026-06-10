@@ -80,12 +80,8 @@ defaults:
       group_id: "soc4kafka-main"
   # Default processor names applied to each pipeline when processors are not specified
   pipelineProcessors:
-    - batch
     - resourcedetection
   processors:
-    batch:
-      timeout: 5s
-      send_batch_size: 1000
     resourcedetection:
       detectors: ["system"]
       system:
@@ -96,6 +92,14 @@ defaults:
       tls:
         insecure_skip_verify: false
       splunk_app_name: "soc4kafka"
+      sending_queue:
+        enabled: true
+        num_consumers: 10
+        queue_size: 10000
+        block_on_overflow: true
+        sizer: items
+        batch:
+          min_size: 8192
 
 # =============================================================================
 # ADVANCED MODE - Full override capability

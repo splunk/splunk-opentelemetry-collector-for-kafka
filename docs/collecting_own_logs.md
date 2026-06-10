@@ -41,7 +41,6 @@ processors:
     detectors: ["system"]
     system:
       hostname_sources: ["os"]
-  batch:
 
 exporters:
   splunk_hec:
@@ -65,7 +64,7 @@ service:
   pipelines:
     logs:
       receivers: [kafka]
-      processors: [batch, resourcedetection]
+      processors: [resourcedetection]
       exporters: [splunk_hec]
 ```
 
@@ -95,7 +94,6 @@ processors:
     detectors: ["system"]
     system:
       hostname_sources: ["os"]
-  batch:
 
 exporters:
   splunk_hec:
@@ -131,11 +129,11 @@ service:
   pipelines:
     logs:
       receivers: [kafka]
-      processors: [batch, resourcedetection]
+      processors: [resourcedetection]
       exporters: [splunk_hec]
     logs/internal:
       receivers: [filelog]
-      processors: [batch, resourcedetection]
+      processors: [resourcedetection]
       exporters: [splunk_hec/internal_logs]
 ```
 Additionally, we have added a separate pipeline to forward the internal logs collected by the `filelog` receiver to Splunk using a dedicated exporter (`splunk_hec/internal_logs`).
@@ -169,7 +167,6 @@ processors:
     detectors: ["system"]
     system:
       hostname_sources: ["os"]
-  batch:
 
 exporters:
   splunk_hec:
@@ -205,11 +202,11 @@ service:
   pipelines:
     logs:
       receivers: [kafka]
-      processors: [batch, resourcedetection]
+      processors: [resourcedetection]
       exporters: [splunk_hec]
     logs/internal:
       receivers: [filelog]
-      processors: [batch, resourcedetection]
+      processors: [resourcedetection]
       exporters: [splunk_hec/internal_logs]
 ```
 

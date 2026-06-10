@@ -51,7 +51,6 @@ pipelines:
     exporters:
       - primary
     processors:
-      - batch
       - resourcedetection
   - name: "2"
     type: logs
@@ -60,7 +59,6 @@ pipelines:
     exporters:
       - secondary
     processors:
-      - batch
       - resourcedetection
 
 replicaCount: 3

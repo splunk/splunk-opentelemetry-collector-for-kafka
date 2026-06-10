@@ -30,7 +30,7 @@ pipelines:
       - main
     exporters:
       - primary
-    # processors optional; defaults to ["batch", "resourcedetection"] (defaults.pipelineProcessors in values.yaml)
+    # processors optional; defaults to ["resourcedetection"] (defaults.pipelineProcessors in values.yaml)
 ```
 
 2. Add helm repository:

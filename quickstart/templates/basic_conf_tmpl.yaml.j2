@@ -11,7 +11,6 @@ processors:
     detectors: ["system"]
     system:
       hostname_sources: ["os"]
-  batch:
 
 exporters:
   splunk_hec:
@@ -23,10 +22,18 @@ exporters:
     splunk_app_name: "soc4kafka"
     tls:
       insecure_skip_verify: {{ insecure_skip_verify | default(false) | lower }}  # Set to true to skip TLS verification (not recommended for production)
+    sending_queue:
+      enabled: true
+      num_consumers: 10
+      queue_size: 10000
+      block_on_overflow: true
+      sizer: items
+      batch:
+        min_size: 8192
 
 service:
   pipelines:
     logs:
       receivers: [kafka]
-      processors: [batch, resourcedetection]
+      processors: [resourcedetection]
       exporters: [splunk_hec]
