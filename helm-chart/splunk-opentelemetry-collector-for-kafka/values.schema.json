@@ -73,6 +73,10 @@
           "tls": {
             "type": "object",
             "description": "TLS configuration"
+          },
+          "sending_queue": {
+            "type": "object",
+            "description": "Splunk HEC exporter sending queue configuration. Passed through to the collector."
           }
         }
       }
@@ -114,7 +118,7 @@
             "items": {
               "type": "string"
             },
-            "description": "Optional list of processor names. If omitted, defaults.pipelineProcessors is used (default: [\"batch\", \"resourcedetection\"])"
+            "description": "Optional list of processor names. If omitted, defaults.pipelineProcessors is used (default: [\"resourcedetection\"])"
           }
         }
       }

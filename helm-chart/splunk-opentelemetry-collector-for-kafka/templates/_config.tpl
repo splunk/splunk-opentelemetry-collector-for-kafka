@@ -146,7 +146,7 @@ service:
         - {{ $receiverName }}
         {{- end }}
       processors:
-        {{- $procs := .processors | default $.Values.defaults.pipelineProcessors | default (list "batch" "resourcedetection") }}
+        {{- $procs := .processors | default $.Values.defaults.pipelineProcessors | default (list "resourcedetection") }}
         {{- toYaml $procs | nindent 8 }}
       exporters:
         {{- range .exporters }}
@@ -161,7 +161,6 @@ service:
       receivers:
         - filelog
       processors:
-        - batch
         - resourcedetection
       exporters:
         - {{ $referencedExporterName }}

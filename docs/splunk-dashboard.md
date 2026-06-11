@@ -149,6 +149,14 @@ exporters:
     sourcetype: <sourcetype>
     index: <metrics-index>
     splunk_app_name: "soc4kafka"
+    sending_queue:
+      enabled: true
+      num_consumers: 10
+      queue_size: 10000
+      block_on_overflow: true
+      sizer: items
+      batch:
+        min_size: 1000
 ```
 
 Make sure you've created a metric type index:

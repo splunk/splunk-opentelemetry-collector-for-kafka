@@ -41,7 +41,6 @@ processors:
     detectors: ["system"]
     system:
       hostname_sources: ["os"]
-  batch:
 
 exporters:
   splunk_hec:
@@ -51,7 +50,15 @@ exporters:
     sourcetype: kafka-otel
     index: kafka_otel
     splunk_app_name: "soc4kafka"
-      
+    sending_queue:
+      enabled: true
+      num_consumers: 10
+      queue_size: 10000
+      block_on_overflow: true
+      sizer: items
+      batch:
+        min_size: 1000
+
 service:
   telemetry:
     logs:
@@ -65,7 +72,7 @@ service:
   pipelines:
     logs:
       receivers: [kafka]
-      processors: [batch, resourcedetection]
+      processors: [resourcedetection]
       exporters: [splunk_hec]
 ```
 
@@ -95,7 +102,6 @@ processors:
     detectors: ["system"]
     system:
       hostname_sources: ["os"]
-  batch:
 
 exporters:
   splunk_hec:
@@ -105,12 +111,28 @@ exporters:
     sourcetype: kafka-otel
     index: kafka_otel
     splunk_app_name: "soc4kafka"
-  
+    sending_queue:
+      enabled: true
+      num_consumers: 10
+      queue_size: 10000
+      block_on_overflow: true
+      sizer: items
+      batch:
+        min_size: 1000
+
   splunk_hec/internal_logs:
     token: "your-splunk-hec-token"
     endpoint: "https://splunk-hec-endpoint:8088/services/collector"
     index: kafka-logs
     splunk_app_name: "soc4kafka"
+    sending_queue:
+      enabled: true
+      num_consumers: 10
+      queue_size: 10000
+      block_on_overflow: true
+      sizer: items
+      batch:
+        min_size: 1000
 
 extensions:
   file_storage:
@@ -131,11 +153,11 @@ service:
   pipelines:
     logs:
       receivers: [kafka]
-      processors: [batch, resourcedetection]
+      processors: [resourcedetection]
       exporters: [splunk_hec]
     logs/internal:
       receivers: [filelog]
-      processors: [batch, resourcedetection]
+      processors: [resourcedetection]
       exporters: [splunk_hec/internal_logs]
 ```
 Additionally, we have added a separate pipeline to forward the internal logs collected by the `filelog` receiver to Splunk using a dedicated exporter (`splunk_hec/internal_logs`).
@@ -169,7 +191,6 @@ processors:
     detectors: ["system"]
     system:
       hostname_sources: ["os"]
-  batch:
 
 exporters:
   splunk_hec:
@@ -179,12 +200,28 @@ exporters:
     sourcetype: kafka-otel
     index: kafka_otel
     splunk_app_name: "soc4kafka"
+    sending_queue:
+      enabled: true
+      num_consumers: 10
+      queue_size: 10000
+      block_on_overflow: true
+      sizer: items
+      batch:
+        min_size: 1000
 
   splunk_hec/internal_logs:
     token: "your-splunk-hec-token"
     endpoint: "https://splunk-hec-endpoint:8088/services/collector"
     index: kafka-logs
     splunk_app_name: "soc4kafka"
+    sending_queue:
+      enabled: true
+      num_consumers: 10
+      queue_size: 10000
+      block_on_overflow: true
+      sizer: items
+      batch:
+        min_size: 1000
 
 extensions:
   file_storage:
@@ -205,11 +242,11 @@ service:
   pipelines:
     logs:
       receivers: [kafka]
-      processors: [batch, resourcedetection]
+      processors: [resourcedetection]
       exporters: [splunk_hec]
     logs/internal:
       receivers: [filelog]
-      processors: [batch, resourcedetection]
+      processors: [resourcedetection]
       exporters: [splunk_hec/internal_logs]
 ```
 

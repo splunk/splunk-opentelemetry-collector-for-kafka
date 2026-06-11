@@ -80,12 +80,8 @@ defaults:
       group_id: "soc4kafka-main"
   # Default processor names applied to each pipeline when processors are not specified
   pipelineProcessors:
-    - batch
     - resourcedetection
   processors:
-    batch:
-      timeout: 5s
-      send_batch_size: 1000
     resourcedetection:
       detectors: ["system"]
       system:
@@ -96,6 +92,28 @@ defaults:
       tls:
         insecure_skip_verify: false
       splunk_app_name: "soc4kafka"
+      # Refer to https://github.com/open-telemetry/opentelemetry-collector/blob/main/exporter/exporterhelper/README.md
+      sending_queue:
+        enabled: true
+        # Number of consumers that dequeue batches; ignored if enabled is false
+        num_consumers: 10
+        # Maximum number of batches kept in memory before applying backpressure; ignored if enabled is false
+        # The sending queue keeps by default all elements in memory, so it is best to keep it small
+        # and allow the collector to slow down ingestion.
+        queue_size: 10000
+        # When block_on_overflow is enabled, the caller may instead wait until space becomes available, 
+        # and the request may still be enqueued if capacity frees up before the timeout.
+        block_on_overflow: true
+        sizer: items
+        # Groups queued telemetry items into exporter-side batches before sending them to Splunk HEC.
+        # This batching happens inside the sending_queue, so it replaces the old pipeline batch processor.
+        batch:
+          # Minimum number of items to collect before forming and sending a batch.
+          # With sizer: items, this is the number of log records. 
+          # A smaller value sends more, smaller requests with better parallelism;
+          # a larger value sends fewer, larger requests but can increase latency
+          # and reduce throughput if it is too close to queue_size
+          min_size: 1000
 
 # =============================================================================
 # ADVANCED MODE - Full override capability

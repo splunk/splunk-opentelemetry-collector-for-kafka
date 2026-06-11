@@ -106,8 +106,6 @@ receivers:
         - "three-pat"
       encoding: "text"
 
-processors:
-  batch:
 
 exporters:
   splunk_hec:
@@ -117,12 +115,19 @@ exporters:
     sourcetype: kafka-otel
     index: "logs_index"
     splunk_app_name: "soc4kafka"
+    sending_queue:
+      enabled: true
+      num_consumers: 10
+      queue_size: 10000
+      block_on_overflow: true
+      sizer: items
+      batch:
+        min_size: 1000
 
 service:
   pipelines:
     logs:
       receivers: [kafka]
-      processors: [batch]
       exporters: [splunk_hec]
 ```
 
@@ -152,7 +157,6 @@ processors:
       - set(log.attributes["extracted_ts"], ExtractPatterns(log.body, "\\[(?P<timestamp>[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2})\\]"))
       - set(log.time, Time(log.attributes["extracted_ts"]["timestamp"], "2006-01-02 15:04:05", "UTC"))
       - delete_key(log.attributes, "extracted_ts")
-  batch:
 
 exporters:
   splunk_hec:
@@ -162,12 +166,20 @@ exporters:
     sourcetype: kafka-otel
     index: "logs_index"
     splunk_app_name: "soc4kafka"
+    sending_queue:
+      enabled: true
+      num_consumers: 10
+      queue_size: 10000
+      block_on_overflow: true
+      sizer: items
+      batch:
+        min_size: 1000
 
 service:
   pipelines:
     logs:
       receivers: [kafka]
-      processors: [batch, transform]
+      processors: [transform]
       exporters: [splunk_hec]
 ```
 
@@ -195,7 +207,6 @@ processors:
     detectors: ["system"]
     system:
       hostname_sources: ["os"]
-  batch:
 
 exporters:
   splunk_hec:
@@ -205,6 +216,14 @@ exporters:
     sourcetype: kafka-otel
     index: "logs_index"
     splunk_app_name: "soc4kafka"
+    sending_queue:
+      enabled: true
+      num_consumers: 10
+      queue_size: 10000
+      block_on_overflow: true
+      sizer: items
+      batch:
+        min_size: 1000
 
 service:
   telemetry:
@@ -213,7 +232,7 @@ service:
   pipelines:
    logs:
      receivers: [kafka]
-     processors: [batch, resourcedetection]
+     processors: [resourcedetection]
      exporters: [splunk_hec]
 ```
 
@@ -265,14 +284,20 @@ receivers:
       extract_headers: true
       headers: ["index", "source", "sourcetype", "host", "myHeader1", "myHeader2"]
 
-processors:
-  batch:
 
 exporters:
   splunk_hec:
     token: "your-splunk-hec-token"
     endpoint: "https://splunk-hec-endpoint:8088/services/collector"
     splunk_app_name: "soc4kafka"
+    sending_queue:
+      enabled: true
+      num_consumers: 10
+      queue_size: 10000
+      block_on_overflow: true
+      sizer: items
+      batch:
+        min_size: 1000
     otel_attrs_to_hec_metadata:
       index: kafka.header.index
       host: kafka.header.host
@@ -283,7 +308,6 @@ service:
   pipelines:
     logs:
       receivers: [kafka]
-      processors: [batch]
       exporters: [splunk_hec]
 ```
 
@@ -341,7 +365,6 @@ processors:
     detectors: ["system"]
     system:
       hostname_sources: ["os"]
-  batch:
 
 exporters:
   splunk_hec/1:
@@ -351,6 +374,14 @@ exporters:
     sourcetype: kafka-otel
     index: "logs_index"
     splunk_app_name: "soc4kafka"
+    sending_queue:
+      enabled: true
+      num_consumers: 10
+      queue_size: 10000
+      block_on_overflow: true
+      sizer: items
+      batch:
+        min_size: 1000
 
   splunk_hec/2:
     token: "your-splunk-hec-token"
@@ -359,16 +390,24 @@ exporters:
     sourcetype: kafka-otel
     index: "kafka_otel"
     splunk_app_name: "soc4kafka"
+    sending_queue:
+      enabled: true
+      num_consumers: 10
+      queue_size: 10000
+      block_on_overflow: true
+      sizer: items
+      batch:
+        min_size: 1000
 
 service:
   pipelines:
    logs/1:
      receivers: [kafka/1]
-     processors: [batch, resourcedetection]
+     processors: [resourcedetection]
      exporters: [splunk_hec/1]
    logs/2:
      receivers: [kafka/2]
-     processors: [batch, resourcedetection]
+     processors: [resourcedetection]
      exporters: [splunk_hec/2]
 ```
 
@@ -429,6 +468,14 @@ exporters:
     sourcetype: otel
     index: test
     splunk_app_name: "soc4kafka"
+    sending_queue:
+      enabled: true
+      num_consumers: 10
+      queue_size: 10000
+      block_on_overflow: true
+      sizer: items
+      batch:
+        min_size: 1000
     export_raw: true
 
 service:

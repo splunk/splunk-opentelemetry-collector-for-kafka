@@ -20,6 +20,14 @@ splunkExporters:
     source: "kafka"
     sourcetype: "otel:logs"
     index: "main"
+    sending_queue:
+      enabled: true
+      num_consumers: 10
+      queue_size: 10000
+      block_on_overflow: true
+      sizer: items
+      batch:
+        min_size: 1000
 
 pipelines:
   - name: logs
@@ -28,7 +36,7 @@ pipelines:
       - main
     exporters:
       - primary
-    # processors omitted: defaults to ["batch", "resourcedetection"]
+    # processors omitted: defaults to ["resourcedetection"]
 ```
 
 ## Multiple Topics to Multiple Indexes
@@ -78,7 +86,6 @@ pipelines:
     exporters:
       - main-index
     processors:
-      - batch
       - resourcedetection
   
   - name: error-pipeline

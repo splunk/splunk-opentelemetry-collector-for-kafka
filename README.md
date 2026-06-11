@@ -61,7 +61,6 @@ processors:
     detectors: ["system"]
     system:
       hostname_sources: ["os"]
-  batch:
 
 exporters:
   splunk_hec:
@@ -73,12 +72,20 @@ exporters:
     tls:
       insecure_skip_verify: false
     splunk_app_name: "soc4kafka"
+    sending_queue:
+      enabled: true
+      num_consumers: 10
+      queue_size: 10000
+      block_on_overflow: true
+      sizer: items
+      batch:
+        min_size: 1000
 
 service:
   pipelines:
     logs:
       receivers: [kafka]
-      processors: [batch, resourcedetection]
+      processors: [resourcedetection]
       exporters: [splunk_hec]
 ```
 
@@ -91,14 +98,18 @@ Mind that this is just a minimal configuration. You can customize it further bas
 | **Receivers**  | [kafka](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/kafkareceiver)                           | `brokers`                   | Kafka broker addresses for message consumption.                                            | Yes          | N/A               |
 |                |                                                                                                                                       | `logs.topics`               | Kafka list of topics to subscribe to for receiving messages.                               | Yes          | N/A               |
 |                |                                                                                                                                       | `logs.encoding`             | Encoding format of the Kafka messages.                                                     | No           | `"text"`          |
-| **Processors** | [batch](https://github.com/open-telemetry/opentelemetry-collector/tree/main/processor/batchprocessor)                                 |                             | Groups messages into batches before exporting.                                             | No           | N/A               |
-|                | [resourcedetection](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/resourcedetectionprocessor) |                             | Sets a `host` field based on a machine's information.                                      | No           | N/A               |
+| **Processors** | [resourcedetection](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/resourcedetectionprocessor) |                             | Sets a `host` field based on a machine's information.                                      | No           | N/A               |
 | **Exporters**  | [splunk_hec](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter/splunkhecexporter)                  | `token`                     | Splunk HEC token for authentication.                                                       | Yes          | N/A               |
 |                |                                                                                                                                       | `endpoint`                  | Splunk HEC endpoint URL for sending data.                                                  | Yes          | N/A               |
 |                |                                                                                                                                       | `source`                    | Source metadata for events sent to Splunk.                                                 | No           | `"otel"`          |
 |                |                                                                                                                                       | `sourcetype`                | Sourcetype metadata for events sent to Splunk.                                             | No           | `"otel"`          |
 |                |                                                                                                                                       | `index`                     | Splunk index where the logs will be stored.                                                | Yes          | N/A               |
 |                |                                                                                                                                       | `tls.insecure_skip_verify`  | Whether to skip checking the certificate of the HEC endpoint when sending data over HTTPS. | No           | false             |
+|                |                                                                                                                                       | `sending_queue.queue_size`         | Maximum number of queued items waiting to be exported.                                     | No           | 10000             |
+|                |                                                                                                                                       | `sending_queue.block_on_overflow`  | Applies backpressure instead of immediately rejecting data when the exporter queue is full. | No           | true              |
+|                |                                                                                                                                       | `sending_queue.sizer`              | Counts queue capacity by items.                                                           | No           | items             |
+|                |                                                                                                                                       | `sending_queue.batch`              | Enables exporter-level batching before requests are sent to Splunk HEC.                    | No           | enabled           |
+|                |                                                                                                                                       | `sending_queue.batch.min_size`     | Minimum number of items to batch before sending a request.                                 | No           | 1000              |
 | **Service**    |                                                                                                                                       | `pipelines.logs.receivers`  | Specifies the receiver(s) for the log pipeline.                                            | Yes          | N/A               |
 |                |                                                                                                                                       | `pipelines.logs.processors` | Specifies the processor(s) for the log pipeline.                                           | No           | `[]` (empty)      |
 |                |                                                                                                                                       | `pipelines.logs.exporters`  | Specifies the exporter(s) for the log pipeline.                                            | Yes          | N/A               |
@@ -119,7 +130,6 @@ processors:
     detectors: ["system"]
     system:
       hostname_sources: ["os"]
-  batch:
 
 exporters:
   splunk_hec:
@@ -131,12 +141,20 @@ exporters:
     tls:
       insecure_skip_verify: false
     splunk_app_name: "soc4kafka"
+    sending_queue:
+      enabled: true
+      num_consumers: 10
+      queue_size: 10000
+      block_on_overflow: true
+      sizer: items
+      batch:
+        min_size: 1000
 
 service:
   pipelines:
     logs:
       receivers: [kafka]
-      processors: [batch, resourcedetection]
+      processors: [resourcedetection]
       exporters: [splunk_hec]
 ```
 

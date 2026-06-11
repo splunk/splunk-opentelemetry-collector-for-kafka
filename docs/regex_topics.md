@@ -28,8 +28,6 @@ receivers:
         - ^<Regex-Topic-To-Exclude-Pattern>
       encoding: <Encoding>
 
-processors:
-  batch:
 
 exporters:
   splunk_hec:
@@ -39,12 +37,19 @@ exporters:
     sourcetype: <Sourcetype>
     index: <Splunk index>
     splunk_app_name: "soc4kafka"
+    sending_queue:
+      enabled: true
+      num_consumers: 10
+      queue_size: 10000
+      block_on_overflow: true
+      sizer: items
+      batch:
+        min_size: 1000
 
 service:
   pipelines:
     logs:
       receivers: [kafka]
-      processors: [batch]
       exporters: [splunk_hec]
 ```
 
@@ -102,4 +107,3 @@ receivers:
 This configuration subscribes to multiple regex patterns while excluding topics ending with -archive or -old.
 
 Note that `exclude_topics` doesn't have to be regex, it can be an exact name. When using exact names no `^` at the beginning is necessary.
-

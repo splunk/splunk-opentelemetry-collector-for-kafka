@@ -7,9 +7,6 @@ receivers:
         - {{ .KafkaRegexTopicName }}
       encoding: "text"
 
-processors:
-  batch:
-
 exporters:
   splunk_hec:
     token: {{ .SplunkHECToken }}
@@ -19,6 +16,14 @@ exporters:
     source: {{ .Source }}
     sourcetype: {{ .Sourcetype }}
     index: {{ .Index }}
+    sending_queue:
+      enabled: true
+      num_consumers: 10
+      queue_size: 10000
+      block_on_overflow: true
+      sizer: items
+      batch:
+        min_size: 1000
 
 service:
   telemetry:
@@ -33,5 +38,4 @@ service:
   pipelines:
     logs:
       receivers: [ kafka ]
-      processors: [ batch ]
       exporters: [ splunk_hec ]

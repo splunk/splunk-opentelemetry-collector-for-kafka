@@ -70,7 +70,6 @@ pipelines:
     exporters:
       - primary
     processors:
-      - batch
       - resourcedetection
 
 replicaCount: 3

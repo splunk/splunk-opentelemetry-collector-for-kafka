@@ -22,6 +22,14 @@ splunkExporters:
     source: "soc4kafka"
     sourcetype: "otel:logs"
     index: "main"
+    sending_queue:
+      enabled: true
+      num_consumers: 10
+      queue_size: 10000
+      block_on_overflow: true
+      sizer: items
+      batch:
+        min_size: 1000
 
 pipelines:
   - name: main-logs
@@ -30,7 +38,7 @@ pipelines:
       - main
     exporters:
       - primary
-    # processors optional; defaults to ["batch", "resourcedetection"] (defaults.pipelineProcessors in values.yaml)
+    # processors optional; defaults to ["resourcedetection"] (defaults.pipelineProcessors in values.yaml)
 ```
 
 2. Add helm repository:

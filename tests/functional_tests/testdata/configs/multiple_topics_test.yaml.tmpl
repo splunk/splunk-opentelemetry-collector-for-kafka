@@ -13,9 +13,6 @@ receivers:
         - {{ .KafkaTopicName2 }}
       encoding: "text"
 
-processors:
-  batch:
-
 exporters:
   splunk_hec/{{ .KafkaTopicName1 }}:
     token: {{ .SplunkHECToken }}
@@ -25,6 +22,14 @@ exporters:
     source: {{ .Source1 }}
     sourcetype: {{ .Sourcetype }}
     index: {{ .Index }}
+    sending_queue:
+      enabled: true
+      num_consumers: 10
+      queue_size: 10000
+      block_on_overflow: true
+      sizer: items
+      batch:
+        min_size: 1000
   splunk_hec/{{ .KafkaTopicName2 }}:
     token: {{ .SplunkHECToken }}
     endpoint: {{ .SplunkHECEndpoint }}
@@ -33,6 +38,14 @@ exporters:
     source: {{ .Source2 }}
     sourcetype: {{ .Sourcetype }}
     index: {{ .Index }}
+    sending_queue:
+      enabled: true
+      num_consumers: 10
+      queue_size: 10000
+      block_on_overflow: true
+      sizer: items
+      batch:
+        min_size: 1000
 
 service:
   telemetry:
@@ -47,9 +60,7 @@ service:
   pipelines:
     logs/1:
       receivers: [ kafka/{{ .KafkaTopicName1 }} ]
-      processors: [ batch ]
       exporters: [ splunk_hec/{{ .KafkaTopicName1 }} ]
     logs/2:
       receivers: [ kafka/{{ .KafkaTopicName2 }} ]
-      processors: [ batch ]
       exporters: [ splunk_hec/{{ .KafkaTopicName2 }} ]

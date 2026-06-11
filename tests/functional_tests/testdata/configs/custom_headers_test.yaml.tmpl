@@ -10,9 +10,6 @@ receivers:
       extract_headers: true
       headers: [ index, source, sourcetype, host, {{ .CustomHeader }} ]
 
-processors:
-  batch:
-
 exporters:
   splunk_hec:
     token: {{ .SplunkHECToken }}
@@ -27,6 +24,14 @@ exporters:
       source: kafka.header.source
       sourcetype: kafka.header.sourcetype
       host: kafka.header.host
+    sending_queue:
+      enabled: true
+      num_consumers: 10
+      queue_size: 10000
+      block_on_overflow: true
+      sizer: items
+      batch:
+        min_size: 1000
 
 service:
   telemetry:
@@ -41,5 +46,4 @@ service:
   pipelines:
     logs:
       receivers: [ kafka ]
-      processors: [ batch ]
       exporters: [ splunk_hec ]

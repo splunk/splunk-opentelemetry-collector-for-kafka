@@ -22,8 +22,6 @@ receivers:
       topics: 
         - "example-topic-b-1"
       encoding: "text"
-processors:
- batch:
 
 exporters:
   splunk_hec/a:
@@ -33,7 +31,15 @@ exporters:
     sourcetype: kafka-otel
     index: kafka_otel_index_a
     splunk_app_name: "soc4kafka"
-      
+    sending_queue:
+      enabled: true
+      num_consumers: 10
+      queue_size: 10000
+      block_on_overflow: true
+      sizer: items
+      batch:
+        min_size: 1000
+
   splunk_hec/b:
     token: "your-splunk-hec-token"
     endpoint: "https://splunk-hec-endpoint:8088/services/collector"
@@ -41,15 +47,21 @@ exporters:
     sourcetype: kafka-otel
     index: kafka_otel_index_b
     splunk_app_name: "soc4kafka"
+    sending_queue:
+      enabled: true
+      num_consumers: 10
+      queue_size: 10000
+      block_on_overflow: true
+      sizer: items
+      batch:
+        min_size: 1000
 
 service:
   pipelines:
     logs/a:
       receivers: [kafka/example_topic_a]
-      processors: [batch]
       exporters: [splunk_hec/a]
     logs/b:
      receivers: [kafka/example_topic_b]
-     processors: [batch]
      exporters: [splunk_hec/b]
 ```
