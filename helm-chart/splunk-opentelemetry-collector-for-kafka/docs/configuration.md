@@ -194,7 +194,7 @@ configOverride:
   exporters:
     splunk_hec:
       sending_queue:
-        block_on_overflow: false  # This wins - configOverride has highest priority
+        num_consumers: 20  # This wins - configOverride has highest priority
 ```
 
 ## Automatic Pod Restarts

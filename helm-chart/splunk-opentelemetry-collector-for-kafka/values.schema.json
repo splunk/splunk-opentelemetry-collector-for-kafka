@@ -75,7 +75,8 @@
             "description": "TLS configuration"
           },
           "sending_queue": {
-            "$ref": "#/definitions/sendingQueue"
+            "type": "object",
+            "description": "Splunk HEC exporter sending queue configuration. Passed through to the collector."
           }
         }
       }
@@ -118,56 +119,6 @@
               "type": "string"
             },
             "description": "Optional list of processor names. If omitted, defaults.pipelineProcessors is used (default: [\"resourcedetection\"])"
-          }
-        }
-      }
-    }
-  },
-  "definitions": {
-    "sendingQueue": {
-      "type": "object",
-      "description": "Splunk HEC exporter sending queue and exporter-level batching configuration",
-      "additionalProperties": false,
-      "properties": {
-        "enabled": {
-          "type": "boolean",
-          "default": true,
-          "description": "Enable the exporter sending queue"
-        },
-        "num_consumers": {
-          "type": "integer",
-          "minimum": 1,
-          "default": 10,
-          "description": "Number of queue consumers that dequeue and export batches"
-        },
-        "queue_size": {
-          "type": "integer",
-          "minimum": 1,
-          "default": 10000,
-          "description": "Maximum queue size measured by the configured sizer"
-        },
-        "block_on_overflow": {
-          "type": "boolean",
-          "default": true,
-          "description": "Block until queue space is available instead of rejecting data immediately when the queue is full"
-        },
-        "sizer": {
-          "type": "string",
-          "enum": ["requests", "items", "bytes"],
-          "default": "items",
-          "description": "Unit used to size the queue"
-        },
-        "batch": {
-          "type": "object",
-          "description": "Exporter-level batching configuration inside the sending queue",
-          "additionalProperties": false,
-          "properties": {
-            "min_size": {
-              "type": "integer",
-              "minimum": 1,
-              "default": 1000,
-              "description": "Minimum batch size before export"
-            }
           }
         }
       }
