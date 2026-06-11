@@ -20,6 +20,14 @@ splunkExporters:
     source: "kafka"
     sourcetype: "otel:logs"
     index: "main"
+    sending_queue:
+      enabled: true
+      num_consumers: 10
+      queue_size: 10000
+      block_on_overflow: true
+      sizer: items
+      batch:
+        min_size: 1000
 
 pipelines:
   - name: logs

@@ -50,7 +50,15 @@ exporters:
     sourcetype: kafka-otel
     index: kafka_otel
     splunk_app_name: "soc4kafka"
-      
+    sending_queue:
+      enabled: true
+      num_consumers: 10
+      queue_size: 10000
+      block_on_overflow: true
+      sizer: items
+      batch:
+        min_size: 1000
+
 service:
   telemetry:
     logs:
@@ -103,12 +111,28 @@ exporters:
     sourcetype: kafka-otel
     index: kafka_otel
     splunk_app_name: "soc4kafka"
-  
+    sending_queue:
+      enabled: true
+      num_consumers: 10
+      queue_size: 10000
+      block_on_overflow: true
+      sizer: items
+      batch:
+        min_size: 1000
+
   splunk_hec/internal_logs:
     token: "your-splunk-hec-token"
     endpoint: "https://splunk-hec-endpoint:8088/services/collector"
     index: kafka-logs
     splunk_app_name: "soc4kafka"
+    sending_queue:
+      enabled: true
+      num_consumers: 10
+      queue_size: 10000
+      block_on_overflow: true
+      sizer: items
+      batch:
+        min_size: 1000
 
 extensions:
   file_storage:
@@ -176,12 +200,28 @@ exporters:
     sourcetype: kafka-otel
     index: kafka_otel
     splunk_app_name: "soc4kafka"
+    sending_queue:
+      enabled: true
+      num_consumers: 10
+      queue_size: 10000
+      block_on_overflow: true
+      sizer: items
+      batch:
+        min_size: 1000
 
   splunk_hec/internal_logs:
     token: "your-splunk-hec-token"
     endpoint: "https://splunk-hec-endpoint:8088/services/collector"
     index: kafka-logs
     splunk_app_name: "soc4kafka"
+    sending_queue:
+      enabled: true
+      num_consumers: 10
+      queue_size: 10000
+      block_on_overflow: true
+      sizer: items
+      batch:
+        min_size: 1000
 
 extensions:
   file_storage:

@@ -22,9 +22,14 @@ splunkExporters:
     source: "soc4kafka"
     sourcetype: "otel:logs"
     index: "main"
-    # Optional; defaults are already applied from defaults.exporters.splunk_hec.
     sending_queue:
+      enabled: true
+      num_consumers: 10
+      queue_size: 10000
       block_on_overflow: true
+      sizer: items
+      batch:
+        min_size: 1000
 
 pipelines:
   - name: main-logs

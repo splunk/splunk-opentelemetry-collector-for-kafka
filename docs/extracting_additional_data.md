@@ -27,6 +27,14 @@ exporters:
     sourcetype: kafka-otel
     index: kafka_otel
     splunk_app_name: "soc4kafka"
+    sending_queue:
+      enabled: true
+      num_consumers: 10
+      queue_size: 10000
+      block_on_overflow: true
+      sizer: items
+      batch:
+        min_size: 1000
     otel_attrs_to_hec_metadata:
       index: kafka.header.index
       host: kafka.header.host
@@ -97,6 +105,14 @@ exporters:
     sourcetype: kafka-otel
     index: kafka_otel
     splunk_app_name: "soc4kafka"
+    sending_queue:
+      enabled: true
+      num_consumers: 10
+      queue_size: 10000
+      block_on_overflow: true
+      sizer: items
+      batch:
+        min_size: 1000
 
 service:
   pipelines:
