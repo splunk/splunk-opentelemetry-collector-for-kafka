@@ -130,7 +130,6 @@ processors:
     detectors: [system]
     system:
       hostname_sources: ["os"]
-  batch: {}
 
 exporters:
   splunk_hec:
@@ -147,7 +146,7 @@ service:
   pipelines:
     logs:
       receivers: [kafka]
-      processors: [batch, resourcedetection]
+      processors: [resourcedetection]
       exporters: [splunk_hec]
 ```
 
@@ -437,7 +436,7 @@ pipelines:
     type: logs
     receivers: [main]
     exporters: [primary]
-    processors: [batch, resourcedetection]
+    processors: [resourcedetection]
 
 extraEnv:
   - name: KAFKA_KAFKA_MAIN_SASL_PASSWORD
