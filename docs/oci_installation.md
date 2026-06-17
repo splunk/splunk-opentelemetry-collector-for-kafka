@@ -8,7 +8,7 @@ It covers two deployment forms — pick the one that fits your environment:
 
 - **Option A — Bare metal / systemd**: the collector binary runs directly on the VM. No container
   runtime required. Good for a simple single-host setup.
-- **Option B — MicroK8s**: the collector runs as a Kubernetes pod via the official Helm chart. Good
+- **Option B — Kubernetes**: the collector runs as a Kubernetes pod via the official Helm chart. Good
   if you want pod-level isolation and rolling updates.
 
 ---
@@ -282,11 +282,20 @@ should follow shortly after as the batch flushes.
 
 ---
 
-## Option B — MicroK8s
+## Option B — Kubernetes
 
 All commands run on the OCI VM over SSH.
 
-> MicroK8s ships its own bundled `helm3` and `kubectl`. The commands below use `microk8s helm3` and
+> **Kubernetes distribution note:** this guide uses **MicroK8s** as a representative example of a
+> single-node Kubernetes setup. The SOC4Kafka Helm chart is distribution-agnostic and will run on
+> any conformant Kubernetes cluster (EKS, GKE, AKS, K3s, vanilla kubeadm, etc.). If you are using
+> a different distribution, substitute your cluster's `kubectl` and `helm` commands for the
+> `microk8s kubectl` and `microk8s helm3` equivalents used below. The DNS configuration (step B.1),
+> firewall fix (step B.2), and the OCI-specific CIDRs in the step B.2 callout are specific to
+> MicroK8s on an OCI Ubuntu VM and will differ on other distributions or cloud providers.
+
+
+>  MicroK8s ships its own bundled `helm3` and `kubectl`. The commands below use `microk8s helm3` and
 > `microk8s kubectl` — not the system-level tools.
 
 ### B.1 Install MicroK8s
@@ -301,7 +310,6 @@ newgrp microk8s
 Enable the addons the chart needs:
 
 ```bash
-microk8s enable helm3
 microk8s enable hostpath-storage
 microk8s enable rbac
 microk8s enable metrics-server
