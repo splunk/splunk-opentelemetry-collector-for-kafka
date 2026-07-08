@@ -7,7 +7,7 @@ on:
 jobs:
   create_release:
     runs-on: ubuntu-latest
-    if: startsWith(github.event.head_commit.message, 'Prepare release v')
+    if: startsWith(github.event.commits[0].message, 'Prepare release v')
     permissions:
       contents: write
 
@@ -32,7 +32,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          VERSION=$(echo "${{ github.event.head_commit.message }}" | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')
+          VERSION=$(echo "${{ github.event.commits[0].message }}" | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')
           RELEASE_TAG="v$VERSION"
           gh release edit "$RELEASE_TAG" \
             --notes "This SOC4Kafka release adopts [the Splunk OpenTelemetry Collector v${VERSION}](https://github.com/signalfx/splunk-otel-collector/releases/tag/v${VERSION})"
