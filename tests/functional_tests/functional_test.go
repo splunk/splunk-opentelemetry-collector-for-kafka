@@ -222,9 +222,10 @@ func testScenarioTimestampExtraction(t *testing.T) {
 	source := "otel-" + sourceTimestamp
 	configFileTemplate := "timestamp_extraction_test.yaml.tmpl"
 	extractPattern := "(?P<timestamp>[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2})"
-	formatStr := "2006-01-02 15:04:05"
+	goFormatStr := "2006-01-02 15:04:05"
+	otelFormatStr := "%Y-%m-%d %H:%M:%S"
 	timestampStr := "2020-01-01 12:00:00"
-	timestamp, err := time.Parse(formatStr, timestampStr)
+	timestamp, err := time.Parse(goFormatStr, timestampStr)
 	require.NoError(t, err, "Error parsing timestamp")
 	event := "[" + timestampStr + "]" + " This event should have a custom timestamp!"
 
@@ -239,7 +240,7 @@ func testScenarioTimestampExtraction(t *testing.T) {
 		"Index":              index,
 		"Sourcetype":         sourcetype,
 		"ExtractPattern":     "\\\\[" + extractPattern + "\\\\]",
-		"FormatStr":          formatStr,
+		"FormatStr":          otelFormatStr,
 	}
 
 	configFileName := common.PrepareConfigFile(t, configFileTemplate, replacements, common.ConfigFilesDir)

@@ -75,7 +75,7 @@ transform:
 
 The `set(log.attributes["extracted_ts"], ExtractPatterns(log.body, "<timestamp_regex>"))` statement captures the timestamp and sets a helper log attribute `"extracted_ts"`. The `<timestamp_regex>` must be a valid regex containing a named capturing group timestamp. An example of such a regex is: `\\[(?P<timestamp>[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2})\\]`.
 
-The `set(log.time, Time(log.attributes["extracted_ts"]["timestamp"], "<format>", "<timezone>")` statement sets the actual timestamp of the log. It converts the extracted timestamp into a `Golang time.Time object`. The `<format>` variable specifies the standard Go layout format and `<timezone>` is an optional variable that specifies a timezone name. 
+The `set(log.time, Time(log.attributes["extracted_ts"]["timestamp"], "<format>", "<timezone>")` statement sets the actual timestamp of the log. It converts the extracted timestamp into the log record timestamp. The `<format>` variable specifies a strptime-style timestamp format and `<timezone>` is an optional variable that specifies a timezone name. 
 Finally, the `delete_key(log.attributes, "extracted_ts")` statement removes the helper log attribute `"extracted_ts"`.
 
 Timestamp extraction configuration: 
@@ -94,7 +94,7 @@ processors:
     error_mode: ignore
     log_statements:
       - set(log.attributes["extracted_ts"], ExtractPatterns(log.body, "\\[(?P<timestamp>[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2})\\]"))
-      - set(log.time, Time(log.attributes["extracted_ts"]["timestamp"], "2006-01-02 15:04:05", "UTC"))
+      - set(log.time, Time(log.attributes["extracted_ts"]["timestamp"], "%Y-%m-%d %H:%M:%S", "UTC"))
       - delete_key(log.attributes, "extracted_ts")
 
 exporters:
