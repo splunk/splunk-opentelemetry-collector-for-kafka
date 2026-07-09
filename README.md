@@ -64,7 +64,7 @@ processors:
 
 exporters:
   splunk_hec:
-    token: <Splunk HEC Token>
+    token: "<Splunk HEC Token>"
     endpoint: <Splunk HEC Endpoint>
     source: <Source>
     sourcetype: <Sourcetype>

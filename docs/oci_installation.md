@@ -27,9 +27,11 @@ Collect the following before touching the VM. Everything in this document is a
 | OCI auth token (SASL password) | Profile → User Settings → **Auth Tokens** → Generate Token — copy immediately, shown once | `<OCI_AUTH_TOKEN>` |
 | Stream / topic name | Streaming → **Streams** | `<TOPIC>` |
 
-> **Auth token constraint:** the token must **not begin with** `#`, `&`, `*`, `!`, `>`, `|`, `@`,
-> or `` ` ``. These characters have special meaning in YAML and will silently break the collector
-> configuration. If your generated token starts with one of them, delete it and generate a new one.
+> **Handling special characters:** the OCI auth token may contain characters like `&`, `|`, `>`,
+> `` ` ``, or `!` — no need to regenerate the token if it does. Just make sure to keep the single
+> quotes shown around `KAFKA_SASL_PASS` and `--from-literal=...` below when you set it: without
+> them, the **shell** interprets those characters itself and can silently truncate or empty out
+> the value before it ever reaches the collector.
 
 ### From Splunk
 

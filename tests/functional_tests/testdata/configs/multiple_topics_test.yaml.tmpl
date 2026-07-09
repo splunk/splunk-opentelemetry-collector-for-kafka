@@ -15,7 +15,7 @@ receivers:
 
 exporters:
   splunk_hec/{{ .KafkaTopicName1 }}:
-    token: {{ .SplunkHECToken }}
+    token: "{{ .SplunkHECToken }}"
     endpoint: {{ .SplunkHECEndpoint }}
     tls:
       insecure_skip_verify: true
@@ -31,7 +31,7 @@ exporters:
       batch:
         min_size: 1000
   splunk_hec/{{ .KafkaTopicName2 }}:
-    token: {{ .SplunkHECToken }}
+    token: "{{ .SplunkHECToken }}"
     endpoint: {{ .SplunkHECEndpoint }}
     tls:
       insecure_skip_verify: true

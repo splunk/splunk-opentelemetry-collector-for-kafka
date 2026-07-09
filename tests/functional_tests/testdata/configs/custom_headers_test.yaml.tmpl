@@ -12,7 +12,7 @@ receivers:
 
 exporters:
   splunk_hec:
-    token: {{ .SplunkHECToken }}
+    token: "{{ .SplunkHECToken }}"
     endpoint: {{ .SplunkHECEndpoint }}
     tls:
       insecure_skip_verify: true
