@@ -1,42 +1,15 @@
-# SOC4Kafka collector
-
-The new SOC4Kafka collector, built on OpenTelemetry, enables the collection of Kafka messages and forwards these events to Splunk. It serves as a replacement for the existing
-Splunk Connect for Kafka [(kafka-connect-splunk)](https://github.com/splunk/kafka-connect-splunk).
-
-## Requirements
-
-1. Kafka version 3.7.0 and above.
-   - Tested with following versions: 3.7.0, 3.8.0, 3.9.0, 4.0.0
-2. A Splunk environment of version 9.x and above, configured with valid [HTTP Event Collector (HEC)](https://dev.splunk.com/enterprise/docs/devtools/httpeventcollector/) token.
-
-> **NOTE:** HEC Acknowledgements are not supported in SOC4Kafka
-
-## Support technologies
-
-Splunk OTel Collector for Kafka lets you subscribe to a Kafka topic and stream the data to the Splunk HTTP event collector on the following technologies:
-
-- Apache Kafka
-- Amazon Managed Streaming for Apache Kafka (Amazon MSK)
-- Confluent Platform
-
-## Key differences to Splunk Connect for Kafka
-
-Not supported features which are available in previous version of Splunk Connect for Kafka but are not available in SOC4Kafka collector:
-- Acknowledgment support - Not supported
-- Protobuf encoding - Not supported
-
 ## How to start with SOC4Kafka?
 
 Choose an installation method that fits your environment:
 
-- **Kubernetes (Helm):** Use the [Helm chart](helm-chart/splunk-opentelemetry-collector-for-kafka/README.md) to deploy SOC4Kafka on Kubernetes. See the chart [Installation Guide](docs/helm/installation.md) for install and upgrade steps.
-- **Automated (Ansible):** See the [Quickstart Guide](docs/quickstart_guide.md) for automated installation.
-- **Manual:** Follow the steps below to run the collector from a downloaded package and config file.
+- **Kubernetes (Helm):** Use the [Helm chart](helm/installation.md) to deploy SOC4Kafka on Kubernetes.
+- **Automated (Ansible):** See the [Quickstart Guide](quickstart_guide.md) for automated installation.
+- **Manual:** Follow the steps below to run the collector from a downloaded package and config file. For a full command-by-command walkthrough against a real source, see the [OCI Streaming on a VM](oci_installation.md) guide.
 
 ### Download Splunk OTel Collector package
 
 The SOC4Kafka base package is the Splunk OpenTelemetry Collector, offering multiple installation methods to suit different needs.
-Get the newest release (prefixed with `v`) using [this link](https://github.com/signalfx/splunk-otel-collector/releases), download 
+Get the newest release (prefixed with `v`) using [this link](https://github.com/signalfx/splunk-otel-collector/releases), download
 the package suited for your platform.
 
 For instance, if you are using Linux on an AMD64 architecture, you can execute the following `wget` command:
@@ -121,7 +94,7 @@ receivers:
   kafka:
     brokers: ["kafka-broker-1:9092", "kafka-broker-2:9092", "kafka-broker-3:9092"]
     logs:
-      topics: 
+      topics:
        - "example-topic"
       encoding: "text"
 
@@ -168,7 +141,9 @@ To run SOC4Kafka Connect, use the base package along with a completed configurat
 ./<otel_package> --config <config_file>
 ```
 
-> **NOTE**: Ensure the file has executable permissions before running the command. On Linux-based systems you can add executable permissions using the following command:
+!!! note
+
+    Ensure the file has executable permissions before running the command. On Linux-based systems you can add executable permissions using the following command:
 
 ```commandline
 chmod a+x <otel_package>
@@ -181,28 +156,4 @@ chmod a+x otelcol_linux_amd64
 ./otelcol_linux_amd64 --config config.yaml
 ```
 
-## Advanced configuration
-
-Thanks to the flexibility of the OpenTelemetry Collector, the setup can be tailored to meet specific requirements. This modular approach allows you to treat the components as building blocks, enabling you to create a pipeline that aligns perfectly with your use case.
-To understand the design, refer to [this guide](docs/otel_design.md).
-
-You can unlock a range of powerful features by adjusting the configuration, such as:
-- [Collecting events from multiple topics](docs/multiple_topics.md): Easily gather data from several Kafka topics at once.
-- [Subscribing to topics using regex](docs/regex_topics.md): Dynamically subscribe to topics that match specific patterns using regular expressions.
-- [Extracting data from headers and timestamps](docs/extracting_additional_data.md): Access and make use of metadata, like headers and timestamps, for more detailed insights.
-
-## Scaling 
-
-SOC4Kafka supports horizontal scaling, allowing you to run multiple collector instances to handle increased Kafka message throughput. For more details check [this guide](docs/scaling.md).
-
-## Load Balancing
-
-SOC4Kafka supports load balancing across multiple collector instances, distributing the Kafka message processing workload evenly to improve reliability and performance. For more details check [this guide](docs/loadbalancing.md).
-
-## Migration 
-
-Migration from Splunk Connect for Kafka to SOC4Kafka is [described here](docs/migration.md).
-
-## Troubleshooting
-
-For troubleshooting check [this guide](docs/troubleshooting.md).
+To understand the collector's pipeline design, refer to the [Design](otel_design.md) guide.

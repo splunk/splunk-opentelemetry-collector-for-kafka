@@ -220,12 +220,14 @@ collectorLogs:
 ```
 
 When enabled, collector logs will be:
+
 - Written to files in `/var/log/otelcol/` inside the container
 - Available in pod logs via `kubectl logs` (stdout/stderr)
 - Automatically forwarded to Splunk using the referenced `splunkExporter` (uses its endpoint, token, index, source, sourcetype)
 - Tracked with `file_storage` extension to prevent re-reading on restart
 
 The chart automatically adds:
+
 - `filelog` receiver to read collector log files
 - `file_storage` extension for checkpointing
 - `logs/internal` pipeline connecting filelog → processors → referenced exporter
@@ -275,9 +277,11 @@ collectorMetrics:
 ```
 
 When enabled, the chart automatically adds:
+
 - **Prometheus receiver** - Scrapes the collector's internal telemetry endpoint (port 8888)
 - **Hostmetrics receiver** - Collects system metrics (CPU, memory, disk, network, filesystem, process)
 - **Telemetry service** - Exposes collector metrics via Prometheus endpoint
 - **Metrics pipeline** - Forwards metrics to Splunk using the referenced `splunkExporter`
 
-**Note:** Make sure you have a metrics-type index in Splunk for the metrics data. The service exposes port 8888 for Prometheus scraping if needed.
+!!! note
+    Make sure you have a metrics-type index in Splunk for the metrics data. The service exposes port 8888 for Prometheus scraping if needed.

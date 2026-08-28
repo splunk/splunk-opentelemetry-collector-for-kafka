@@ -192,7 +192,9 @@ service:
 
 ### Create Dashboard in Splunk
 
-> **NOTE:** This dashboard is available only for Splunk version 9.4.0 and higher
+!!! note
+
+    This dashboard is available only for Splunk version 9.4.0 and higher
 
 1. In Splunk, open **Search & Reporting -> Dashboards**
 2. Click on **Create New Dashboard** and create a new dashboard. Make sure to choose **Dashboard Studio** and **Grid** options.

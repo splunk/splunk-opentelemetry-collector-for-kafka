@@ -2,29 +2,31 @@
 
 Welcome to the Quickstart Guide! This guide will help you get up and running with SOC4Kafka in just a few simple steps.
 
-> **Note:** This guide covers the setup of a simple, basic configuration to get you started quickly. Once the `values.yaml` file is generated, it can be further adjusted and customized to suit your specific needs. For more advanced configuration options, please refer to the [documentation](../docs).
+!!! note
+    This guide covers the setup of a simple, basic configuration to get you started quickly. Once the `values.yaml` file is generated, it can be further adjusted and customized to suit your specific needs. For more advanced configuration options, please refer to the documentation.
 
 ### Prerequisites
-> **NOTE:** This guide is applicable for Linux and macOS systems. Windows is not supported.
 
+!!! note
+    This guide is applicable for Linux and macOS systems. Windows is not supported.
 
 
 Before you begin, ensure you have the following prerequisites in place:
+
 - A running instance of Splunk
-  - with a valid HTTP Event Collector (HEC) token from your Splunk instance
-  - index created for Kafka logs (e.g., `kafka_otel`)
+    - with a valid HTTP Event Collector (HEC) token from your Splunk instance
+    - index created for Kafka logs (e.g., `kafka_otel`)
 - A running instance of Kafka
 - Network connectivity between your Kafka instance and Splunk and the VM where SOC4Kafka will be installed
 - Ansible installed on VM where SOC4Kafka will be installed
 
 ### Quickstart Steps
-1. Download Ansible script: [install_soc4kafka_collector.yaml](../quickstart/install_soc4kafka_collector.yaml)
+1. Download Ansible script: [install_soc4kafka_collector.yaml](https://github.com/splunk/splunk-opentelemetry-collector-for-kafka/blob/main/quickstart/install_soc4kafka_collector.yaml)
 
 ```bash
 wget https://raw.githubusercontent.com/splunk/splunk-opentelemetry-collector-for-kafka/refs/heads/main/quickstart/install_soc4kafka_collector.yaml
 ```
-2. Fill in the variables in the Ansible script:
-More information about the variables can be found in the [Variables Description](#variables-description) section below.
+2. Fill in the variables in the Ansible script. More information about the variables can be found in the [Variables Description](#variables-description) section below.
 
 3. Run the Ansible playbook:
 ```bash

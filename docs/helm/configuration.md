@@ -4,7 +4,7 @@
 
 ### Kafka Receivers
 
-Define one or more Kafka receivers. All standard Kafka receiver configuration options are supported. See the [SOC4Kafka design documentation](../../../docs/otel_design.md) for details.
+Define one or more Kafka receivers. All standard Kafka receiver configuration options are supported. See the [SOC4Kafka design documentation](../otel_design.md) for details.
 
 ```yaml
 kafkaReceivers:
@@ -22,13 +22,15 @@ kafkaReceivers:
 
 **Chart-specific:** The `name` field is required and used to reference the receiver in pipelines.
 
-**Note:** Kafka authentication passwords (plain_text, SASL, or Kerberos) can reference existing Kubernetes secrets using the `secret` field. See [Secret Management](secrets.md) for details.
+!!! note
+
+    Kafka authentication passwords (plain_text, SASL, or Kerberos) can reference existing Kubernetes secrets using the `secret` field. See [Secret Management](secrets.md) for details.
 
 **TLS:** For TLS-enabled Kafka brokers (e.g. port 9093), add a `tls` block. See [TLS Configuration](tls.md) for full details and examples.
 
 ### Splunk HEC Exporters
 
-Define one or more Splunk HEC exporters. All standard Splunk HEC exporter configuration options are supported. See the [SOC4Kafka design documentation](../../../docs/otel_design.md) for details.
+Define one or more Splunk HEC exporters. All standard Splunk HEC exporter configuration options are supported. See the [SOC4Kafka design documentation](../otel_design.md) for details.
 
 ```yaml
 splunkExporters:
@@ -52,7 +54,9 @@ splunkExporters:
 
 **Chart-specific:** The `name` field is required and used to reference the exporter in pipelines.
 
-**Note:** Instead of providing `token` directly, you can reference an existing Kubernetes secret using the `secret` field. See [Secret Management](secrets.md) for details.
+!!! note
+
+    Instead of providing `token` directly, you can reference an existing Kubernetes secret using the `secret` field. See [Secret Management](secrets.md) for details.
 
 **TLS:** Use `https://` in the endpoint for TLS. The same `tls` options as for Kafka apply. See [TLS Configuration](tls.md).
 
@@ -60,7 +64,7 @@ splunkExporters:
 
 ### Pipelines
 
-Connect receivers to exporters. See the [SOC4Kafka design documentation](../../../docs/otel_design.md) for details.
+Connect receivers to exporters. See the [SOC4Kafka design documentation](../otel_design.md) for details.
 
 **Chart-specific:** You can omit `processors`; the chart then uses `defaults.pipelineProcessors` (default: `["resourcedetection"]`). Override per pipeline or change the default in `values.yaml`.
 
@@ -79,7 +83,7 @@ pipelines:
 
 ## Advanced Configuration
 
-See [values.yaml](../values.yaml) for all available configuration options. Key areas:
+See [values.yaml](https://github.com/splunk/splunk-opentelemetry-collector-for-kafka/blob/main/helm-chart/splunk-opentelemetry-collector-for-kafka/values.yaml) for all available configuration options. Key areas:
 
 - **TLS** ([tls.md](tls.md)): Configure TLS for Kafka receivers and Splunk HEC exporters.
 - **Component Defaults** (`defaults`): Override default OpenTelemetry component settings
@@ -120,13 +124,16 @@ collectorLogs:
 ```
 
 **Features:**
+
 - Logs are written to files and stdout/stderr
 - Logs are automatically forwarded to Splunk via `filelog` receiver
 - `file_storage` extension tracks read position to prevent re-reading logs on restart
 - Internal logs are sent using the referenced Splunk exporter (by default the first one); you can use a dedicated exporter to send them to a separate index for easier analysis
 - Uses the first `splunkExporter`'s endpoint and secret by default (can be overridden)
 
-**Note:** Log files are stored in an `emptyDir` volume, which means they are ephemeral and will be lost when the pod is deleted. However, logs are forwarded to Splunk, so they are preserved there.
+!!! note
+
+    Log files are stored in an `emptyDir` volume, which means they are ephemeral and will be lost when the pod is deleted. However, logs are forwarded to Splunk, so they are preserved there.
 
 ### Metrics Collection
 
@@ -145,13 +152,16 @@ collectorMetrics:
 ```
 
 **Features:**
+
 - Collector internal metrics exposed via Prometheus endpoint (port 8888)
 - System metrics collected via hostmetrics receiver (CPU, memory, disk, network, filesystem, process)
 - Metrics forwarded to Splunk using the referenced `splunkExporter` (or first if not specified)
 - Service exposes metrics port for Prometheus scraping
 - All metrics go through the `resourcedetection` processor for host filtering
 
-**Note:** Make sure you have a metrics-type index in Splunk for the metrics data. See the [Splunk Dashboard documentation](../../../docs/splunk-dashboard.md) for details.
+!!! note
+
+    Make sure you have a metrics-type index in Splunk for the metrics data. See the [Splunk Dashboard documentation](../splunk-dashboard.md) for details.
 
 **Advanced Configuration:** For custom metrics configuration (different exporter, scrapers, intervals, etc.), use `configOverride` to override the generated configuration.
 
@@ -162,15 +172,17 @@ The chart merges configuration in the following order (highest to lowest priorit
 1. **`configOverride`** - Highest priority. Completely overrides any generated configuration. Use this for advanced customizations that can't be achieved through other means.
 
 2. **Explicit configuration** - Values specified directly in `kafkaReceivers` and `splunkExporters` override defaults. For example:
-   ```yaml
-   kafkaReceivers:
-     - name: main
-       group_id: "custom-group"  # This overrides defaults.receivers.kafka.group_id
-   ```
+   
+```yaml
+kafkaReceivers:
+ - name: main
+   group_id: "custom-group"  # This overrides defaults.receivers.kafka.group_id
+```
 
 3. **`defaults`** - Lowest priority. Provides default values for receivers, processors, and exporters. These are used when not explicitly specified.
 
 **Merge behavior:**
+
 - `mustMergeOverwrite` is used, which means values are deeply merged, and explicit values completely replace defaults at the same path
 - For nested objects, only the specified keys are replaced; other keys from defaults are preserved
 - `configOverride` is applied last and can override any part of the generated configuration

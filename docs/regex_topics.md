@@ -7,7 +7,8 @@ To enable this feature, prefix your topic with the `^` character. This indicates
 The Kafka receiver supports subscribing to topics using regular expressions. When you use a regex pattern (e.g., ^myPrefix.*), the receiver continuously monitors the Kafka cluster for new topics that match the pattern.
 The receiver does not only subscribe to existing topics that match the regex, but also detects new matching topics as they are created.
 
-Please Note: Ensure that your regex pattern is valid and correctly formatted to avoid any subscription issues.
+!!! note
+    Ensure that your regex pattern is valid and correctly formatted to avoid any subscription issues.
 
 ### Excluding topics
 
