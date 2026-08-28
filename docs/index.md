@@ -57,6 +57,6 @@ Migration from Splunk Connect for Kafka to SOC4Kafka is described in the [Migrat
 
 A preconfigured health dashboard is available — see [Splunk Dashboard](splunk-dashboard.md).
 
-## Troubleshooting
+## Collecting logs
 
-For troubleshooting check the [Troubleshooting](helm/troubleshooting.md) guide.
+For set up on collecting the SOC4Kafka's own logs check the [Collecting SOC4Kafka's own logs](collecting_own_logs.md) guide.

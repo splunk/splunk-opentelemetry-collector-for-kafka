@@ -205,6 +205,6 @@ SOC4Kafka supports load balancing across multiple collector instances, distribut
 
 Migration from Splunk Connect for Kafka to SOC4Kafka is [described here](https://splunk.github.io/splunk-opentelemetry-collector-for-kafka/main/migration/).
 
-## Troubleshooting
+## Collecting logs
 
-For troubleshooting check [this guide](https://splunk.github.io/splunk-opentelemetry-collector-for-kafka/main/helm/troubleshooting/).
+For set up on collecting the SOC4Kafka's own logs check the [Collecting SOC4Kafka's own logs](https://splunk.github.io/splunk-opentelemetry-collector-for-kafka/main/collecting_own_logs/) guide.
