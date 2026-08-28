@@ -59,4 +59,4 @@ A preconfigured health dashboard is available — see [Splunk Dashboard](splunk-
 
 ## Troubleshooting
 
-For troubleshooting check the [Troubleshooting](troubleshooting.md) guide.
+For troubleshooting check the [Troubleshooting](helm/troubleshooting.md) guide.

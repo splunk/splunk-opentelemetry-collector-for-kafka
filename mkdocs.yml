@@ -45,7 +45,6 @@ nav:
   - Design: "otel_design.md"
   - How to run:
       - Overview: "getting_started.md"
-      - Ansible: "quickstart_guide.md"
       - Kubernetes:
           - Installation: "helm/installation.md"
           - Configuration: "helm/configuration.md"
@@ -53,6 +52,7 @@ nav:
           - TLS: "helm/tls.md"
           - Examples: "helm/examples.md"
           - Troubleshooting: "helm/troubleshooting.md"
+      - Ansible: "quickstart_guide.md"
       - OCI Streaming: "oci_installation.md"
   - Advanced Configuration:
       - Multiple topics: "multiple_topics.md"
