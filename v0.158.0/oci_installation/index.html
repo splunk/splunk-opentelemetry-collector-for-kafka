@@ -1,0 +1,2121 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://splunk.github.io/splunk-opentelemetry-collector-for-kafka/v0.158.0/oci_installation/">
+      
+      
+        <link rel="prev" href="../quickstart_guide/">
+      
+      
+        <link rel="next" href="../multiple_topics/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="zensical-0.0.57">
+    
+    
+      
+        <title>SOC4Kafka Installation Guide - OCI Streaming to Splunk - Splunk OpenTelemetry Collector for Kafka (SOC4Kafka)</title>
+      
+    
+    
+      
+        
+      
+      <link rel="stylesheet" href="../assets/stylesheets/modern/main.5da3a30f.min.css">
+      
+        
+          
+        
+        <link rel="stylesheet" href="../assets/stylesheets/modern/palette.812a03bb.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,300i,400,400i,500,500i,700,700i%7CJetBrains+Mono:400,400i,700,700i&amp;display=fallback">
+        <style>:root{--md-text-font:"Inter";--md-code-font:"JetBrains Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_scope.pathname.endsWith("/")||(__md_scope=new URL(__md_scope.pathname+"/",location)),__md_hash=e=>[...e].reduce(((e,t)=>(e<<5)-e+t.charCodeAt(0)),0),__md_get=(e,t=localStorage,_=__md_scope)=>JSON.parse(t.getItem(_.pathname+"."+e)),__md_set=(e,t,_=localStorage,a=__md_scope)=>{try{_.setItem(a.pathname+"."+e,JSON.stringify(t))}catch(e){}},document.documentElement.setAttribute("data-platform",navigator.platform)</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="black" data-md-color-accent="orange">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer" aria-label="Navigation"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#soc4kafka-installation-guide-oci-streaming-to-splunk" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="./.." title="Splunk OpenTelemetry Collector for Kafka (SOC4Kafka)" class="md-header__button md-logo" aria-label="Splunk OpenTelemetry Collector for Kafka (SOC4Kafka)" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-book-open" viewBox="0 0 24 24"><path d="M12 5v16M20.001 19A2 2 0 0 0 22 17V5a2 2 0 0 0-1.999-2L16 3.002A5 5 0 0 0 12 5a5 5 0 0 0-4-2H4a2 2 0 0 0-2 2v12a2 2 0 0 0 1.999 2H8a5 5 0 0 1 4 2 5 5 0 0 1 4-2z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer" aria-label="Navigation">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-menu" viewBox="0 0 24 24"><path d="M4 5h16M4 12h16M4 19h16"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Splunk OpenTelemetry Collector for Kafka (SOC4Kafka)
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              SOC4Kafka Installation Guide - OCI Streaming to Splunk
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="none" data-md-color-scheme="default" data-md-color-primary="black" data-md-color-accent="orange"  aria-hidden="true"  type="radio" name="__palette" id="__palette_0">
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search" aria-label="Search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-search" viewBox="0 0 24 24"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog" aria-label="Search">
+  <button type="button" class="md-search__button">
+    Search
+  </button>
+</div>
+      
+    
+    <div class="md-header__source">
+      
+        <a href="https://github.com/splunk/splunk-opentelemetry-collector-for-kafka" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.3.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2026 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    splunk/splunk-opentelemetry-collector-for-kafka
+  </div>
+</a>
+      
+    </div>
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="./.." title="Splunk OpenTelemetry Collector for Kafka (SOC4Kafka)" class="md-nav__button md-logo" aria-label="Splunk OpenTelemetry Collector for Kafka (SOC4Kafka)" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-book-open" viewBox="0 0 24 24"><path d="M12 5v16M20.001 19A2 2 0 0 0 22 17V5a2 2 0 0 0-1.999-2L16 3.002A5 5 0 0 0 12 5a5 5 0 0 0-4-2H4a2 2 0 0 0-2 2v12a2 2 0 0 0 1.999 2H8a5 5 0 0 1 4 2 5 5 0 0 1 4-2z"/></svg>
+
+    </a>
+    Splunk OpenTelemetry Collector for Kafka (SOC4Kafka)
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/splunk/splunk-opentelemetry-collector-for-kafka" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.3.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2026 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    splunk/splunk-opentelemetry-collector-for-kafka
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="./.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Home
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../otel_design/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Design
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  How to run
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  How to run
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting_started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Overview
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_2" id="__nav_3_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Kubernetes
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  Kubernetes
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../helm/installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Installation
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../helm/configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Configuration
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../helm/secrets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Secrets
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../helm/tls/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  TLS
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../helm/examples/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Examples
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../helm/troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Troubleshooting
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../quickstart_guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Ansible
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  OCI Streaming
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="././" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  OCI Streaming
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+
+<nav class="md-nav md-nav--secondary" aria-label="On this page">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      On this page
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#before-you-start-values-to-have-ready" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Before you start - values to have ready
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Before you start - values to have ready">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#from-oci-console" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        From OCI Console
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#from-splunk" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        From Splunk
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#choose-a-consumer-group-name" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Choose a consumer group name
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#option-a-bare-metal-systemd" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Option A - Bare metal / systemd
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Option A - Bare metal &#x2f; systemd">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a1-install-dependencies" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        A.1 Install dependencies
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#a2-download-the-collector-binary" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        A.2 Download the collector binary
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#a3-create-the-secrets-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        A.3 Create the secrets file
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#a4-create-the-collector-config" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        A.4 Create the collector config
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#a5-verify-connectivity-before-starting-the-collector" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        A.5 Verify connectivity before starting the collector
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#a6-start-the-collector" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        A.6 Start the collector
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#a7-install-as-a-systemd-service" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        A.7 Install as a systemd service
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#a8-send-a-test-message-and-confirm-in-splunk" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        A.8 Send a test message and confirm in Splunk
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#option-b-kubernetes" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Option B - Kubernetes
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Option B - Kubernetes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#b1-install-microk8s" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        B.1 Install MicroK8s
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b2-fix-the-oci-host-firewall" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        B.2 Fix the OCI host firewall
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b3-create-the-namespace" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        B.3 Create the namespace
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b4-create-the-kubernetes-secrets" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        B.4 Create the Kubernetes secrets
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b5-create-valuesyaml" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        B.5 Create <code>values.yaml</code>
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b6-install-the-chart" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        B.6 Install the chart
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b7-verify-the-deployment" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        B.7 Verify the deployment
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b8-send-a-test-message-and-confirm-in-splunk" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        B.8 Send a test message and confirm in Splunk
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Advanced Configuration
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  Advanced Configuration
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../multiple_topics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Multiple topics
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../regex_topics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Regex topics
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../extracting_additional_data/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Extracting additional data
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../scaling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Scaling
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../loadbalancing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Load Balancing
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Migration from SC4Kafka
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  Migration from SC4Kafka
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../migration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Overview
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../migration_config_values/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Config value mapping
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../splunk-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Splunk Dashboard
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../collecting_own_logs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Collecting SOC4Kafka's own logs
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  
+                    
+                    
+                    
+                      
+                    
+                    
+                      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+                      <div class="md-sidebar-button__wrapper">
+                        <label class="md-sidebar-button" for="__toc"></label>
+                      </div>
+                    
+                  
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--secondary" aria-label="On this page">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      On this page
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#before-you-start-values-to-have-ready" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Before you start - values to have ready
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Before you start - values to have ready">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#from-oci-console" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        From OCI Console
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#from-splunk" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        From Splunk
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#choose-a-consumer-group-name" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Choose a consumer group name
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#option-a-bare-metal-systemd" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Option A - Bare metal / systemd
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Option A - Bare metal &#x2f; systemd">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a1-install-dependencies" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        A.1 Install dependencies
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#a2-download-the-collector-binary" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        A.2 Download the collector binary
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#a3-create-the-secrets-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        A.3 Create the secrets file
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#a4-create-the-collector-config" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        A.4 Create the collector config
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#a5-verify-connectivity-before-starting-the-collector" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        A.5 Verify connectivity before starting the collector
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#a6-start-the-collector" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        A.6 Start the collector
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#a7-install-as-a-systemd-service" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        A.7 Install as a systemd service
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#a8-send-a-test-message-and-confirm-in-splunk" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        A.8 Send a test message and confirm in Splunk
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#option-b-kubernetes" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Option B - Kubernetes
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Option B - Kubernetes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#b1-install-microk8s" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        B.1 Install MicroK8s
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b2-fix-the-oci-host-firewall" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        B.2 Fix the OCI host firewall
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b3-create-the-namespace" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        B.3 Create the namespace
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b4-create-the-kubernetes-secrets" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        B.4 Create the Kubernetes secrets
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b5-create-valuesyaml" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        B.5 Create <code>values.yaml</code>
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b6-install-the-chart" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        B.6 Install the chart
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b7-verify-the-deployment" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        B.7 Verify the deployment
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b8-send-a-test-message-and-confirm-in-splunk" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        B.8 Send a test message and confirm in Splunk
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+  
+  
+
+
+<h1 id="soc4kafka-installation-guide-oci-streaming-to-splunk">SOC4Kafka Installation Guide - OCI Streaming to Splunk<a class="headerlink" href="#soc4kafka-installation-guide-oci-streaming-to-splunk" title="Permanent link">&para;</a></h1>
+<p>This guide walks you through installing and configuring the <strong>Splunk OpenTelemetry Collector for
+Kafka (SOC4Kafka)</strong> on an OCI Ubuntu VM so that records published to an <strong>OCI Streaming</strong> stream are
+forwarded to <strong>Splunk</strong> via HTTP Event Collector (HEC).</p>
+<p>It covers two deployment forms - pick the one that fits your environment:</p>
+<ul>
+<li><strong>Option A - Bare metal / systemd</strong>: the collector binary runs directly on the VM. No container
+  runtime required. Good for a simple single-host setup.</li>
+<li><strong>Option B - Kubernetes</strong>: the collector runs as a Kubernetes pod via the official Helm chart. Good
+  if you want pod-level isolation and rolling updates.</li>
+</ul>
+<hr />
+<h2 id="before-you-start-values-to-have-ready">Before you start - values to have ready<a class="headerlink" href="#before-you-start-values-to-have-ready" title="Permanent link">&para;</a></h2>
+<p>Collect the following before touching the VM. Everything in this document is a
+<code>&lt;PLACEHOLDER&gt;</code> - substitute your real values as you go.</p>
+<h3 id="from-oci-console">From OCI Console<a class="headerlink" href="#from-oci-console" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>What you need</th>
+<th>Where to find it</th>
+<th>Placeholder</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Kafka bootstrap endpoint</td>
+<td>Streaming → Stream Pools → select pool → <strong>Kafka Connection Settings</strong> → Bootstrap Servers</td>
+<td><code>&lt;KAFKA_BOOTSTRAP&gt;</code></td>
+</tr>
+<tr>
+<td>Kafka SASL username</td>
+<td>Same page → <strong>Username</strong> (fully formed, ready to copy)</td>
+<td><code>&lt;SASL_USERNAME&gt;</code></td>
+</tr>
+<tr>
+<td>OCI auth token (SASL password)</td>
+<td>Profile → User Settings → <strong>Auth Tokens</strong> → Generate Token - copy immediately, shown once</td>
+<td><code>&lt;OCI_AUTH_TOKEN&gt;</code></td>
+</tr>
+<tr>
+<td>Stream / topic name</td>
+<td>Streaming → <strong>Streams</strong></td>
+<td><code>&lt;TOPIC&gt;</code></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p><strong>Handling special characters:</strong> the OCI auth token may contain characters like <code>&amp;</code>, <code>|</code>, <code>&gt;</code>, 
+<code>`</code>, or <code>!</code> - no need to regenerate the token if it does. Just make sure to keep the single
+quotes shown around <code>KAFKA_SASL_PASS</code> and <code>--from-literal=...</code> below when you set it: without
+them, the <strong>shell</strong> interprets those characters itself and can silently truncate or empty out
+the value before it ever reaches the collector.</p>
+</div>
+<h3 id="from-splunk">From Splunk<a class="headerlink" href="#from-splunk" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>What you need</th>
+<th>Where to find it</th>
+<th>Placeholder</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>HEC endpoint URL</td>
+<td>Settings → Data inputs → HTTP Event Collector → host + port <code>8088</code>, path <code>/services/collector</code></td>
+<td><code>&lt;SPLUNK_HEC_ENDPOINT&gt;</code></td>
+</tr>
+<tr>
+<td>HEC token</td>
+<td>Settings → Data inputs → HTTP Event Collector → token&rsquo;s <strong>Token Value</strong></td>
+<td><code>&lt;SPLUNK_HEC_TOKEN&gt;</code></td>
+</tr>
+<tr>
+<td>Target index</td>
+<td>Settings → <strong>Indexes</strong></td>
+<td><code>&lt;SPLUNK_INDEX&gt;</code></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p><strong>HEC prerequisites:</strong> before installing the collector, make sure HEC is globally enabled
+(<strong>Global Settings → Enabled</strong>) and that <strong>Indexer Acknowledgement is OFF</strong> - SOC4Kafka does not
+implement HEC ACK and the connection will stall if it is on.</p>
+</div>
+<h3 id="choose-a-consumer-group-name">Choose a consumer group name<a class="headerlink" href="#choose-a-consumer-group-name" title="Permanent link">&para;</a></h3>
+<p>Pick a short, unique string for <code>&lt;CONSUMER_GROUP&gt;</code> (e.g. <code>soc4kafka-v1</code>). This name identifies your
+collector instance to the Kafka broker. <strong>Use a fresh name</strong> - reusing a group ID from a previous
+failed install can cause the collector to loop indefinitely on startup.</p>
+<hr />
+<h2 id="option-a-bare-metal-systemd">Option A - Bare metal / systemd<a class="headerlink" href="#option-a-bare-metal-systemd" title="Permanent link">&para;</a></h2>
+<p>All commands run on the OCI VM over SSH.</p>
+<h3 id="a1-install-dependencies">A.1 Install dependencies<a class="headerlink" href="#a1-install-dependencies" title="Permanent link">&para;</a></h3>
+<p>These packages are used for connectivity testing and producing test messages. They are not required
+for the collector itself to run.</p>
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>apt-get<span class="w"> </span>update
+sudo<span class="w"> </span>apt-get<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>kafkacat<span class="w"> </span>curl<span class="w"> </span>netcat-openbsd
+</code></pre></div>
+<h3 id="a2-download-the-collector-binary">A.2 Download the collector binary<a class="headerlink" href="#a2-download-the-collector-binary" title="Permanent link">&para;</a></h3>
+<p>SOC4Kafka releases are published on GitHub. Download the binary for your target version, make it
+executable, and place it in a working directory.</p>
+<div class="highlight"><pre><span></span><code>mkdir<span class="w"> </span>-p<span class="w"> </span>~/soc4kafka<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">cd</span><span class="w"> </span>~/soc4kafka
+wget<span class="w"> </span>https://github.com/signalfx/splunk-otel-collector/releases/download/v0.158.0/otelcol_linux_amd64
+chmod<span class="w"> </span>+x<span class="w"> </span>otelcol_linux_amd64
+</code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Check the <a href="https://github.com/splunk/splunk-opentelemetry-collector-for-kafka/releases">releases page</a>
+for newer versions and substitute <code>v0.158.0</code> accordingly.</p>
+</div>
+<h3 id="a3-create-the-secrets-file">A.3 Create the secrets file<a class="headerlink" href="#a3-create-the-secrets-file" title="Permanent link">&para;</a></h3>
+<p>Create <code>~/soc4kafka/collector.env</code> and restrict its permissions. This file holds all secrets so they
+never appear in the config file or in process arguments.</p>
+<div class="highlight"><pre><span></span><code>cat<span class="w"> </span>&gt;<span class="w"> </span>~/soc4kafka/collector.env<span class="w"> </span><span class="s">&lt;&lt;'EOF'</span>
+<span class="s">KAFKA_BOOTSTRAP=&lt;KAFKA_BOOTSTRAP&gt;</span>
+<span class="s">KAFKA_SASL_USER=&lt;SASL_USERNAME&gt;</span>
+<span class="s">KAFKA_SASL_PASS='&lt;OCI_AUTH_TOKEN&gt;'</span>
+<span class="s">SPLUNK_HEC_URL=&lt;SPLUNK_HEC_ENDPOINT&gt;</span>
+<span class="s">SPLUNK_HEC_TOKEN=&lt;SPLUNK_HEC_TOKEN&gt;</span>
+<span class="s">SPLUNK_INDEX=&lt;SPLUNK_INDEX&gt;</span>
+<span class="s">EOF</span>
+chmod<span class="w"> </span><span class="m">600</span><span class="w"> </span>~/soc4kafka/collector.env
+</code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Wrap <code>KAFKA_SASL_PASS</code> in <strong>single quotes</strong> so the shell does not expand special characters in the
+token value.</p>
+</div>
+<h3 id="a4-create-the-collector-config">A.4 Create the collector config<a class="headerlink" href="#a4-create-the-collector-config" title="Permanent link">&para;</a></h3>
+<p>Create <code>~/soc4kafka/config.yaml</code> with the content below. Substitute <code>&lt;CONSUMER_GROUP&gt;</code> and <code>&lt;TOPIC&gt;</code>
+directly in the file - these are not secrets and do not need to be in the env file.</p>
+<div class="highlight"><pre><span></span><code><span class="nt">receivers</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">kafka</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">brokers</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${env:KAFKA_BOOTSTRAP}</span>
+<span class="w">    </span><span class="nt">group_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;CONSUMER_GROUP&gt;</span>
+<span class="w">    </span><span class="nt">client_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;CONSUMER_GROUP&gt;</span>
+<span class="w">    </span><span class="nt">group_rebalance_strategy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">range</span>
+<span class="w">    </span><span class="nt">initial_offset</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">earliest</span>
+<span class="w">    </span><span class="nt">tls</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">insecure_skip_verify</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">    </span><span class="nt">auth</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">sasl</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${env:KAFKA_SASL_USER}</span>
+<span class="w">        </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${env:KAFKA_SASL_PASS}</span>
+<span class="w">        </span><span class="nt">mechanism</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PLAIN</span>
+<span class="w">    </span><span class="nt">logs</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">topics</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;TOPIC&gt;</span>
+<span class="w">      </span><span class="nt">encoding</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">text</span>
+
+<span class="nt">processors</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">resourcedetection</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">detectors</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">system</span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="nt">system</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">hostname_sources</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">"os"</span><span class="p p-Indicator">]</span>
+
+<span class="nt">exporters</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">splunk_hec</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">token</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${env:SPLUNK_HEC_TOKEN}</span>
+<span class="w">    </span><span class="nt">endpoint</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${env:SPLUNK_HEC_URL}</span>
+<span class="w">    </span><span class="nt">source</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">oci-streaming</span>
+<span class="w">    </span><span class="nt">sourcetype</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">oci:streaming:text</span>
+<span class="w">    </span><span class="nt">index</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${env:SPLUNK_INDEX}</span>
+<span class="w">    </span><span class="nt">tls</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">insecure_skip_verify</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">    </span><span class="nt">splunk_app_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">soc4kafka</span>
+
+<span class="nt">service</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">pipelines</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">logs</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">receivers</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">kafka</span><span class="p p-Indicator">]</span>
+<span class="w">      </span><span class="nt">processors</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">resourcedetection</span><span class="p p-Indicator">]</span>
+<span class="w">      </span><span class="nt">exporters</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">splunk_hec</span><span class="p p-Indicator">]</span>
+</code></pre></div>
+<h3 id="a5-verify-connectivity-before-starting-the-collector">A.5 Verify connectivity before starting the collector<a class="headerlink" href="#a5-verify-connectivity-before-starting-the-collector" title="Permanent link">&para;</a></h3>
+<p>Check that the VM can reach Splunk HEC:</p>
+<div class="highlight"><pre><span></span><code>nc<span class="w"> </span>-vz<span class="w"> </span>&lt;SPLUNK_HEC_HOST&gt;<span class="w"> </span><span class="m">8088</span>
+</code></pre></div>
+<p>Check that the VM can reach the Kafka broker and authenticate (this is the single best end-to-end
+connectivity test - success means DNS, routing, TLS, and SASL all work):</p>
+<div class="highlight"><pre><span></span><code><span class="nb">set</span><span class="w"> </span>-a<span class="p">;</span><span class="w"> </span><span class="nb">source</span><span class="w"> </span>~/soc4kafka/collector.env<span class="p">;</span><span class="w"> </span><span class="nb">set</span><span class="w"> </span>+a
+kafkacat<span class="w"> </span>-L<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-b<span class="w"> </span><span class="s2">"</span><span class="nv">$KAFKA_BOOTSTRAP</span><span class="s2">"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-X<span class="w"> </span>security.protocol<span class="o">=</span>SASL_SSL<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-X<span class="w"> </span>sasl.mechanisms<span class="o">=</span>PLAIN<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-X<span class="w"> </span>sasl.username<span class="o">=</span><span class="s2">"</span><span class="nv">$KAFKA_SASL_USER</span><span class="s2">"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-X<span class="w"> </span>sasl.password<span class="o">=</span><span class="s2">"</span><span class="nv">$KAFKA_SASL_PASS</span><span class="s2">"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-20
+</code></pre></div>
+<p>You should see <code>&lt;TOPIC&gt;</code> listed in the output. If it times out or returns an auth error, resolve that
+before proceeding - the collector will exhibit the same failure.</p>
+<h3 id="a6-start-the-collector">A.6 Start the collector<a class="headerlink" href="#a6-start-the-collector" title="Permanent link">&para;</a></h3>
+<p>Run in the foreground first to watch the startup logs:</p>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>~/soc4kafka
+<span class="nb">set</span><span class="w"> </span>-a<span class="p">;</span><span class="w"> </span><span class="nb">source</span><span class="w"> </span>./collector.env<span class="p">;</span><span class="w"> </span><span class="nb">set</span><span class="w"> </span>+a
+./otelcol_linux_amd64<span class="w"> </span>--config<span class="w"> </span>config.yaml
+</code></pre></div>
+<p>A healthy startup looks like:</p>
+<div class="highlight"><pre><span></span><code>Everything is ready. Begin running and processing data.
+...joined, balancing group   group: &lt;CONSUMER_GROUP&gt;
+...synced                    assigned: &lt;TOPIC&gt;[0]
+...beginning heartbeat loop
+</code></pre></div>
+<p>If you see <code>NOT_COORDINATOR</code> repeating, stop the collector, change <code>group_id</code> and <code>client_id</code> to a
+new name in <code>config.yaml</code>, and restart.</p>
+<h3 id="a7-install-as-a-systemd-service">A.7 Install as a systemd service<a class="headerlink" href="#a7-install-as-a-systemd-service" title="Permanent link">&para;</a></h3>
+<p>Once the collector starts cleanly, promote it to a managed service so it restarts automatically and
+its logs are captured by journald.</p>
+<p>Copy files into place:</p>
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>mkdir<span class="w"> </span>-p<span class="w"> </span>/opt/soc4kafka<span class="w"> </span>/etc/soc4kafka
+sudo<span class="w"> </span>cp<span class="w"> </span>~/soc4kafka/otelcol_linux_amd64<span class="w"> </span>/opt/soc4kafka/
+sudo<span class="w"> </span>cp<span class="w"> </span>~/soc4kafka/config.yaml<span class="w"> </span>/opt/soc4kafka/
+sudo<span class="w"> </span>cp<span class="w"> </span>~/soc4kafka/collector.env<span class="w"> </span>/etc/soc4kafka/collector.env
+sudo<span class="w"> </span>chmod<span class="w"> </span><span class="m">600</span><span class="w"> </span>/etc/soc4kafka/collector.env
+</code></pre></div>
+<p>Create the service user and set ownership:</p>
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>useradd<span class="w"> </span>--system<span class="w"> </span>--no-create-home<span class="w"> </span>--shell<span class="w"> </span>/usr/sbin/nologin<span class="w"> </span>otel
+sudo<span class="w"> </span>chown<span class="w"> </span>otel:otel<span class="w"> </span>/opt/soc4kafka/otelcol_linux_amd64
+sudo<span class="w"> </span>chown<span class="w"> </span>otel:otel<span class="w"> </span>/opt/soc4kafka/config.yaml
+sudo<span class="w"> </span>chown<span class="w"> </span>otel:otel<span class="w"> </span>/etc/soc4kafka/collector.env
+</code></pre></div>
+<p>Create the unit file:</p>
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>tee<span class="w"> </span>/etc/systemd/system/soc4kafka.service<span class="w"> </span>&gt;<span class="w"> </span>/dev/null<span class="w"> </span><span class="s">&lt;&lt;'EOF'</span>
+<span class="s">[Unit]</span>
+<span class="s">Description=SOC4Kafka collector (OCI Streaming -&gt; Splunk)</span>
+<span class="s">After=network-online.target</span>
+<span class="s">Wants=network-online.target</span>
+
+<span class="s">[Service]</span>
+<span class="s">User=otel</span>
+<span class="s">Group=otel</span>
+<span class="s">EnvironmentFile=/etc/soc4kafka/collector.env</span>
+<span class="s">ExecStart=/opt/soc4kafka/otelcol_linux_amd64 --config /opt/soc4kafka/config.yaml</span>
+<span class="s">Restart=on-failure</span>
+<span class="s">RestartSec=5s</span>
+
+<span class="s">[Install]</span>
+<span class="s">WantedBy=multi-user.target</span>
+<span class="s">EOF</span>
+</code></pre></div>
+<p>Enable and start:</p>
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>systemctl<span class="w"> </span>daemon-reload
+sudo<span class="w"> </span>systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>--now<span class="w"> </span>soc4kafka
+sudo<span class="w"> </span>journalctl<span class="w"> </span>-u<span class="w"> </span>soc4kafka<span class="w"> </span>-f
+</code></pre></div>
+<h3 id="a8-send-a-test-message-and-confirm-in-splunk">A.8 Send a test message and confirm in Splunk<a class="headerlink" href="#a8-send-a-test-message-and-confirm-in-splunk" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="nb">set</span><span class="w"> </span>-a<span class="p">;</span><span class="w"> </span><span class="nb">source</span><span class="w"> </span>~/soc4kafka/collector.env<span class="p">;</span><span class="w"> </span><span class="nb">set</span><span class="w"> </span>+a
+<span class="nb">printf</span><span class="w"> </span><span class="s1">'{"hello":"splunk","ts":"%s"}\n'</span><span class="w"> </span><span class="s2">"</span><span class="k">$(</span>date<span class="w"> </span>-u<span class="w"> </span>+%FT%TZ<span class="k">)</span><span class="s2">"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>kafkacat<span class="w"> </span>-P<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-b<span class="w"> </span><span class="s2">"</span><span class="nv">$KAFKA_BOOTSTRAP</span><span class="s2">"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-t<span class="w"> </span>&lt;TOPIC&gt;<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-X<span class="w"> </span>security.protocol<span class="o">=</span>SASL_SSL<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-X<span class="w"> </span>sasl.mechanisms<span class="o">=</span>PLAIN<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-X<span class="w"> </span>sasl.username<span class="o">=</span><span class="s2">"</span><span class="nv">$KAFKA_SASL_USER</span><span class="s2">"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-X<span class="w"> </span>sasl.password<span class="o">=</span><span class="s2">"</span><span class="nv">$KAFKA_SASL_PASS</span><span class="s2">"</span>
+</code></pre></div>
+<p>In Splunk search:</p>
+<div class="highlight"><pre><span></span><code>index=&lt;SPLUNK_INDEX&gt; sourcetype=oci:streaming:text
+</code></pre></div>
+<p>You can also monitor collector throughput from the VM:</p>
+<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>-s<span class="w"> </span>http://127.0.0.1:8888/metrics<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">'otelcol_(receiver_accepted|exporter_sent)'</span>
+</code></pre></div>
+<p><code>receiver_accepted_log_records_total</code> should increment when you produce; <code>exporter_sent_log_records_total</code>
+should follow shortly after as the batch flushes.</p>
+<hr />
+<h2 id="option-b-kubernetes">Option B - Kubernetes<a class="headerlink" href="#option-b-kubernetes" title="Permanent link">&para;</a></h2>
+<p>All commands run on the OCI VM over SSH.</p>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p><strong>Kubernetes distribution note:</strong> this guide uses <strong>MicroK8s</strong> as a representative example of a
+single-node Kubernetes setup. The SOC4Kafka Helm chart is distribution-agnostic and will run on
+any conformant Kubernetes cluster (EKS, GKE, AKS, K3s, vanilla kubeadm, etc.). If you are using
+a different distribution, substitute your cluster&rsquo;s <code>kubectl</code> and <code>helm</code> commands for the
+<code>microk8s kubectl</code> and <code>microk8s helm3</code> equivalents used below. The DNS configuration (step B.1),
+firewall fix (step B.2), and the OCI-specific CIDRs in the step B.2 callout are specific to
+MicroK8s on an OCI Ubuntu VM and will differ on other distributions or cloud providers.</p>
+<p>MicroK8s ships its own bundled <code>helm3</code> and <code>kubectl</code>. The commands below use <code>microk8s helm3</code> and
+<code>microk8s kubectl</code> - not the system-level tools.</p>
+</div>
+<h3 id="b1-install-microk8s">B.1 Install MicroK8s<a class="headerlink" href="#b1-install-microk8s" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>snap<span class="w"> </span>install<span class="w"> </span>microk8s<span class="w"> </span>--classic<span class="w"> </span>--channel<span class="o">=</span><span class="m">1</span>.33/stable
+sudo<span class="w"> </span>usermod<span class="w"> </span>-a<span class="w"> </span>-G<span class="w"> </span>microk8s<span class="w"> </span><span class="s2">"</span><span class="nv">$USER</span><span class="s2">"</span>
+sudo<span class="w"> </span>chown<span class="w"> </span>-f<span class="w"> </span>-R<span class="w"> </span><span class="s2">"</span><span class="nv">$USER</span><span class="s2">"</span><span class="w"> </span>~/.kube
+newgrp<span class="w"> </span>microk8s
+</code></pre></div>
+<p>Enable the addons the chart needs:</p>
+<div class="highlight"><pre><span></span><code>microk8s<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>hostpath-storage
+microk8s<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>rbac
+microk8s<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>metrics-server
+</code></pre></div>
+<p>Enable DNS pinned to the <strong>OCI VCN resolver</strong>. This resolver handles both private OCI names (your
+broker&rsquo;s private endpoint) and public names (your Splunk HEC host) - using it as the single
+upstream is important:</p>
+<div class="highlight"><pre><span></span><code>microk8s<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>dns:169.254.169.254
+</code></pre></div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Do <strong>not</strong> add a public resolver like <code>8.8.8.8</code> alongside it. The OCI Streaming broker resolves
+to a private VCN IP, and a public resolver will return NXDOMAIN for it, causing intermittent
+connection failures.</p>
+</div>
+<h3 id="b2-fix-the-oci-host-firewall">B.2 Fix the OCI host firewall<a class="headerlink" href="#b2-fix-the-oci-host-firewall" title="Permanent link">&para;</a></h3>
+<p>The OCI Ubuntu image ships a firewall rule that blocks forwarded traffic. This prevents pods from
+reaching the Kubernetes API server, causing CoreDNS and Calico to crash-loop. Remove the rule:</p>
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>iptables<span class="w"> </span>-L<span class="w"> </span>FORWARD<span class="w"> </span>-n<span class="w"> </span>--line-numbers<span class="w"> </span><span class="p">|</span><span class="w"> </span>head
+sudo<span class="w"> </span>iptables<span class="w"> </span>-D<span class="w"> </span>FORWARD<span class="w"> </span><span class="m">1</span><span class="w">    </span><span class="c1"># removes the REJECT rule (usually at position 1)</span>
+</code></pre></div>
+<p>Pods recover within about 60 seconds. <strong>Make the fix permanent</strong> - the rule returns on reboot
+otherwise:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Edit the persisted ruleset and remove the REJECT line, then reload:</span>
+sudo<span class="w"> </span>grep<span class="w"> </span>-nE<span class="w"> </span><span class="s1">'REJECT|icmp-host-prohibited'</span><span class="w"> </span>/etc/iptables/rules.v4
+<span class="c1"># Delete the matching line from the file, then:</span>
+sudo<span class="w"> </span>netfilter-persistent<span class="w"> </span>reload
+</code></pre></div>
+<p>On a test VM you can instead disable the OS firewall entirely - the OCI VCN security list still
+controls ingress at the cloud layer:</p>
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>systemctl<span class="w"> </span>disable<span class="w"> </span>--now<span class="w"> </span>netfilter-persistent
+</code></pre></div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p><strong>If Calico still crash-loops</strong> after removing the FORWARD rule, your image also has an INPUT-chain
+REJECT that blocks pod traffic to the Kubernetes API server VIP (<code>10.152.183.1</code>) and pod CIDR
+(<code>10.1.0.0/16</code>). These are standard MicroK8s defaults. Allow them:</p>
+<p><code>sudo iptables -I INPUT 4 -s 10.152.183.0/24 -j ACCEPT</code></p>
+<p><code>sudo iptables -I INPUT 4 -d 10.152.183.0/24 -j ACCEPT</code></p>
+<p><code>sudo iptables -I INPUT 4 -s 10.1.0.0/16    -j ACCEPT</code></p>
+<p><code>sudo iptables -I INPUT 4 -d 10.1.0.0/16    -j ACCEPT</code></p>
+<p>The <code>-I INPUT 4</code> inserts before the catch-all REJECT. Confirm position with
+<code>sudo iptables -L INPUT -n --line-numbers</code> first. If you customised MicroK8s CIDRs, replace the
+ranges with your actual service CIDR (<code>grep service-cluster-ip-range /var/snap/microk8s/current/args/*</code>)
+and pod CIDR (<code>grep cluster-cidr /var/snap/microk8s/current/args/*</code>).</p>
+</div>
+<h3 id="b3-create-the-namespace">B.3 Create the namespace<a class="headerlink" href="#b3-create-the-namespace" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>microk8s<span class="w"> </span>kubectl<span class="w"> </span>create<span class="w"> </span>namespace<span class="w"> </span>soc4kafka
+</code></pre></div>
+<h3 id="b4-create-the-kubernetes-secrets">B.4 Create the Kubernetes secrets<a class="headerlink" href="#b4-create-the-kubernetes-secrets" title="Permanent link">&para;</a></h3>
+<p>The collector reads credentials from Kubernetes Secrets injected as environment variables - they
+never appear in the Helm values file.</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Kafka SASL password - the key name "password" is required by the chart</span>
+microk8s<span class="w"> </span>kubectl<span class="w"> </span>-n<span class="w"> </span>soc4kafka<span class="w"> </span>create<span class="w"> </span>secret<span class="w"> </span>generic<span class="w"> </span>kafka-sasl<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--from-literal<span class="o">=</span><span class="nv">password</span><span class="o">=</span><span class="s1">'&lt;OCI_AUTH_TOKEN&gt;'</span>
+
+<span class="c1"># Splunk HEC token - the key name "splunk-hec-token" is required by the chart</span>
+microk8s<span class="w"> </span>kubectl<span class="w"> </span>-n<span class="w"> </span>soc4kafka<span class="w"> </span>create<span class="w"> </span>secret<span class="w"> </span>generic<span class="w"> </span>splunk-hec<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--from-literal<span class="o">=</span>splunk-hec-token<span class="o">=</span><span class="s1">'&lt;SPLUNK_HEC_TOKEN&gt;'</span>
+</code></pre></div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Wrap values in <strong>single quotes</strong> to prevent the shell from interpreting special characters.</p>
+</div>
+<h3 id="b5-create-valuesyaml">B.5 Create <code>values.yaml</code><a class="headerlink" href="#b5-create-valuesyaml" title="Permanent link">&para;</a></h3>
+<p>Create this file on the VM (e.g. at <code>~/soc4kafka_microk8s/values.yaml</code>) before running the Helm
+install. Substitute all <code>&lt;PLACEHOLDERS&gt;</code> with your real values.</p>
+<div class="highlight"><pre><span></span><code><span class="nt">replicaCount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+
+<span class="nt">kafkaReceivers</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">main</span>
+<span class="w">    </span><span class="nt">brokers</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;KAFKA_BOOTSTRAP&gt;</span>
+<span class="w">    </span><span class="nt">client_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;CONSUMER_GROUP&gt;</span><span class="w">       </span><span class="c1"># e.g. soc4kafka-m8k-v1 - must be fresh</span>
+<span class="w">    </span><span class="nt">group_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;CONSUMER_GROUP&gt;</span>
+<span class="w">    </span><span class="nt">group_rebalance_strategy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">range</span>
+<span class="w">    </span><span class="nt">initial_offset</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">earliest</span>
+<span class="w">    </span><span class="nt">logs</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">topics</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;TOPIC&gt;</span>
+<span class="w">      </span><span class="nt">encoding</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">text</span>
+<span class="w">    </span><span class="nt">auth</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">sasl</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;SASL_USERNAME&gt;</span>
+<span class="w">        </span><span class="nt">mechanism</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PLAIN</span>
+<span class="w">        </span><span class="nt">secret</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kafka-sasl</span><span class="w">            </span><span class="c1"># references the Secret created in step B.4</span>
+<span class="w">    </span><span class="nt">tls</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">insecure_skip_verify</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w">     </span><span class="c1"># OCI broker cert is publicly trusted (DigiCert)</span>
+
+<span class="nt">splunkExporters</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">primary</span>
+<span class="w">    </span><span class="nt">endpoint</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;SPLUNK_HEC_ENDPOINT&gt;</span>
+<span class="w">    </span><span class="nt">secret</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">splunk-hec</span><span class="w">                </span><span class="c1"># references the Secret created in step B.4</span>
+<span class="w">    </span><span class="nt">source</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">oci-streaming</span>
+<span class="w">    </span><span class="nt">sourcetype</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">oci:streaming:text</span>
+<span class="w">    </span><span class="nt">index</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;SPLUNK_INDEX&gt;</span>
+<span class="w">    </span><span class="nt">splunk_app_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">soc4kafka</span>
+<span class="w">    </span><span class="nt">tls</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">insecure_skip_verify</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w">      </span><span class="c1"># Splunk default self-signed cert has no SAN</span>
+
+<span class="nt">pipelines</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">oci-to-splunk</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">logs</span>
+<span class="w">    </span><span class="nt">receivers</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">main</span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="nt">exporters</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">primary</span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="nt">processors</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">resourcedetection</span><span class="p p-Indicator">]</span>
+
+<span class="nt">extraEnv</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">KAFKA_KAFKA_MAIN_SASL_PASSWORD</span>
+<span class="w">    </span><span class="nt">valueFrom</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">secretKeyRef</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kafka-sasl</span>
+<span class="w">        </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">password</span>
+
+<span class="nt">resources</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">limits</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">500m</span>
+<span class="w">    </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">512Mi</span>
+<span class="w">  </span><span class="nt">requests</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100m</span>
+<span class="w">    </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">256Mi</span>
+
+<span class="nt">collectorLogs</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="nt">collectorMetrics</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+</code></pre></div>
+<h3 id="b6-install-the-chart">B.6 Install the chart<a class="headerlink" href="#b6-install-the-chart" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>microk8s<span class="w"> </span>helm3<span class="w"> </span>repo<span class="w"> </span>add<span class="w"> </span>splunk-opentelemetry-collector-for-kafka<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>https://splunk.github.io/splunk-opentelemetry-collector-for-kafka
+microk8s<span class="w"> </span>helm3<span class="w"> </span>repo<span class="w"> </span>update
+
+microk8s<span class="w"> </span>helm3<span class="w"> </span>upgrade<span class="w"> </span>--install<span class="w"> </span>soc4kafka<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>splunk-opentelemetry-collector-for-kafka/splunk-opentelemetry-collector-for-kafka<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-n<span class="w"> </span>soc4kafka<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-f<span class="w"> </span>~/soc4kafka_microk8s/values.yaml
+</code></pre></div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Always include <code>-n soc4kafka</code>. Without it the release lands in the <code>default</code> namespace and will be
+difficult to find.</p>
+</div>
+<h3 id="b7-verify-the-deployment">B.7 Verify the deployment<a class="headerlink" href="#b7-verify-the-deployment" title="Permanent link">&para;</a></h3>
+<p>Check that all pods are running:</p>
+<div class="highlight"><pre><span></span><code>microk8s<span class="w"> </span>kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-A
+</code></pre></div>
+<p>Tail the collector logs and look for the healthy startup sequence:</p>
+<div class="highlight"><pre><span></span><code>microk8s<span class="w"> </span>kubectl<span class="w"> </span>-n<span class="w"> </span>soc4kafka<span class="w"> </span>logs<span class="w"> </span>-f<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>deploy/soc4kafka-splunk-opentelemetry-collector-for-kafka
+</code></pre></div>
+<p>Expected output:</p>
+<div class="highlight"><pre><span></span><code>Everything is ready. Begin running and processing data.
+franz   joined, balancing group   group: &lt;CONSUMER_GROUP&gt;
+franz   synced                    assigned: &lt;TOPIC&gt;[0]
+franz   assigning partitions      ...
+</code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If you see <code>NOT_COORDINATOR</code> repeating, change <code>client_id</code> and <code>group_id</code> to a new name in
+<code>values.yaml</code> and re-run the <code>helm3 upgrade</code> command from step B.6.</p>
+</div>
+<h3 id="b8-send-a-test-message-and-confirm-in-splunk">B.8 Send a test message and confirm in Splunk<a class="headerlink" href="#b8-send-a-test-message-and-confirm-in-splunk" title="Permanent link">&para;</a></h3>
+<p>Produce a message from the VM (install <code>kafkacat</code> first if needed: <code>sudo apt-get install -y kafkacat</code>):</p>
+<div class="highlight"><pre><span></span><code><span class="nb">echo</span><span class="w"> </span><span class="s2">"hello-from-microk8s-</span><span class="k">$(</span>date<span class="w"> </span>-Is<span class="k">)</span><span class="s2">"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>kafkacat<span class="w"> </span>-P<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-b<span class="w"> </span>&lt;KAFKA_BOOTSTRAP&gt;<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-t<span class="w"> </span>&lt;TOPIC&gt;<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-X<span class="w"> </span>security.protocol<span class="o">=</span>SASL_SSL<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-X<span class="w"> </span>sasl.mechanisms<span class="o">=</span>PLAIN<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-X<span class="w"> </span>sasl.username<span class="o">=</span><span class="s1">'&lt;SASL_USERNAME&gt;'</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-X<span class="w"> </span>sasl.password<span class="o">=</span><span class="s1">'&lt;OCI_AUTH_TOKEN&gt;'</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-X<span class="w"> </span>ssl.ca.location<span class="o">=</span>/etc/ssl/certs/ca-certificates.crt
+</code></pre></div>
+<p>Alternatively use the OCI Console: <strong>Streaming → Streams → select stream → Produce Test Message</strong>.</p>
+<p>In Splunk search:</p>
+<div class="highlight"><pre><span></span><code>index=&lt;SPLUNK_INDEX&gt; sourcetype="oci:streaming:text" earliest=-5m
+</code></pre></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      <p>Webpages built on GitHub Pages | <a href="https://docs.github.com/en/site-policy/github-terms/github-terms-of-service">Github Terms</a> | <a href="https://docs.github.com/en/site-policy/privacy-policies/github-privacy-statement">GitHub Privacy</a></p>
+    </div>
+  
+  
+    Made with
+    <a href="https://zensical.org/" target="_blank" rel="noopener">
+      Zensical
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate":null,"base":"..","features":[],"search":"../assets/javascripts/workers/search.7d14d953.min.js","tags":null,"translations":{"clipboard.copied":"Copied to clipboard","clipboard.copy":"Copy to clipboard","search.result.more.one":"1 more on this page","search.result.more.other":"# more on this page","search.result.none":"No matching documents","search.result.one":"1 matching document","search.result.other":"# matching documents","search.result.placeholder":"Type to start searching","search.result.term.missing":"Missing","select.version":"Select version"},"version":{"provider":"mike"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.49251538.min.js"></script>
+      
+        <script src="../javascripts/footer.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,1444 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://splunk.github.io/splunk-opentelemetry-collector-for-kafka/v0.158.0/migration_config_values/">
+      
+      
+        <link rel="prev" href="../migration/">
+      
+      
+        <link rel="next" href="../splunk-dashboard/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="zensical-0.0.57">
+    
+    
+      
+        <title>Migration config values - Splunk OpenTelemetry Collector for Kafka (SOC4Kafka)</title>
+      
+    
+    
+      
+        
+      
+      <link rel="stylesheet" href="../assets/stylesheets/modern/main.5da3a30f.min.css">
+      
+        
+          
+        
+        <link rel="stylesheet" href="../assets/stylesheets/modern/palette.812a03bb.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,300i,400,400i,500,500i,700,700i%7CJetBrains+Mono:400,400i,700,700i&amp;display=fallback">
+        <style>:root{--md-text-font:"Inter";--md-code-font:"JetBrains Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_scope.pathname.endsWith("/")||(__md_scope=new URL(__md_scope.pathname+"/",location)),__md_hash=e=>[...e].reduce(((e,t)=>(e<<5)-e+t.charCodeAt(0)),0),__md_get=(e,t=localStorage,_=__md_scope)=>JSON.parse(t.getItem(_.pathname+"."+e)),__md_set=(e,t,_=localStorage,a=__md_scope)=>{try{_.setItem(a.pathname+"."+e,JSON.stringify(t))}catch(e){}},document.documentElement.setAttribute("data-platform",navigator.platform)</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="black" data-md-color-accent="orange">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer" aria-label="Navigation"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#config-mapping-between-sc4kafka-and-soc4kafka" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="./.." title="Splunk OpenTelemetry Collector for Kafka (SOC4Kafka)" class="md-header__button md-logo" aria-label="Splunk OpenTelemetry Collector for Kafka (SOC4Kafka)" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-book-open" viewBox="0 0 24 24"><path d="M12 5v16M20.001 19A2 2 0 0 0 22 17V5a2 2 0 0 0-1.999-2L16 3.002A5 5 0 0 0 12 5a5 5 0 0 0-4-2H4a2 2 0 0 0-2 2v12a2 2 0 0 0 1.999 2H8a5 5 0 0 1 4 2 5 5 0 0 1 4-2z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer" aria-label="Navigation">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-menu" viewBox="0 0 24 24"><path d="M4 5h16M4 12h16M4 19h16"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Splunk OpenTelemetry Collector for Kafka (SOC4Kafka)
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Migration config values
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="none" data-md-color-scheme="default" data-md-color-primary="black" data-md-color-accent="orange"  aria-hidden="true"  type="radio" name="__palette" id="__palette_0">
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search" aria-label="Search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-search" viewBox="0 0 24 24"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog" aria-label="Search">
+  <button type="button" class="md-search__button">
+    Search
+  </button>
+</div>
+      
+    
+    <div class="md-header__source">
+      
+        <a href="https://github.com/splunk/splunk-opentelemetry-collector-for-kafka" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.3.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2026 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    splunk/splunk-opentelemetry-collector-for-kafka
+  </div>
+</a>
+      
+    </div>
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="./.." title="Splunk OpenTelemetry Collector for Kafka (SOC4Kafka)" class="md-nav__button md-logo" aria-label="Splunk OpenTelemetry Collector for Kafka (SOC4Kafka)" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-book-open" viewBox="0 0 24 24"><path d="M12 5v16M20.001 19A2 2 0 0 0 22 17V5a2 2 0 0 0-1.999-2L16 3.002A5 5 0 0 0 12 5a5 5 0 0 0-4-2H4a2 2 0 0 0-2 2v12a2 2 0 0 0 1.999 2H8a5 5 0 0 1 4 2 5 5 0 0 1 4-2z"/></svg>
+
+    </a>
+    Splunk OpenTelemetry Collector for Kafka (SOC4Kafka)
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/splunk/splunk-opentelemetry-collector-for-kafka" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.3.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2026 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    splunk/splunk-opentelemetry-collector-for-kafka
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="./.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Home
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../otel_design/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Design
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  How to run
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  How to run
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting_started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Overview
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_2" id="__nav_3_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Kubernetes
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  Kubernetes
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../helm/installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Installation
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../helm/configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Configuration
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../helm/secrets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Secrets
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../helm/tls/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  TLS
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../helm/examples/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Examples
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../helm/troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Troubleshooting
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../quickstart_guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Ansible
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../oci_installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  OCI Streaming
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Advanced Configuration
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  Advanced Configuration
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../multiple_topics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Multiple topics
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../regex_topics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Regex topics
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../extracting_additional_data/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Extracting additional data
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../scaling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Scaling
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../loadbalancing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Load Balancing
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Migration from SC4Kafka
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  Migration from SC4Kafka
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../migration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Overview
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Config value mapping
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="././" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Config value mapping
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+
+<nav class="md-nav md-nav--secondary" aria-label="On this page">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      On this page
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#config-mapping-between-sc4kafka-and-soc4kafka" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Config mapping between SC4Kafka and SOC4Kafka
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Config mapping between SC4Kafka and SOC4Kafka">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fields-supported-by-soc4kafka" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Fields supported by SOC4Kafka
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fields-not-supported-by-soc4kafka" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Fields not supported by SOC4Kafka
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../splunk-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Splunk Dashboard
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../collecting_own_logs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Collecting SOC4Kafka's own logs
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  
+                    
+                    
+                    
+                    
+                      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+                      <div class="md-sidebar-button__wrapper">
+                        <label class="md-sidebar-button" for="__toc"></label>
+                      </div>
+                    
+                  
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--secondary" aria-label="On this page">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      On this page
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#config-mapping-between-sc4kafka-and-soc4kafka" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Config mapping between SC4Kafka and SOC4Kafka
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Config mapping between SC4Kafka and SOC4Kafka">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fields-supported-by-soc4kafka" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Fields supported by SOC4Kafka
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fields-not-supported-by-soc4kafka" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Fields not supported by SOC4Kafka
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+  
+  
+
+
+  <h1 id="__skip">Migration config values</h1>
+
+<h2 id="config-mapping-between-sc4kafka-and-soc4kafka">Config mapping between SC4Kafka and SOC4Kafka<a class="headerlink" href="#config-mapping-between-sc4kafka-and-soc4kafka" title="Permanent link">&para;</a></h2>
+<p>In the OpenTelemetry (OTel) Collector, parameters are configured individually per exporter (data sink) or per receiver
+(data source), rather than being specified in a single consolidated table. This modular approach allows greater
+flexibility and customization for defining pipelines, but it differs fundamentally from the configuration style used in 
+the Splunk Connect for Kafka.</p>
+<h3 id="fields-supported-by-soc4kafka">Fields supported by SOC4Kafka<a class="headerlink" href="#fields-supported-by-soc4kafka" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th><strong>Field</strong></th>
+<th><strong>SOC4Kafka Field</strong></th>
+<th><strong>Comments</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>topics</code></td>
+<td><code>receivers.kafka.logs.topics</code></td>
+<td>Each Kafka receiver can be configured with a single topic, but multiple receivers can be composed together in a pipeline as a list. Take a look at <a href="../otel_design/">this doc</a>.</td>
+</tr>
+<tr>
+<td><code>topics.regex</code></td>
+<td><code>receivers.kafka.logs.topics</code></td>
+<td>In order to use regex, prefix your topic with <code>^</code> character. Read more <a href="../regex_topics/">here</a>.</td>
+</tr>
+<tr>
+<td><code>splunk.indexes</code></td>
+<td><code>exporters.splunk_hec.index</code></td>
+<td>Each Splunk HEC exporter can be configured with a single <code>index</code>, but multiple exporters can be composed together in a pipeline as a list.</td>
+</tr>
+<tr>
+<td><code>splunk.sources</code></td>
+<td><code>exporters.splunk_hec.source</code></td>
+<td>Each Splunk HEC exporter can be configured with a single <code>source</code>, but multiple exporters can be composed together in a pipeline as a list.</td>
+</tr>
+<tr>
+<td><code>splunk.sourcetypes</code></td>
+<td><code>exporters.splunk_hec.sourcetype</code></td>
+<td>Each Splunk HEC exporter can be configured with a single <code>sourcetype</code>, but multiple exporters can be composed together in a pipeline as a list.</td>
+</tr>
+<tr>
+<td><code>splunk.hec.uri</code></td>
+<td><code>exporters.splunk_hec.endpoint</code></td>
+<td>The endpoint for the Splunk HEC.</td>
+</tr>
+<tr>
+<td><code>splunk.hec.token</code></td>
+<td><code>exporters.splunk_hec.token</code></td>
+<td>Token for authenticating with Splunk HEC.</td>
+</tr>
+<tr>
+<td><code>splunk.hec.raw</code></td>
+<td><code>exporters.splunk_hec.export_raw</code></td>
+<td>Sends only the log&rsquo;s body, targeting a Splunk HEC raw endpoint.</td>
+</tr>
+<tr>
+<td><code>splunk.hec.ssl.validate.certs</code></td>
+<td><code>exporters.splunk_hec.tls.insecure_skip_verify</code></td>
+<td>Specifies whether to skip certificate validation for the HEC endpoint when using HTTPS. Defaults to <code>false</code>.</td>
+</tr>
+<tr>
+<td><code>splunk.hec.http.keepalive</code></td>
+<td><code>exporters.splunk_hec.health_check_enabled</code></td>
+<td>Specifies whether to perform a Splunk HEC health check during the exporter&rsquo;s startup.</td>
+</tr>
+<tr>
+<td><code>splunk.hec.max.http.connection.per.channel</code></td>
+<td><code>exporters.splunk_hec.max_idle_conns</code></td>
+<td>Configures the maximum number of simultaneous HTTP connections to Splunk HEC. Defaults to 100.</td>
+</tr>
+<tr>
+<td><code>splunk.hec.max.batch.size</code></td>
+<td><code>splunk_hec.sending_queue.batch.min_size</code></td>
+<td>Specifies the number of spans, metric data points, or log records to batch before sending. The default is 1000.</td>
+</tr>
+<tr>
+<td><code>splunk.hec.event.timeout</code></td>
+<td><code>splunk.timeout</code></td>
+<td>Configures timeout for Splunk exporter operations.</td>
+</tr>
+<tr>
+<td><code>splunk.hec.socket.timeout</code></td>
+<td><code>splunk.socket.timeout</code></td>
+<td>Configures socket timeout for Splunk exporter operations.</td>
+</tr>
+<tr>
+<td><code>splunk.header.support</code></td>
+<td><code>receivers.kafka.header_extraction.extract_headers</code></td>
+<td>When set to <code>true</code>, the Kafka receiver will parse headers for use as metadata in Splunk events. See the <a href="../extracting_additional_data/#headers">header extraction guide</a>.</td>
+</tr>
+<tr>
+<td><code>splunk.header.custom</code></td>
+<td><code>receivers.kafka.header_extraction.headers</code></td>
+<td>Custom headers can be extracted and used through custom processors.</td>
+</tr>
+<tr>
+<td><code>splunk.header.index</code></td>
+<td><code>exporters.splunk_hec.otel_attrs_to_hec_metadata.index</code></td>
+<td>Kafka header values can be mapped to Splunk index attributes via custom processors.</td>
+</tr>
+<tr>
+<td><code>splunk.header.source</code></td>
+<td><code>exporters.splunk_hec.otel_attrs_to_hec_metadata.source</code></td>
+<td>Kafka header values can be mapped to Splunk source attributes via custom processors.</td>
+</tr>
+<tr>
+<td><code>splunk.header.sourcetype</code></td>
+<td><code>exporters.splunk_hec.otel_attrs_to_hec_metadata.sourcetype</code></td>
+<td>Kafka header values can be mapped to Splunk sourcetype attributes via custom processors.</td>
+</tr>
+<tr>
+<td><code>splunk.header.host</code></td>
+<td><code>exporters.splunk_hec.otel_attrs_to_hec_metadata.host</code></td>
+<td>Kafka header values can be mapped to Splunk host attributes via custom processors.</td>
+</tr>
+<tr>
+<td><code>enable.timestamp.extraction</code></td>
+<td><code>processors.timestamp</code></td>
+<td>Timestamp extraction can be configured using processors in SOC4Kafka. Refer to the <a href="../extracting_additional_data/#timestamps">timestamp extraction guide</a> for details.</td>
+</tr>
+<tr>
+<td><code>timestamp.regex</code></td>
+<td><code>processors.timestamp.regex</code></td>
+<td>Specifies the regular expression for extracting timestamps from log data.</td>
+</tr>
+<tr>
+<td><code>timestamp.format</code></td>
+<td><code>processors.timestamp.format</code></td>
+<td>Defines the format for extracted timestamps.</td>
+</tr>
+<tr>
+<td><code>timestamp.timezone</code></td>
+<td><code>processors.timestamp.timezone</code></td>
+<td>Specifies the timezone for extracted timestamps.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="fields-not-supported-by-soc4kafka">Fields not supported by SOC4Kafka<a class="headerlink" href="#fields-not-supported-by-soc4kafka" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th><strong>Field</strong></th>
+<th><strong>Comments</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>connector.class</code></td>
+<td>SOC4Kafka does not require a connector class; configuration is achieved using receivers, processors, and exporters.</td>
+</tr>
+<tr>
+<td><code>tasks.max</code></td>
+<td>Task management is handled differently in SOC4Kafka. Refer to the <a href="../scaling/">scaling documentation</a> for more details.</td>
+</tr>
+<tr>
+<td><code>splunk.hec.raw.line.breaker</code></td>
+<td>Line breaker configuration is achieved through custom processors in SOC4Kafka.</td>
+</tr>
+<tr>
+<td><code>splunk.hec.json.event.enrichment</code></td>
+<td>JSON enrichment is achieved through custom processors in SOC4Kafka.</td>
+</tr>
+<tr>
+<td><code>splunk.hec.auto.extract.timestamp</code></td>
+<td>Timestamp extraction can be configured using processors. Refer to the <a href="../extracting_additional_data/#timestamps">timestamp guide</a>.</td>
+</tr>
+<tr>
+<td><code>value.converter</code></td>
+<td>This feature is not supported in SOC4Kafka.</td>
+</tr>
+<tr>
+<td><code>value.converter.schema.registry.url</code></td>
+<td>This feature is not supported in SOC4Kafka.</td>
+</tr>
+<tr>
+<td><code>value.converter.schemas.enable</code></td>
+<td>This feature is not supported in SOC4Kafka.</td>
+</tr>
+<tr>
+<td><code>key.converter</code></td>
+<td>This feature is not supported in SOC4Kafka.</td>
+</tr>
+<tr>
+<td><code>key.converter.schema.registry.url</code></td>
+<td>This feature is not supported in SOC4Kafka.</td>
+</tr>
+<tr>
+<td><code>key.converter.schemas.enable</code></td>
+<td>This feature is not supported in SOC4Kafka.</td>
+</tr>
+<tr>
+<td><code>splunk.hec.ack.enabled</code></td>
+<td>This feature is not supported in SOC4Kafka.</td>
+</tr>
+<tr>
+<td><code>splunk.hec.ack.poll.interval</code></td>
+<td>This feature is not supported in SOC4Kafka.</td>
+</tr>
+<tr>
+<td><code>splunk.hec.ack.poll.threads</code></td>
+<td>This feature is not supported in SOC4Kafka.</td>
+</tr>
+<tr>
+<td><code>splunk.hec.total.channels</code></td>
+<td>The concept of &ldquo;channels&rdquo; is not used in SOC4Kafka.</td>
+</tr>
+<tr>
+<td><code>splunk.hec.threads</code></td>
+<td>Threading is managed differently in SOC4Kafka and does not require explicit configuration.</td>
+</tr>
+<tr>
+<td><code>splunk.hec.track.data</code></td>
+<td>Data tracking and debugging must be handled through custom processors or external monitoring tools.</td>
+</tr>
+<tr>
+<td><code>splunk.hec.json.event.formatted</code></td>
+<td>Events that are already in HEC format must be sent using the <code>exporters.splunk_hec.export_raw</code> option.</td>
+</tr>
+<tr>
+<td><code>splunk.hec.ssl.trust.store.path</code></td>
+<td>Trust store configuration is not supported in SOC4Kafka.</td>
+</tr>
+<tr>
+<td><code>splunk.hec.ssl.trust.store.password</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>kerberos.user.principal</code></td>
+<td>Kerberos authentication is supported by the Kafka receiver in SOC4Kafka. Configuration details can be found <a href="https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/f1d708538c1038aacf60f6659ed23189481358e4/receiver/kafkareceiver/README.md?plain=1#L72">here</a>.</td>
+</tr>
+<tr>
+<td><code>kerberos.keytab.path</code></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      <p>Webpages built on GitHub Pages | <a href="https://docs.github.com/en/site-policy/github-terms/github-terms-of-service">Github Terms</a> | <a href="https://docs.github.com/en/site-policy/privacy-policies/github-privacy-statement">GitHub Privacy</a></p>
+    </div>
+  
+  
+    Made with
+    <a href="https://zensical.org/" target="_blank" rel="noopener">
+      Zensical
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate":null,"base":"..","features":[],"search":"../assets/javascripts/workers/search.7d14d953.min.js","tags":null,"translations":{"clipboard.copied":"Copied to clipboard","clipboard.copy":"Copy to clipboard","search.result.more.one":"1 more on this page","search.result.more.other":"# more on this page","search.result.none":"No matching documents","search.result.one":"1 matching document","search.result.other":"# matching documents","search.result.placeholder":"Type to start searching","search.result.term.missing":"Missing","select.version":"Select version"},"version":{"provider":"mike"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.49251538.min.js"></script>
+      
+        <script src="../javascripts/footer.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,2460 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://splunk.github.io/splunk-opentelemetry-collector-for-kafka/v0.158.0/migration/">
+      
+      
+        <link rel="prev" href="../loadbalancing/">
+      
+      
+        <link rel="next" href="../migration_config_values/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="zensical-0.0.57">
+    
+    
+      
+        <title>Migration - Splunk OpenTelemetry Collector for Kafka (SOC4Kafka)</title>
+      
+    
+    
+      
+        
+      
+      <link rel="stylesheet" href="../assets/stylesheets/modern/main.5da3a30f.min.css">
+      
+        
+          
+        
+        <link rel="stylesheet" href="../assets/stylesheets/modern/palette.812a03bb.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,300i,400,400i,500,500i,700,700i%7CJetBrains+Mono:400,400i,700,700i&amp;display=fallback">
+        <style>:root{--md-text-font:"Inter";--md-code-font:"JetBrains Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_scope.pathname.endsWith("/")||(__md_scope=new URL(__md_scope.pathname+"/",location)),__md_hash=e=>[...e].reduce(((e,t)=>(e<<5)-e+t.charCodeAt(0)),0),__md_get=(e,t=localStorage,_=__md_scope)=>JSON.parse(t.getItem(_.pathname+"."+e)),__md_set=(e,t,_=localStorage,a=__md_scope)=>{try{_.setItem(a.pathname+"."+e,JSON.stringify(t))}catch(e){}},document.documentElement.setAttribute("data-platform",navigator.platform)</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="black" data-md-color-accent="orange">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer" aria-label="Navigation"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#migration-from-splunk-connect-for-kafka-into-splunk-otel-collector-for-kafka" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="./.." title="Splunk OpenTelemetry Collector for Kafka (SOC4Kafka)" class="md-header__button md-logo" aria-label="Splunk OpenTelemetry Collector for Kafka (SOC4Kafka)" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-book-open" viewBox="0 0 24 24"><path d="M12 5v16M20.001 19A2 2 0 0 0 22 17V5a2 2 0 0 0-1.999-2L16 3.002A5 5 0 0 0 12 5a5 5 0 0 0-4-2H4a2 2 0 0 0-2 2v12a2 2 0 0 0 1.999 2H8a5 5 0 0 1 4 2 5 5 0 0 1 4-2z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer" aria-label="Navigation">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-menu" viewBox="0 0 24 24"><path d="M4 5h16M4 12h16M4 19h16"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Splunk OpenTelemetry Collector for Kafka (SOC4Kafka)
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Migration
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="none" data-md-color-scheme="default" data-md-color-primary="black" data-md-color-accent="orange"  aria-hidden="true"  type="radio" name="__palette" id="__palette_0">
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search" aria-label="Search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-search" viewBox="0 0 24 24"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog" aria-label="Search">
+  <button type="button" class="md-search__button">
+    Search
+  </button>
+</div>
+      
+    
+    <div class="md-header__source">
+      
+        <a href="https://github.com/splunk/splunk-opentelemetry-collector-for-kafka" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.3.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2026 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    splunk/splunk-opentelemetry-collector-for-kafka
+  </div>
+</a>
+      
+    </div>
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="./.." title="Splunk OpenTelemetry Collector for Kafka (SOC4Kafka)" class="md-nav__button md-logo" aria-label="Splunk OpenTelemetry Collector for Kafka (SOC4Kafka)" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-book-open" viewBox="0 0 24 24"><path d="M12 5v16M20.001 19A2 2 0 0 0 22 17V5a2 2 0 0 0-1.999-2L16 3.002A5 5 0 0 0 12 5a5 5 0 0 0-4-2H4a2 2 0 0 0-2 2v12a2 2 0 0 0 1.999 2H8a5 5 0 0 1 4 2 5 5 0 0 1 4-2z"/></svg>
+
+    </a>
+    Splunk OpenTelemetry Collector for Kafka (SOC4Kafka)
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/splunk/splunk-opentelemetry-collector-for-kafka" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.3.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2026 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    splunk/splunk-opentelemetry-collector-for-kafka
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="./.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Home
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../otel_design/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Design
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  How to run
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  How to run
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting_started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Overview
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_2" id="__nav_3_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Kubernetes
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  Kubernetes
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../helm/installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Installation
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../helm/configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Configuration
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../helm/secrets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Secrets
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../helm/tls/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  TLS
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../helm/examples/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Examples
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../helm/troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Troubleshooting
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../quickstart_guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Ansible
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../oci_installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  OCI Streaming
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Advanced Configuration
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  Advanced Configuration
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../multiple_topics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Multiple topics
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../regex_topics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Regex topics
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../extracting_additional_data/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Extracting additional data
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../scaling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Scaling
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../loadbalancing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Load Balancing
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Migration from SC4Kafka
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  Migration from SC4Kafka
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Overview
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="././" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Overview
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+
+<nav class="md-nav md-nav--secondary" aria-label="On this page">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      On this page
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#migration-from-splunk-connect-for-kafka-into-splunk-otel-collector-for-kafka" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Migration from Splunk Connect for Kafka into Splunk OTel Collector for Kafka
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Migration from Splunk Connect for Kafka into Splunk OTel Collector for Kafka">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sc4kafka-to-soc4kafka-mapping-of-configuration-parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        SC4Kafka to SOC4Kafka mapping of configuration parameters
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#migration-process-from-sc4kafka-to-soc4kafka" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Migration process from SC4Kafka to SOC4Kafka
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Migration process from SC4Kafka to SOC4Kafka">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#important-notes" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Important Notes:
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reading-sc4kafka-existing-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Reading SC4Kafka existing configuration
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Reading SC4Kafka existing configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#checking-logs-encoding-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Checking logs encoding format
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reading-sc4kafka-connector-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Reading SC4Kafka connector configuration
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#migration-examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Migration examples:
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Migration examples:">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-basic-config-for-kafka-string-messages" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        The basic config for Kafka string messages
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The basic config for Kafka string messages">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sc4kafka-config" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        SC4Kafka config
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#soc4kafka-config" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        SOC4Kafka config
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#timestamp-extraction" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Timestamp extraction
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#set-host-automatically" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Set host automatically
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Set host automatically">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#soc4kafka-config_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        SOC4Kafka config
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#extract-headers" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Extract headers
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Extract headers">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sc4kafka-config_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        SC4Kafka config
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#soc4kafka-config_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        SOC4Kafka config
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#send-data-from-multiple-kafka-topics-to-multiple-splunk-hec-endpoints" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Send data from multiple kafka topics to multiple Splunk HEC endpoints
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Send data from multiple kafka topics to multiple Splunk HEC endpoints">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sc4kafka-config_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        SC4Kafka config
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#soc4kafka" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        SOC4Kafka
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sending-events-that-are-already-in-hec-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Sending events that are already in HEC format
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Sending events that are already in HEC format">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sc4kafka-config_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        SC4Kafka config
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#soc4kafka_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        SOC4Kafka
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#recommended-migration-strategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Recommended Migration Strategy
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Recommended Migration Strategy">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#check-running-consumer-groups" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Check running consumer groups
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#strategy-1-use-different-consumer-groups" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Strategy 1: Use different consumer groups
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#strategy-2-use-the-same-consumer-group-id" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Strategy 2: Use the Same Consumer Group ID
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#strategy-3-use-separate-topics-parallel-topics-migration" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Strategy 3: Use Separate Topics (Parallel Topics Migration)
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../migration_config_values/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Config value mapping
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../splunk-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Splunk Dashboard
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../collecting_own_logs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Collecting SOC4Kafka's own logs
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  
+                    
+                    
+                    
+                    
+                      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+                      <div class="md-sidebar-button__wrapper">
+                        <label class="md-sidebar-button" for="__toc"></label>
+                      </div>
+                    
+                  
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--secondary" aria-label="On this page">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      On this page
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#migration-from-splunk-connect-for-kafka-into-splunk-otel-collector-for-kafka" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Migration from Splunk Connect for Kafka into Splunk OTel Collector for Kafka
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Migration from Splunk Connect for Kafka into Splunk OTel Collector for Kafka">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sc4kafka-to-soc4kafka-mapping-of-configuration-parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        SC4Kafka to SOC4Kafka mapping of configuration parameters
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#migration-process-from-sc4kafka-to-soc4kafka" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Migration process from SC4Kafka to SOC4Kafka
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Migration process from SC4Kafka to SOC4Kafka">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#important-notes" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Important Notes:
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reading-sc4kafka-existing-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Reading SC4Kafka existing configuration
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Reading SC4Kafka existing configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#checking-logs-encoding-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Checking logs encoding format
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reading-sc4kafka-connector-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Reading SC4Kafka connector configuration
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#migration-examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Migration examples:
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Migration examples:">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-basic-config-for-kafka-string-messages" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        The basic config for Kafka string messages
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The basic config for Kafka string messages">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sc4kafka-config" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        SC4Kafka config
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#soc4kafka-config" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        SOC4Kafka config
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#timestamp-extraction" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Timestamp extraction
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#set-host-automatically" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Set host automatically
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Set host automatically">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#soc4kafka-config_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        SOC4Kafka config
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#extract-headers" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Extract headers
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Extract headers">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sc4kafka-config_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        SC4Kafka config
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#soc4kafka-config_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        SOC4Kafka config
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#send-data-from-multiple-kafka-topics-to-multiple-splunk-hec-endpoints" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Send data from multiple kafka topics to multiple Splunk HEC endpoints
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Send data from multiple kafka topics to multiple Splunk HEC endpoints">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sc4kafka-config_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        SC4Kafka config
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#soc4kafka" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        SOC4Kafka
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sending-events-that-are-already-in-hec-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Sending events that are already in HEC format
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Sending events that are already in HEC format">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sc4kafka-config_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        SC4Kafka config
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#soc4kafka_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        SOC4Kafka
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#recommended-migration-strategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Recommended Migration Strategy
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Recommended Migration Strategy">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#check-running-consumer-groups" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Check running consumer groups
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#strategy-1-use-different-consumer-groups" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Strategy 1: Use different consumer groups
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#strategy-2-use-the-same-consumer-group-id" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Strategy 2: Use the Same Consumer Group ID
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#strategy-3-use-separate-topics-parallel-topics-migration" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Strategy 3: Use Separate Topics (Parallel Topics Migration)
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+  
+  
+
+
+  <h1 id="__skip">Migration</h1>
+
+<h2 id="migration-from-splunk-connect-for-kafka-into-splunk-otel-collector-for-kafka">Migration from Splunk Connect for Kafka into Splunk OTel Collector for Kafka<a class="headerlink" href="#migration-from-splunk-connect-for-kafka-into-splunk-otel-collector-for-kafka" title="Permanent link">&para;</a></h2>
+<p>Naming: </p>
+<ul>
+<li>SC4Kafka - the <a href="https://github.com/splunk/kafka-connect-splunk">Splunk Connect for Kafka</a></li>
+<li>SOC4Kafka - the Splunk OTel Collector for Kafka (the current project)</li>
+</ul>
+<p>The biggest difference between SC4Kafka and SOC4Kafka is that:</p>
+<table>
+<thead>
+<tr>
+<th><strong>Field</strong></th>
+<th><strong>SC4Kafka</strong></th>
+<th><strong>SOC4Kafka</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Type</strong></td>
+<td>Connector based on <strong>Kafka Connect</strong>, installed as an add-on for Kafka.</td>
+<td>Standalone product that works independently of Kafka.</td>
+</tr>
+<tr>
+<td><strong>Message Retrieval</strong></td>
+<td>Retrieves events directly from Kafka.</td>
+<td>Consumes messages from Kafka via the Kafka OpenTelemetry Receiver (native Kafka consumer protocol).</td>
+</tr>
+<tr>
+<td><strong>Processing</strong></td>
+<td>Sends events directly to Splunk using the <strong>Splunk HEC exporter</strong>.</td>
+<td>Processes messages internally and supports customization using <strong>transform processors</strong> before sending them to the <strong>Splunk HEC exporter</strong>.</td>
+</tr>
+<tr>
+<td><strong>Integration with Kafka</strong></td>
+<td>Tightly integrated as part of the Kafka ecosystem.</td>
+<td>Can run independently and be deployed on an external server, separate from the Kafka cluster.</td>
+</tr>
+<tr>
+<td><strong>Scaling</strong></td>
+<td>Scaling is managed using the <code>tasks.max</code> setting and supports multiple HEC endpoints.</td>
+<td>Scaling is achieved by deploying multiple SOC4Kafka instances with the same <code>group_id</code>. Multiple HEC endpoints are not supported, but you can create multiple Splunk HEC exporters and add them to the pipeline.</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul>
+<li>The timestamp behavior differs between the two solutions. SOC4Kafka assigns a timestamp to the event based on when it is indexed, whereas Splunk Connect for Kafka uses the timestamp from when the event was originally produced. </li>
+<li>Additionally messages from SOC4Kafka appear in Splunk first, as it forwards events to Splunk immediately. In contrast, Splunk Connect for Kafka processes and forwards events in batches, typically every configured number of seconds.</li>
+</ul>
+</div>
+<h3 id="sc4kafka-to-soc4kafka-mapping-of-configuration-parameters">SC4Kafka to SOC4Kafka mapping of configuration parameters<a class="headerlink" href="#sc4kafka-to-soc4kafka-mapping-of-configuration-parameters" title="Permanent link">&para;</a></h3>
+<p>The configuration settings for SC4Kafka cannot be directly transferred to SOC4Kafka due to differences in their architecture and design. However, many configuration parameters have equivalent settings in SOC4Kafka.
+A detailed description of the configuration parameter mappings can be found in the following <a href="../migration_config_values/">table</a>, which provides a comparison of the corresponding properties in both solutions.</p>
+<h2 id="migration-process-from-sc4kafka-to-soc4kafka">Migration process from SC4Kafka to SOC4Kafka<a class="headerlink" href="#migration-process-from-sc4kafka-to-soc4kafka" title="Permanent link">&para;</a></h2>
+<p>Before migrating please get familiar with the <a href="#recommended-migration-strategy">migration strategies</a>.</p>
+<hr />
+<h3 id="important-notes">Important Notes:<a class="headerlink" href="#important-notes" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Migration from the old SC4Kafka connector to SOC4Kafka collector is a manual process.</strong> There is no automated tool available for this migration.</li>
+<li>Begin with a simple configuration, then gradually add more settings. This approach helps in isolating and troubleshooting potential issues during the migration.</li>
+</ul>
+<hr />
+<p>Migrating from SC4Kafka to SOC4Kafka involves several steps to ensure a smooth transition. Below are the key steps to follow during the migration process:</p>
+<ol>
+<li><strong>Review Current SC4Kafka Configuration</strong>: Start by thoroughly reviewing your existing SC4Kafka configuration. Document all the settings, including topics, indexes, sourcetypes, and any custom configurations you have in place. 
+    In order to read the existing SC4Kafka configuration you can use REST API calls as described in the <a href="#reading-sc4kafka-existing-configuration">section below</a>.</li>
+<li><strong>Map Configuration Parameters</strong>: Use the <a href="../migration_config_values/">configuration mapping table</a> to identify equivalent settings in SOC4Kafka. This will help you understand how to translate your SC4Kafka configuration into SOC4Kafka format.</li>
+<li><strong>Create SOC4Kafka Configuration</strong>: Based on the mapped parameters, create a new configuration file for SOC4Kafka. Make sure to include all relevant settings, such as Kafka brokers, topics, Splunk HEC endpoint, and token.</li>
+<li><strong>Set Up SOC4Kafka</strong>: <a href=".././helm/installation/">Install SOC4Kafka</a> on your desired server. Ensure that you have the necessary permissions and access to both Kafka and Splunk.</li>
+<li><strong>Test the Configuration</strong>: Before fully switching over, test the SOC4Kafka configuration in a controlled environment. Verify that it can successfully connect to Kafka, retrieve messages, and send them to Splunk.</li>
+<li><strong>Monitor and Validate</strong>: Once you have deployed SOC4Kafka, closely monitor its performance and validate that all messages are being correctly forwarded to Splunk. Check for any discrepancies in data or performance issues.</li>
+<li><strong>Decommission SC4Kafka</strong>: After confirming that SOC4Kafka is functioning as expected, you can decommission your SC4Kafka setup. </li>
+</ol>
+<h3 id="reading-sc4kafka-existing-configuration">Reading SC4Kafka existing configuration<a class="headerlink" href="#reading-sc4kafka-existing-configuration" title="Permanent link">&para;</a></h3>
+<h4 id="checking-logs-encoding-format">Checking logs encoding format<a class="headerlink" href="#checking-logs-encoding-format" title="Permanent link">&para;</a></h4>
+<p>When migrating from SC4Kafka to SOC4Kafka, it is important to consider the message format used in Kafka topics.
+In case of SC4Kafka the default message format settings are stored in <code>connect-distributed.properties</code> file. The key
+and value converter (<code>org.apache.kafka.connect.json.JsonConverter</code> or <code>org.apache.kafka.connect.storage.StringConverter</code>)
+is a part of Kafka&rsquo;s java ecosystem, in SOC4Kafka it can be handled by setting <code>receivers.kafka.logs.encoding</code> to <code>json</code> or <code>text</code> depending on SC4Kafka configuration.</p>
+<h4 id="reading-sc4kafka-connector-configuration">Reading SC4Kafka connector configuration<a class="headerlink" href="#reading-sc4kafka-connector-configuration" title="Permanent link">&para;</a></h4>
+<p>When migrating from SC4Kafka to SOC4Kafka following commands may be useful:</p>
+<table>
+<thead>
+<tr>
+<th>Action</th>
+<th>curl Command</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>List active connectors</td>
+<td><code>curl http://localhost:8083/connectors</code></td>
+<td>Lists all active connectors</td>
+</tr>
+<tr>
+<td>Get SC4Kafka connector info</td>
+<td><code>curl http://localhost:8083/connectors/&lt;CONNECTOR_NAME&gt;</code></td>
+<td>Retrieves information about the specified SC4Kafka connector</td>
+</tr>
+<tr>
+<td>Get SC4Kafka connector config</td>
+<td><code>curl http://localhost:8083/connectors/&lt;CONNECTOR_NAME&gt;/config</code></td>
+<td>Retrieves configuration details of the specified SC4Kafka connector</td>
+</tr>
+<tr>
+<td>Get SC4Kafka connector task info</td>
+<td><code>curl http://localhost:8083/connectors/&lt;CONNECTOR_NAME&gt;/tasks</code></td>
+<td>Retrieves task information for the specified SC4Kafka connector</td>
+</tr>
+</tbody>
+</table>
+<h2 id="migration-examples">Migration examples:<a class="headerlink" href="#migration-examples" title="Permanent link">&para;</a></h2>
+<p>Following examples demonstrate how to migrate common SC4Kafka configurations to SOC4Kafka.
+The section contains examples for:</p>
+<ul>
+<li>Basic config for Kafka string messages</li>
+<li>Timestamp extraction</li>
+<li>Set host automatically</li>
+<li>Extract headers</li>
+<li>Send data from multiple kafka topics to multiple Splunk HEC endpoints</li>
+<li>Sending events that are already in HEC format</li>
+</ul>
+<hr />
+<h3 id="the-basic-config-for-kafka-string-messages">The basic config for Kafka string messages<a class="headerlink" href="#the-basic-config-for-kafka-string-messages" title="Permanent link">&para;</a></h3>
+<h4 id="sc4kafka-config">SC4Kafka config<a class="headerlink" href="#sc4kafka-config" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code>curl localhost:8083/connectors -X POST -H "Content-Type: application/json" -d '{
+    "name": "kafka-connect-splunk",
+    "config": {
+      "connector.class": "com.splunk.kafka.connect.SplunkSinkConnector",
+      "tasks.max": "3",
+      "splunk.indexes": "logs_index",
+      "topics":"three-pat",
+      "splunk.hec.uri": "https://splunk-hec-endpoint:8088",
+      "splunk.hec.token": "your-splunk-hec-token"
+    }
+  }'
+</code></pre></div>
+<h4 id="soc4kafka-config">SOC4Kafka config<a class="headerlink" href="#soc4kafka-config" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="nt">receivers</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">kafka</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">brokers</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">"kafka-broker:9092"</span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="nt">logs</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">topics</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"three-pat"</span>
+<span class="w">      </span><span class="nt">encoding</span><span class="p">:</span><span class="w"> </span><span class="s">"text"</span>
+
+
+<span class="nt">exporters</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">splunk_hec</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">token</span><span class="p">:</span><span class="w"> </span><span class="s">"your-splunk-hec-token"</span>
+<span class="w">    </span><span class="nt">endpoint</span><span class="p">:</span><span class="w"> </span><span class="s">"https://splunk-hec-endpoint:8088/services/collector"</span>
+<span class="w">    </span><span class="nt">source</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-kafka</span>
+<span class="w">    </span><span class="nt">sourcetype</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kafka-otel</span>
+<span class="w">    </span><span class="nt">index</span><span class="p">:</span><span class="w"> </span><span class="s">"logs_index"</span>
+<span class="w">    </span><span class="nt">splunk_app_name</span><span class="p">:</span><span class="w"> </span><span class="s">"soc4kafka"</span>
+<span class="w">    </span><span class="nt">sending_queue</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">      </span><span class="nt">num_consumers</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span>
+<span class="w">      </span><span class="nt">queue_size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10000</span>
+<span class="w">      </span><span class="nt">block_on_overflow</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">      </span><span class="nt">sizer</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">items</span>
+<span class="w">      </span><span class="nt">batch</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">min_size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1000</span>
+
+<span class="nt">service</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">pipelines</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">logs</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">receivers</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">kafka</span><span class="p p-Indicator">]</span>
+<span class="w">      </span><span class="nt">exporters</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">splunk_hec</span><span class="p p-Indicator">]</span>
+</code></pre></div>
+<p><img alt="1.png" src="../images/migration/basic-message.png" /></p>
+<h3 id="timestamp-extraction">Timestamp extraction<a class="headerlink" href="#timestamp-extraction" title="Permanent link">&para;</a></h3>
+<p>Even though by default kafka events from SOC4Kafka are marked with time of collecting data, if only we have a timestamp included as a part of the log body we can extract it. For example if the event is:</p>
+<div class="highlight"><pre><span></span><code>[2025-06-26 11:45:00]  the message with a timestamp
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="nt">receivers</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">kafka</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">brokers</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">"kafka-broker:9092"</span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="nt">logs</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">topics</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"three-pat"</span>
+<span class="w">      </span><span class="nt">encoding</span><span class="p">:</span><span class="w"> </span><span class="s">"text"</span>
+
+<span class="nt">processors</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">transform</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">error_mode</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ignore</span>
+<span class="w">    </span><span class="nt">log_statements</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">set(log.attributes["extracted_ts"], ExtractPatterns(log.body, "\\[(?P&lt;timestamp&gt;[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2})\\]"))</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">set(log.time, Time(log.attributes["extracted_ts"]["timestamp"], "%Y-%m-%d %H:%M:%S", "UTC"))</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">delete_key(log.attributes, "extracted_ts")</span>
+
+<span class="nt">exporters</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">splunk_hec</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">token</span><span class="p">:</span><span class="w"> </span><span class="s">"your-splunk-hec-token"</span>
+<span class="w">    </span><span class="nt">endpoint</span><span class="p">:</span><span class="w"> </span><span class="s">"https://splunk-hec-endpoint:8088/services/collector"</span>
+<span class="w">    </span><span class="nt">source</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-kafka</span>
+<span class="w">    </span><span class="nt">sourcetype</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kafka-otel</span>
+<span class="w">    </span><span class="nt">index</span><span class="p">:</span><span class="w"> </span><span class="s">"logs_index"</span>
+<span class="w">    </span><span class="nt">splunk_app_name</span><span class="p">:</span><span class="w"> </span><span class="s">"soc4kafka"</span>
+<span class="w">    </span><span class="nt">sending_queue</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">      </span><span class="nt">num_consumers</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span>
+<span class="w">      </span><span class="nt">queue_size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10000</span>
+<span class="w">      </span><span class="nt">block_on_overflow</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">      </span><span class="nt">sizer</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">items</span>
+<span class="w">      </span><span class="nt">batch</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">min_size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1000</span>
+
+<span class="nt">service</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">pipelines</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">logs</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">receivers</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">kafka</span><span class="p p-Indicator">]</span>
+<span class="w">      </span><span class="nt">processors</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">transform</span><span class="p p-Indicator">]</span>
+<span class="w">      </span><span class="nt">exporters</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">splunk_hec</span><span class="p p-Indicator">]</span>
+</code></pre></div>
+<p>and the event in Splunk would be:</p>
+<p><img alt="3.png" src="../images/migration/message-with-timestamp.png" /></p>
+<h3 id="set-host-automatically">Set host automatically<a class="headerlink" href="#set-host-automatically" title="Permanent link">&para;</a></h3>
+<h4 id="soc4kafka-config_1">SOC4Kafka config<a class="headerlink" href="#soc4kafka-config_1" title="Permanent link">&para;</a></h4>
+<p>By default, events produced by SOC4Kafka may have the host field marked as <code>unknown</code>. This behavior can be adjusted using the <a href="https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/resourcedetectionprocessor">resource detection processor</a>.
+The configuration example below demonstrates how to retrieve the hostname of the machine where SOC4Kafka is installed. Alternatively, the host value can be sourced from environmental variables or a specific API, depending on the client&rsquo;s requirements. The processor is flexible and can be tailored to meet specific use cases, as detailed in the <a href="https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/resourcedetectionprocessor">official documentation</a>.
+<div class="highlight"><pre><span></span><code><span class="nt">receivers</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">kafka</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">brokers</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">"kafka-broker:9092"</span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="nt">logs</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">topics</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"three-pat"</span>
+<span class="w">      </span><span class="nt">encoding</span><span class="p">:</span><span class="w"> </span><span class="s">"text"</span>
+
+<span class="nt">processors</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">resourcedetection</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">detectors</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">"system"</span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="nt">system</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">hostname_sources</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">"os"</span><span class="p p-Indicator">]</span>
+
+<span class="nt">exporters</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">splunk_hec</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">token</span><span class="p">:</span><span class="w"> </span><span class="s">"your-splunk-hec-token"</span>
+<span class="w">    </span><span class="nt">endpoint</span><span class="p">:</span><span class="w"> </span><span class="s">"https://splunk-hec-endpoint:8088/services/collector"</span>
+<span class="w">    </span><span class="nt">source</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-kafka</span>
+<span class="w">    </span><span class="nt">sourcetype</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kafka-otel</span>
+<span class="w">    </span><span class="nt">index</span><span class="p">:</span><span class="w"> </span><span class="s">"logs_index"</span>
+<span class="w">    </span><span class="nt">splunk_app_name</span><span class="p">:</span><span class="w"> </span><span class="s">"soc4kafka"</span>
+<span class="w">    </span><span class="nt">sending_queue</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">      </span><span class="nt">num_consumers</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span>
+<span class="w">      </span><span class="nt">queue_size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10000</span>
+<span class="w">      </span><span class="nt">block_on_overflow</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">      </span><span class="nt">sizer</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">items</span>
+<span class="w">      </span><span class="nt">batch</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">min_size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1000</span>
+
+<span class="nt">service</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">telemetry</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">logs</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">level</span><span class="p">:</span><span class="w"> </span><span class="s">"debug"</span>
+<span class="w">  </span><span class="nt">pipelines</span><span class="p">:</span>
+<span class="w">   </span><span class="nt">logs</span><span class="p">:</span>
+<span class="w">     </span><span class="nt">receivers</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">kafka</span><span class="p p-Indicator">]</span>
+<span class="w">     </span><span class="nt">processors</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">resourcedetection</span><span class="p p-Indicator">]</span>
+<span class="w">     </span><span class="nt">exporters</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">splunk_hec</span><span class="p p-Indicator">]</span>
+</code></pre></div></p>
+<p><img alt="2.png" src="../images/migration/message-with-host.png" /></p>
+<h3 id="extract-headers">Extract headers<a class="headerlink" href="#extract-headers" title="Permanent link">&para;</a></h3>
+<p>If there are additional headers present in the incoming data, they can be extracted and added as event attributes. This allows for greater flexibility in customizing event metadata.
+In the following examples, we will extract the following headers and include them as event attributes:</p>
+<ul>
+<li>index</li>
+<li>source</li>
+<li>sourcetype</li>
+<li>host</li>
+<li>myHeader1</li>
+<li>myHeader2</li>
+</ul>
+<h4 id="sc4kafka-config_1">SC4Kafka config<a class="headerlink" href="#sc4kafka-config_1" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code>curl localhost:8083/connectors -X POST -H "Content-Type: application/json" -d '{
+    "name": "kafka-connect-splunk",
+    "config": {
+      "connector.class": "com.splunk.kafka.connect.SplunkSinkConnector",
+      "tasks.max": "3",
+      "splunk.indexes": "logs_index",
+      "topics":"three-pat",
+      "splunk.hec.uri": "https://splunk-hec-endpoint:8088",
+      "splunk.hec.token": "your-splunk-hec-token",
+      "splunk.header.index": "index",
+      "splunk.header.source": "source",
+      "splunk.header.sourcetype": "sourcetype",
+      "splunk.header.host": "host",
+      "splunk.header.custom": "myHeader1,myHeader2"
+    }
+  }'
+</code></pre></div>
+<h4 id="soc4kafka-config_2">SOC4Kafka config<a class="headerlink" href="#soc4kafka-config_2" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="nt">receivers</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">kafka</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">brokers</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">"kafka-broker:9092"</span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="nt">logs</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">topics</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"three-pat"</span>
+<span class="w">      </span><span class="nt">encoding</span><span class="p">:</span><span class="w"> </span><span class="s">"text"</span>
+<span class="w">    </span><span class="nt">header_extraction</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">extract_headers</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">      </span><span class="nt">headers</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">"index"</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">"source"</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">"sourcetype"</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">"host"</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">"myHeader1"</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">"myHeader2"</span><span class="p p-Indicator">]</span>
+
+
+<span class="nt">exporters</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">splunk_hec</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">token</span><span class="p">:</span><span class="w"> </span><span class="s">"your-splunk-hec-token"</span>
+<span class="w">    </span><span class="nt">endpoint</span><span class="p">:</span><span class="w"> </span><span class="s">"https://splunk-hec-endpoint:8088/services/collector"</span>
+<span class="w">    </span><span class="nt">splunk_app_name</span><span class="p">:</span><span class="w"> </span><span class="s">"soc4kafka"</span>
+<span class="w">    </span><span class="nt">sending_queue</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">      </span><span class="nt">num_consumers</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span>
+<span class="w">      </span><span class="nt">queue_size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10000</span>
+<span class="w">      </span><span class="nt">block_on_overflow</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">      </span><span class="nt">sizer</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">items</span>
+<span class="w">      </span><span class="nt">batch</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">min_size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1000</span>
+<span class="w">    </span><span class="nt">otel_attrs_to_hec_metadata</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">index</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kafka.header.index</span>
+<span class="w">      </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kafka.header.host</span>
+<span class="w">      </span><span class="nt">source</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kafka.header.source</span>
+<span class="w">      </span><span class="nt">sourcetype</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kafka.header.sourcetype</span>
+
+<span class="nt">service</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">pipelines</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">logs</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">receivers</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">kafka</span><span class="p p-Indicator">]</span>
+<span class="w">      </span><span class="nt">exporters</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">splunk_hec</span><span class="p p-Indicator">]</span>
+</code></pre></div>
+<p>This is how events generated by SC4Kafka are displayed in Splunk:</p>
+<p><img alt="sc4kafka-headers.png" src="../images/migration/sc4kafka-headers.png" /></p>
+<p>Similarly, events generated by SOC4Kafka are presented in a comparable format:</p>
+<p><img alt="soc4kafka-headers.png" src="../images/migration/soc4kafka-headers.png" /></p>
+<h3 id="send-data-from-multiple-kafka-topics-to-multiple-splunk-hec-endpoints">Send data from multiple kafka topics to multiple Splunk HEC endpoints<a class="headerlink" href="#send-data-from-multiple-kafka-topics-to-multiple-splunk-hec-endpoints" title="Permanent link">&para;</a></h3>
+<p>In SC4Kafka, you can provide a list of topics along with a corresponding list of indexes, where each topic&rsquo;s data is mapped to its respective index (e.g., the first topic maps to the first index, the second topic to the second index, and so on).</p>
+<p>In SOC4Kafka, the configuration is more flexible and modular. You define Kafka receivers and Splunk HEC exporters separately and connect them using a pipeline structure. Additionally, you can configure different source and sourcetype values directly within the settings of each Splunk HEC exporter, enabling greater customization for data routing and metadata assignment.</p>
+<h4 id="sc4kafka-config_2">SC4Kafka config<a class="headerlink" href="#sc4kafka-config_2" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code>curl localhost:8083/connectors -X POST -H "Content-Type: application/json" -d '{
+    "name": "kafka-connect-splunk",
+    "config": {
+      "connector.class": "com.splunk.kafka.connect.SplunkSinkConnector",
+      "tasks.max": "3",
+      "splunk.indexes": "logs_index,kafka_otel",
+      "topics":"three-pat,two-pat",
+      "splunk.hec.uri": "https://splunk-hec-endpoint:8088",
+      "splunk.hec.token": "your-splunk-hec-token",
+    }
+  }'
+</code></pre></div>
+<h4 id="soc4kafka">SOC4Kafka<a class="headerlink" href="#soc4kafka" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="nt">receivers</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">kafka/1</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">brokers</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">"kafka-broker:9092"</span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="nt">logs</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">topics</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"three-pat"</span>
+<span class="w">      </span><span class="nt">encoding</span><span class="p">:</span><span class="w"> </span><span class="s">"text"</span>
+
+<span class="w">  </span><span class="nt">kafka/2</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">brokers</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">"kafka-broker:9092"</span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="nt">logs</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">topics</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"two-pat"</span>
+<span class="w">      </span><span class="nt">encoding</span><span class="p">:</span><span class="w"> </span><span class="s">"text"</span>
+
+<span class="nt">processors</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">resourcedetection</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">detectors</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">"system"</span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="nt">system</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">hostname_sources</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">"os"</span><span class="p p-Indicator">]</span>
+
+<span class="nt">exporters</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">splunk_hec/1</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">token</span><span class="p">:</span><span class="w"> </span><span class="s">"your-splunk-hec-token"</span>
+<span class="w">    </span><span class="nt">endpoint</span><span class="p">:</span><span class="w"> </span><span class="s">"https://splunk-hec-endpoint:8088/services/collector"</span>
+<span class="w">    </span><span class="nt">source</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kafka-otel-three-pat</span>
+<span class="w">    </span><span class="nt">sourcetype</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kafka-otel</span>
+<span class="w">    </span><span class="nt">index</span><span class="p">:</span><span class="w"> </span><span class="s">"logs_index"</span>
+<span class="w">    </span><span class="nt">splunk_app_name</span><span class="p">:</span><span class="w"> </span><span class="s">"soc4kafka"</span>
+<span class="w">    </span><span class="nt">sending_queue</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">      </span><span class="nt">num_consumers</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span>
+<span class="w">      </span><span class="nt">queue_size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10000</span>
+<span class="w">      </span><span class="nt">block_on_overflow</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">      </span><span class="nt">sizer</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">items</span>
+<span class="w">      </span><span class="nt">batch</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">min_size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1000</span>
+
+<span class="w">  </span><span class="nt">splunk_hec/2</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">token</span><span class="p">:</span><span class="w"> </span><span class="s">"your-splunk-hec-token"</span>
+<span class="w">    </span><span class="nt">endpoint</span><span class="p">:</span><span class="w"> </span><span class="s">"https://splunk-hec-endpoint:8088/services/collector"</span>
+<span class="w">    </span><span class="nt">source</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kafka-otel-two-pat</span>
+<span class="w">    </span><span class="nt">sourcetype</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kafka-otel</span>
+<span class="w">    </span><span class="nt">index</span><span class="p">:</span><span class="w"> </span><span class="s">"kafka_otel"</span>
+<span class="w">    </span><span class="nt">splunk_app_name</span><span class="p">:</span><span class="w"> </span><span class="s">"soc4kafka"</span>
+<span class="w">    </span><span class="nt">sending_queue</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">      </span><span class="nt">num_consumers</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span>
+<span class="w">      </span><span class="nt">queue_size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10000</span>
+<span class="w">      </span><span class="nt">block_on_overflow</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">      </span><span class="nt">sizer</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">items</span>
+<span class="w">      </span><span class="nt">batch</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">min_size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1000</span>
+
+<span class="nt">service</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">pipelines</span><span class="p">:</span>
+<span class="w">   </span><span class="nt">logs/1</span><span class="p">:</span>
+<span class="w">     </span><span class="nt">receivers</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">kafka/1</span><span class="p p-Indicator">]</span>
+<span class="w">     </span><span class="nt">processors</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">resourcedetection</span><span class="p p-Indicator">]</span>
+<span class="w">     </span><span class="nt">exporters</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">splunk_hec/1</span><span class="p p-Indicator">]</span>
+<span class="w">   </span><span class="nt">logs/2</span><span class="p">:</span>
+<span class="w">     </span><span class="nt">receivers</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">kafka/2</span><span class="p p-Indicator">]</span>
+<span class="w">     </span><span class="nt">processors</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">resourcedetection</span><span class="p p-Indicator">]</span>
+<span class="w">     </span><span class="nt">exporters</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">splunk_hec/2</span><span class="p p-Indicator">]</span>
+</code></pre></div>
+<p>The events generated by SC4Kafka are:</p>
+<p><img alt="sc4kafka-two-pat.png" src="../images/migration/sc4kafka-two-pat.png" />
+<img alt="sc4kafka-three-pat.png" src="../images/migration/sc4kafka-three-pat.png" /></p>
+<p>While the events from SOC4Kafka are:</p>
+<p><img alt="soc4kafka-two-pat.png" src="../images/migration/soc4kafka-two-pat.png" />
+<img alt="sock4kafka-three-pat.png" src="../images/migration/sock4kafka-three-pat.png" /></p>
+<p>Mind that SOC4Kafka allows you to configure a unique sourcetype and source for each individual topic. This flexibility simplifies filtering and organizing data within Splunk, ensuring better control over your event categorization and search results.</p>
+<h3 id="sending-events-that-are-already-in-hec-format">Sending events that are already in HEC format<a class="headerlink" href="#sending-events-that-are-already-in-hec-format" title="Permanent link">&para;</a></h3>
+<p>In SC4Kafka you can collect events that are already formatted in HEC format, by setting <code>splunk.hec.json.event.formatted</code> option to <code>true</code>.</p>
+<h4 id="sc4kafka-config_3">SC4Kafka config<a class="headerlink" href="#sc4kafka-config_3" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code>curl localhost:8083/connectors -X POST -H "Content-Type: application/json" -d' {
+    "name": "splunk-prod-financial",
+      "config": {
+        "connector.class": "com.splunk.kafka.connect.SplunkSinkConnector",
+        "tasks.max": "20",
+        "topics": "t1",
+        "splunk.hec.uri": "https://idx1:8088,https://idx2:8088,https://idx3:8088",
+        "splunk.hec.token": "your-splunk-hec-token",
+        "splunk.hec.json.event.formatted": "true",
+        "key.converter": "org.apache.kafka.connect.storage.StringConverter",
+        "key.converter.schemas.enable": "false",
+        "value.converter": "org.apache.kafka.connect.storage.StringConverter",
+        "value.converter.schemas.enable": "false"
+ }
+ }'
+</code></pre></div>
+<h4 id="soc4kafka_1">SOC4Kafka<a class="headerlink" href="#soc4kafka_1" title="Permanent link">&para;</a></h4>
+<p>To achieve the same result in SOC4Kafka use <code>export_raw</code> option in exporter configuration:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">receivers</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">kafka</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">brokers</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">"kafka-broker:9092"</span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="nt">logs</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">topics</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"topic"</span>
+<span class="w">      </span><span class="nt">encoding</span><span class="p">:</span><span class="w"> </span><span class="s">"text"</span>
+
+<span class="nt">exporters</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">splunk_hec</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">token</span><span class="p">:</span><span class="w"> </span><span class="s">"your-splunk-hec-token"</span>
+<span class="w">    </span><span class="nt">endpoint</span><span class="p">:</span><span class="w"> </span><span class="s">"https://splunk-hec-endpoint:8088/services/collector"</span>
+<span class="w">    </span><span class="nt">source</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">otel</span>
+<span class="w">    </span><span class="nt">sourcetype</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">otel</span>
+<span class="w">    </span><span class="nt">index</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">test</span>
+<span class="w">    </span><span class="nt">splunk_app_name</span><span class="p">:</span><span class="w"> </span><span class="s">"soc4kafka"</span>
+<span class="w">    </span><span class="nt">sending_queue</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">      </span><span class="nt">num_consumers</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span>
+<span class="w">      </span><span class="nt">queue_size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10000</span>
+<span class="w">      </span><span class="nt">block_on_overflow</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">      </span><span class="nt">sizer</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">items</span>
+<span class="w">      </span><span class="nt">batch</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">min_size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1000</span>
+<span class="w">    </span><span class="nt">export_raw</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+
+<span class="nt">service</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">pipelines</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">logs</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">receivers</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">kafka</span><span class="p p-Indicator">]</span>
+<span class="w">      </span><span class="nt">exporters</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">splunk_hec</span><span class="p p-Indicator">]</span>
+</code></pre></div>
+<p>Example of event in this format:</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">"index"</span><span class="p">:</span><span class="s2">"test"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"host"</span><span class="p">:</span><span class="s2">"localhost"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"sourcetype"</span><span class="p">:</span><span class="s2">"sourcetype"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"source"</span><span class="p">:</span><span class="s2">"source"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"event"</span><span class="p">:</span><span class="s2">"This is already formatted event!"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"fields"</span><span class="p">:</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"extra_field"</span><span class="p">:</span><span class="s2">"extra-field-1"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"extra_fields_arr"</span><span class="p">:</span>
+<span class="w">    </span><span class="p">[</span>
+<span class="w">      </span><span class="s2">"extra-field-2"</span><span class="p">,</span>
+<span class="w">      </span><span class="s2">"extra-field-3"</span>
+<span class="w">    </span><span class="p">]</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>The example message appears like this in Splunk search results when properly configured:</p>
+<p><img alt="formatted-msg.png" src="../images/migration/formatted-msg.png" /></p>
+<h2 id="recommended-migration-strategy">Recommended Migration Strategy<a class="headerlink" href="#recommended-migration-strategy" title="Permanent link">&para;</a></h2>
+<p>There are several considerations to take into account when migrating from SC4Kafka to SOC4Kafka. 
+During the transitional phase—when both SC4Kafka and SOC4Kafka are enabled and SC4Kafka has not yet been 
+decommissioned, Kafka’s at‑least‑once delivery semantics may result in duplicate events being ingested into Splunk. 
+This behavior is expected and is a consequence of Kafka’s design, which prioritizes data durability and avoidance of 
+data loss over deduplication.</p>
+<p>There are multiple approaches to performing the migration. For most of them, it is important to understand how Kafka consumer groups are used by both connectors.</p>
+<h3 id="check-running-consumer-groups">Check running consumer groups<a class="headerlink" href="#check-running-consumer-groups" title="Permanent link">&para;</a></h3>
+<p>First, identify the running SC4Kafka connectors:</p>
+<div class="highlight"><pre><span></span><code>curl http://localhost:8083/connectors
+</code></pre></div>
+<p>Each connector name returned by this command corresponds to a Kafka Connect connector instance. Kafka Connect automatically derives a consumer group ID using the following pattern: <code>connect-&lt;CONNECTOR_NAME&gt;</code>.
+For example, if the connector list is:</p>
+<div class="highlight"><pre><span></span><code>["kafka-connect-splunk"]
+</code></pre></div>
+<p>The corresponding consumer group ID will be: <code>connect-kafka-connect-splunk</code>.</p>
+<p>You can verify consumer group activity and partition assignments from the Kafka perspective using the built‑in <code>kafka-consumer-groups.sh</code> script located in Kafka’s <code>bin</code> directory:</p>
+<div class="highlight"><pre><span></span><code>./kafka-consumer-groups.sh \
+  --bootstrap-server localhost:9092 \
+  --describe \
+  --group connect-kafka-connect-splunk
+</code></pre></div>
+<p>Example output:</p>
+<div class="highlight"><pre><span></span><code>./kafka-consumer-groups.sh   --bootstrap-server localhost:9092   --describe   --group connect-kafka-connect-splunk
+GROUP                        TOPIC           PARTITION  CURRENT-OFFSET  LOG-END-OFFSET  LAG             CONSUMER-ID                                                                    HOST            CLIENT-ID
+connect-kafka-connect-splunk topic1          0          3100135         3100135         0               connector-consumer-kafka-connect-splunk-0-a299967d-4ba2-4d8c-95f0-7f7db4f029ed /10.236.5.232   connector-consumer-kafka-connect-splunk-0
+</code></pre></div>
+<p>This output confirms which partitions are currently assigned to SC4Kafka and whether offsets are being actively committed.</p>
+<h3 id="strategy-1-use-different-consumer-groups">Strategy 1: Use different consumer groups<a class="headerlink" href="#strategy-1-use-different-consumer-groups" title="Permanent link">&para;</a></h3>
+<p>If no <code>group_id</code> is explicitly configured in SOC4Kafka, the connector uses its default consumer group ID: <code>otel_collector</code>. Because this consumer group ID differs from the one used by SC4Kafka, both connectors will independently consume the same Kafka topic.</p>
+<p>As a result:</p>
+<ul>
+<li>SC4Kafka and SOC4Kafka each process all events from Kafka</li>
+<li>All events are ingested twice into Splunk</li>
+<li>Duplicate events will continue to appear until SC4Kafka is fully decommissioned</li>
+</ul>
+<p>This approach is not recommended for production use unless duplicate ingestion is explicitly acceptable or temporary 
+duplication is accounted for during the migration window.</p>
+<h3 id="strategy-2-use-the-same-consumer-group-id">Strategy 2: Use the Same Consumer Group ID<a class="headerlink" href="#strategy-2-use-the-same-consumer-group-id" title="Permanent link">&para;</a></h3>
+<p>In this strategy, SC4Kafka and SOC4Kafka are configured to use the same Kafka consumer group ID. This causes both connectors to participate in the same consumer group and share partition assignments rather than independently consuming all messages.</p>
+<p><strong>Configuration</strong></p>
+<p>Configure SOC4Kafka with the same <code>group_id</code> used by SC4Kafka. For example:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">receivers</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">kafka</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">brokers</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"kafka-broker:9092"</span>
+<span class="w">    </span><span class="nt">logs</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">topics</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"topic1"</span>
+<span class="w">      </span><span class="nt">encoding</span><span class="p">:</span><span class="w"> </span><span class="s">"text"</span>
+<span class="w">    </span><span class="nt">group_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">connect-kafka-connect-splunk</span>
+</code></pre></div>
+<p>Expected Behavior</p>
+<p>When both connectors are running with the same consumer group:</p>
+<ul>
+<li>Kafka assigns partitions to only one consumer per partition</li>
+<li>SC4Kafka and SOC4Kafka share consumption based on partition assignments</li>
+<li>Events are not duplicated by design</li>
+<li>Kafka determines partition ownership dynamically during group rebalances</li>
+</ul>
+<p>However, Kafka consumer groups are designed for parallel work sharing, not for active/standby failover. So when you decommission
+SC4Kafka with the same <code>group_id</code> configured,  SOC4Kafka will take over uncommitted partitions. Offsets that were processed but not yet committed by SC4Kafka may be replayed, this replay can result in duplicate events being ingested into Splunk.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Kafka consumer groups are optimized for resilience and throughput, not for seamless connector replacement. This strategy reduces duplication compared to using separate consumer groups but does not eliminate it entirely.</p>
+</div>
+<p>Using the same consumer group ID for SC4Kafka and SOC4Kafka is the recommended migration approach when both connectors must temporarily coexist. This strategy minimizes duplicate ingestion compared to using separate consumer groups and allows for a controlled transition, provided that connector shutdown is carefully coordinated.</p>
+<h3 id="strategy-3-use-separate-topics-parallel-topics-migration">Strategy 3: Use Separate Topics (Parallel Topics Migration)<a class="headerlink" href="#strategy-3-use-separate-topics-parallel-topics-migration" title="Permanent link">&para;</a></h3>
+<p>In this strategy, new Kafka topics are introduced specifically for SOC4Kafka, while SC4Kafka continues to consume from the existing topics. Event producers are reconfigured to send data to the new topics, allowing both connectors to operate in parallel without sharing consumer groups or partitions.</p>
+<p><strong>Configuration</strong></p>
+<ol>
+<li>Create new Kafka topics for SOC4Kafka, typically by using a clear naming convention to distinguish them from existing topics. For example:</li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="l l-Scalar l-Scalar-Plain">kafka-topics.sh \</span>
+<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">--bootstrap-server localhost:9092 \</span>
+<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">--create \</span>
+<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">--topic topic2 \</span>
+<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">--partitions 10 \</span>
+<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">--replication-factor 1</span>
+</code></pre></div>
+<ol start="2">
+<li>Update Kafka producers to publish events to the new topics (e.g., <code>topic2</code>) instead of the original topics.</li>
+<li>Configure SOC4Kafka to consume from the new topics:</li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="nt">receivers</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">kafka</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">brokers</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"kafka-broker:9092"</span>
+<span class="w">    </span><span class="nt">logs</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">topics</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"topic2"</span>
+<span class="w">      </span><span class="nt">encoding</span><span class="p">:</span><span class="w"> </span><span class="s">"text"</span>
+</code></pre></div>
+<ol start="4">
+<li>Leave SC4Kafka configured to consume from the original topics (e.g., <code>topic1</code>).</li>
+<li>Once all messages are ingested by SC4Kafka, you can safely stop the connector. </li>
+</ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      <p>Webpages built on GitHub Pages | <a href="https://docs.github.com/en/site-policy/github-terms/github-terms-of-service">Github Terms</a> | <a href="https://docs.github.com/en/site-policy/privacy-policies/github-privacy-statement">GitHub Privacy</a></p>
+    </div>
+  
+  
+    Made with
+    <a href="https://zensical.org/" target="_blank" rel="noopener">
+      Zensical
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate":null,"base":"..","features":[],"search":"../assets/javascripts/workers/search.7d14d953.min.js","tags":null,"translations":{"clipboard.copied":"Copied to clipboard","clipboard.copy":"Copy to clipboard","search.result.more.one":"1 more on this page","search.result.more.other":"# more on this page","search.result.none":"No matching documents","search.result.one":"1 matching document","search.result.other":"# matching documents","search.result.placeholder":"Type to start searching","search.result.term.missing":"Missing","select.version":"Select version"},"version":{"provider":"mike"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.49251538.min.js"></script>
+      
+        <script src="../javascripts/footer.js"></script>
+      
+    
+  </body>
+</html>
