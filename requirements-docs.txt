@@ -1,0 +1,5 @@
+# Zensical (successor to Material for MkDocs) is the docs generator; it reads mkdocs.yml.
+zensical>=0.0.57
+# Versioning uses the Material team's mike fork, which retargets mike's build step at `zensical build`.
+# This is a bridge until Zensical ships native versioning; installed from git (not on PyPI), so pin a commit.
+mike @ git+https://github.com/squidfunk/mike.git@2d4ad799442f4592db8ad53b179bfb33db8c69ac

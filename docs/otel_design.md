@@ -1,9 +1,12 @@
 ## Design
 
 The SOC4Kafka collector is designed using the OpenTelemetry Collector framework and is composed of various classes of pipeline components. The key components of the Kafka OpenTelemetry (OTel) collector include:
+
 - Receivers
 - Processors
 - Exporters
+
+![SOC4Kafka scheme](images/kafka-otel-scheme.png)
 
 ### Receivers
 
@@ -17,4 +20,3 @@ Processors are optional components within the data pipeline that transform data 
 
 The Splunk HEC exporter is used to send data to a Splunk HEC index. Detailed configuration guidelines for this exporter can be found [here](https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/exporter/splunkhecexporter/README.md).
 
-![SOC4Kafka scheme](images/kafka-otel-scheme.png)

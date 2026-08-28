@@ -1,0 +1,67 @@
+---
+site_name: Splunk OpenTelemetry Collector for Kafka (SOC4Kafka)
+site_url: https://splunk.github.io/splunk-opentelemetry-collector-for-kafka/
+
+repo_url: https://github.com/splunk/splunk-opentelemetry-collector-for-kafka
+repo_name: splunk/splunk-opentelemetry-collector-for-kafka
+edit_uri: edit/main/docs/
+
+extra:
+  version:
+    provider: mike
+
+markdown_extensions:
+  - toc:
+      permalink: true
+  - smarty
+  - fenced_code
+  - sane_lists
+  - codehilite
+  - attr_list
+  - md_in_html
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.blocks.tab:
+      alternate_style: true
+
+plugins:
+  - search:
+      lang: en
+
+extra_javascript:
+  - javascripts/footer.js
+
+copyright: <p>Webpages built on GitHub Pages | <a href="https://docs.github.com/en/site-policy/github-terms/github-terms-of-service">Github Terms</a> | <a href="https://docs.github.com/en/site-policy/privacy-policies/github-privacy-statement">GitHub Privacy</a></p>
+
+theme:
+  name: "material"
+  palette:
+    primary: "black"
+    accent: "orange"
+
+nav:
+  - Home: "index.md"
+  - Design: "otel_design.md"
+  - How to run:
+      - Overview: "getting_started.md"
+      - Kubernetes:
+          - Installation: "helm/installation.md"
+          - Configuration: "helm/configuration.md"
+          - Secrets: "helm/secrets.md"
+          - TLS: "helm/tls.md"
+          - Examples: "helm/examples.md"
+          - Troubleshooting: "helm/troubleshooting.md"
+      - Ansible: "quickstart_guide.md"
+      - OCI Streaming: "oci_installation.md"
+  - Advanced Configuration:
+      - Multiple topics: "multiple_topics.md"
+      - Regex topics: "regex_topics.md"
+      - Extracting additional data: "extracting_additional_data.md"
+  - Scaling: "scaling.md"
+  - Load Balancing: "loadbalancing.md"
+  - Migration from SC4Kafka:
+      - Overview: "migration.md"
+      - Config value mapping: "migration_config_values.md"
+  - Splunk Dashboard: "splunk-dashboard.md"
+  - Collecting SOC4Kafka's own logs: "collecting_own_logs.md"

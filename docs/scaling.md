@@ -47,4 +47,5 @@ service:
       exporters: [splunk_hec]
 ```
 
-Note: Replace `<GROUP ID>` with a name that will be shared across all SOC4Kafka instances. This ensures that all instances are part of the same consumer group.
+!!! note
+    Replace `<GROUP ID>` with a name that will be shared across all SOC4Kafka instances. This ensures that all instances are part of the same consumer group.

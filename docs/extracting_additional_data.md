@@ -62,7 +62,7 @@ To extract the timestamp from a log message, we can use a transform processor.
 
 ![SOC4Kafka timestamp extraction](images/kafka-timestamp-extraction.png)
 
-The full documentation for the processor can be found at [this link](https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/processor/transformprocessor/README.md). However, we only need a subset of its functionalities, Below is the minimal configuration required for timestamp extraction using the transform processor:
+The full documentation for the processor can be found at [this link](https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/processor/transformprocessor/README.md). However, we only need a subset of its functionalities. Below is the minimal configuration required for timestamp extraction using the transform processor:
 
 ```yaml
 transform:

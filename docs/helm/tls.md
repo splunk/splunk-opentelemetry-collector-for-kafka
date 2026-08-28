@@ -64,54 +64,54 @@ You can mount a Secret containing the CA certificate using `extraVolumes` and `e
 
 1. Create a Secret with the CA certificate (and optionally client cert/key; use a name that matches your use case, e.g. `kafka-ca` or `hec-ca`):
 
-   ```bash
-   kubectl create secret generic kafka-ca --from-file=ca.pem=/path/to/ca.pem
-   # or for HEC:
-   kubectl create secret generic hec-ca --from-file=ca.pem=/path/to/hec-ca.pem
-   ```
+```bash
+kubectl create secret generic kafka-ca --from-file=ca.pem=/path/to/ca.pem
+# or for HEC:
+kubectl create secret generic hec-ca --from-file=ca.pem=/path/to/hec-ca.pem
+```
 
 2. In your Helm values, add the volume and mount, and set `tls.ca_file` to the path inside the container.
 
    **Kafka receiver example:**
 
-   ```yaml
-   extraVolumes:
-     - name: kafka-ca
-       secret:
-         secretName: kafka-ca
-   extraVolumeMounts:
-     - name: kafka-ca
-       mountPath: /etc/ssl/kafka
-       readOnly: true
+```yaml
+extraVolumes:
+  - name: kafka-ca
+    secret:
+      secretName: kafka-ca
+extraVolumeMounts:
+  - name: kafka-ca
+    mountPath: /etc/ssl/kafka
+    readOnly: true
 
-   kafkaReceivers:
-     - name: main
-       brokers: ["kafka-broker-1:9093"]
-       tls:
-         insecure_skip_verify: false
-         ca_file: /etc/ssl/kafka/ca.pem
-   ```
+kafkaReceivers:
+  - name: main
+    brokers: ["kafka-broker-1:9093"]
+    tls:
+      insecure_skip_verify: false
+      ca_file: /etc/ssl/kafka/ca.pem
+```
 
    **Splunk HEC exporter example:**
 
-   ```yaml
-   extraVolumes:
-     - name: hec-ca
-       secret:
-         secretName: hec-ca
-   extraVolumeMounts:
-     - name: hec-ca
-       mountPath: /etc/ssl/hec
-       readOnly: true
+```yaml
+extraVolumes:
+  - name: hec-ca
+    secret:
+      secretName: hec-ca
+extraVolumeMounts:
+  - name: hec-ca
+    mountPath: /etc/ssl/hec
+    readOnly: true
 
-   splunkExporters:
-     - name: primary
-       endpoint: "https://splunk-hec:8088/services/collector"
-       token: "your-token"
-       tls:
-         insecure_skip_verify: false
-         ca_file: /etc/ssl/hec/ca.pem
-   ```
+splunkExporters:
+  - name: primary
+    endpoint: "https://splunk-hec:8088/services/collector"
+    token: "your-token"
+    tls:
+      insecure_skip_verify: false
+      ca_file: /etc/ssl/hec/ca.pem
+```
 
    Secret keys are mounted as files; if your secret key is `ca.pem`, the path is `/<mountPath>/ca.pem`. The same volume can hold multiple files (e.g. `ca.pem`, `cert.pem`, `key.pem`); reference each in `tls` as `ca_file`, `cert_file`, and `key_file`.
 

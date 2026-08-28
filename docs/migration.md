@@ -1,6 +1,7 @@
 ## Migration from Splunk Connect for Kafka into Splunk OTel Collector for Kafka
 
 Naming: 
+
 - SC4Kafka - the [Splunk Connect for Kafka](https://github.com/splunk/kafka-connect-splunk)
 - SOC4Kafka - the Splunk OTel Collector for Kafka (the current project)
 
@@ -14,9 +15,9 @@ The biggest difference between SC4Kafka and SOC4Kafka is that:
 | **Integration with Kafka** | Tightly integrated as part of the Kafka ecosystem.                                    | Can run independently and be deployed on an external server, separate from the Kafka cluster.                                                                                                                    |
 | **Scaling**                | Scaling is managed using the `tasks.max` setting and supports multiple HEC endpoints. | Scaling is achieved by deploying multiple SOC4Kafka instances with the same `group_id`. Multiple HEC endpoints are not supported, but you can create multiple Splunk HEC exporters and add them to the pipeline. |
 
-Note:
-- The timestamp behavior differs between the two solutions. SOC4Kafka assigns a timestamp to the event based on when it is indexed, whereas Splunk Connect for Kafka uses the timestamp from when the event was originally produced. 
-- Additionally messages from SOC4Kafka appear in Splunk first, as it forwards events to Splunk immediately. In contrast, Splunk Connect for Kafka processes and forwards events in batches, typically every configured number of seconds.
+!!! note
+    - The timestamp behavior differs between the two solutions. SOC4Kafka assigns a timestamp to the event based on when it is indexed, whereas Splunk Connect for Kafka uses the timestamp from when the event was originally produced. 
+    - Additionally messages from SOC4Kafka appear in Splunk first, as it forwards events to Splunk immediately. In contrast, Splunk Connect for Kafka processes and forwards events in batches, typically every configured number of seconds.
 
 ### SC4Kafka to SOC4Kafka mapping of configuration parameters
 
@@ -35,11 +36,12 @@ Before migrating please get familiar with the [migration strategies](#recommende
 ---
 
 Migrating from SC4Kafka to SOC4Kafka involves several steps to ensure a smooth transition. Below are the key steps to follow during the migration process:
+
 1. **Review Current SC4Kafka Configuration**: Start by thoroughly reviewing your existing SC4Kafka configuration. Document all the settings, including topics, indexes, sourcetypes, and any custom configurations you have in place. 
     In order to read the existing SC4Kafka configuration you can use REST API calls as described in the [section below](#reading-sc4kafka-existing-configuration).
 2. **Map Configuration Parameters**: Use the [configuration mapping table](migration_config_values.md) to identify equivalent settings in SOC4Kafka. This will help you understand how to translate your SC4Kafka configuration into SOC4Kafka format.
 3. **Create SOC4Kafka Configuration**: Based on the mapped parameters, create a new configuration file for SOC4Kafka. Make sure to include all relevant settings, such as Kafka brokers, topics, Splunk HEC endpoint, and token.
-4. **Set Up SOC4Kafka**: [Install SOC4Kafka](../README.md#how-to-start-with-soc4kafka) on your desired server. Ensure that you have the necessary permissions and access to both Kafka and Splunk.
+4. **Set Up SOC4Kafka**: [Install SOC4Kafka](./helm/installation.md) on your desired server. Ensure that you have the necessary permissions and access to both Kafka and Splunk.
 5. **Test the Configuration**: Before fully switching over, test the SOC4Kafka configuration in a controlled environment. Verify that it can successfully connect to Kafka, retrieve messages, and send them to Splunk.
 6. **Monitor and Validate**: Once you have deployed SOC4Kafka, closely monitor its performance and validate that all messages are being correctly forwarded to Splunk. Check for any discrepancies in data or performance issues.
 7. **Decommission SC4Kafka**: After confirming that SOC4Kafka is functioning as expected, you can decommission your SC4Kafka setup. 
@@ -68,6 +70,7 @@ When migrating from SC4Kafka to SOC4Kafka following commands may be useful:
 
 Following examples demonstrate how to migrate common SC4Kafka configurations to SOC4Kafka.
 The section contains examples for:
+
 - Basic config for Kafka string messages
 - Timestamp extraction
 - Set host automatically
@@ -192,7 +195,7 @@ and the event in Splunk would be:
 #### SOC4Kafka config
 
 By default, events produced by SOC4Kafka may have the host field marked as `unknown`. This behavior can be adjusted using the [resource detection processor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/resourcedetectionprocessor).
-The configuration example below demonstrates how to retrieve the hostname of the machine where SOC4Kafka is installed. Alternatively, the host value can be sourced from environmental variables or a specific API, depending on the client's requirements. The processor is flexible and can be tailored to meet specific use cases, as detailed in the [official documentation](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/resourcedetectionprocessor\).
+The configuration example below demonstrates how to retrieve the hostname of the machine where SOC4Kafka is installed. Alternatively, the host value can be sourced from environmental variables or a specific API, depending on the client's requirements. The processor is flexible and can be tailored to meet specific use cases, as detailed in the [official documentation](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/resourcedetectionprocessor).
 ```yaml
 receivers:
   kafka:
@@ -242,6 +245,7 @@ service:
 
 If there are additional headers present in the incoming data, they can be extracted and added as event attributes. This allows for greater flexibility in customizing event metadata.
 In the following examples, we will extract the following headers and include them as event attributes:
+
 - index
 - source
 - sourcetype
@@ -602,7 +606,8 @@ When both connectors are running with the same consumer group:
 However, Kafka consumer groups are designed for parallel work sharing, not for active/standby failover. So when you decommission
 SC4Kafka with the same `group_id` configured,  SOC4Kafka will take over uncommitted partitions. Offsets that were processed but not yet committed by SC4Kafka may be replayed, this replay can result in duplicate events being ingested into Splunk.
 
-Note: Kafka consumer groups are optimized for resilience and throughput, not for seamless connector replacement. This strategy reduces duplication compared to using separate consumer groups but does not eliminate it entirely.
+!!! note
+    Kafka consumer groups are optimized for resilience and throughput, not for seamless connector replacement. This strategy reduces duplication compared to using separate consumer groups but does not eliminate it entirely.
 
 Using the same consumer group ID for SC4Kafka and SOC4Kafka is the recommended migration approach when both connectors must temporarily coexist. This strategy minimizes duplicate ingestion compared to using separate consumer groups and allows for a controlled transition, provided that connector shutdown is carefully coordinated.
 
