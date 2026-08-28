@@ -3,6 +3,8 @@
 The new SOC4Kafka collector, built on OpenTelemetry, enables the collection of Kafka messages and forwards these events to Splunk. It serves as a replacement for the existing
 Splunk Connect for Kafka [(kafka-connect-splunk)](https://github.com/splunk/kafka-connect-splunk).
 
+**For the installation instructions and advanced settings check the [documentation](https://splunk.github.io/splunk-opentelemetry-collector-for-kafka/).**
+
 ## Requirements
 
 1. Kafka version 3.7.0 and above.
@@ -29,8 +31,8 @@ Not supported features which are available in previous version of Splunk Connect
 
 Choose an installation method that fits your environment:
 
-- **Kubernetes (Helm):** Use the [Helm chart](helm-chart/splunk-opentelemetry-collector-for-kafka/README.md) to deploy SOC4Kafka on Kubernetes. See the chart [Installation Guide](docs/helm/installation.md) for install and upgrade steps.
-- **Automated (Ansible):** See the [Quickstart Guide](docs/quickstart_guide.md) for automated installation.
+- **Kubernetes (Helm):** Use the [Helm chart](helm-chart/splunk-opentelemetry-collector-for-kafka/README.md) to deploy SOC4Kafka on Kubernetes. See the chart [Installation Guide](https://splunk.github.io/splunk-opentelemetry-collector-for-kafka/main/helm/installation/) for install and upgrade steps.
+- **Automated (Ansible):** See the [Quickstart Guide](https://splunk.github.io/splunk-opentelemetry-collector-for-kafka/main/quickstart_guide/) for automated installation.
 - **Manual:** Follow the steps below to run the collector from a downloaded package and config file.
 
 ### Download Splunk OTel Collector package
@@ -184,25 +186,25 @@ chmod a+x otelcol_linux_amd64
 ## Advanced configuration
 
 Thanks to the flexibility of the OpenTelemetry Collector, the setup can be tailored to meet specific requirements. This modular approach allows you to treat the components as building blocks, enabling you to create a pipeline that aligns perfectly with your use case.
-To understand the design, refer to [this guide](docs/otel_design.md).
+To understand the design, refer to [this guide](https://splunk.github.io/splunk-opentelemetry-collector-for-kafka/main/otel_design/).
 
 You can unlock a range of powerful features by adjusting the configuration, such as:
-- [Collecting events from multiple topics](docs/multiple_topics.md): Easily gather data from several Kafka topics at once.
-- [Subscribing to topics using regex](docs/regex_topics.md): Dynamically subscribe to topics that match specific patterns using regular expressions.
-- [Extracting data from headers and timestamps](docs/extracting_additional_data.md): Access and make use of metadata, like headers and timestamps, for more detailed insights.
+- [Collecting events from multiple topics](https://splunk.github.io/splunk-opentelemetry-collector-for-kafka/main/multiple_topics/): Easily gather data from several Kafka topics at once.
+- [Subscribing to topics using regex](https://splunk.github.io/splunk-opentelemetry-collector-for-kafka/main/regex_topics/): Dynamically subscribe to topics that match specific patterns using regular expressions.
+- [Extracting data from headers and timestamps](https://splunk.github.io/splunk-opentelemetry-collector-for-kafka/main/extracting_additional_data/): Access and make use of metadata, like headers and timestamps, for more detailed insights.
 
 ## Scaling 
 
-SOC4Kafka supports horizontal scaling, allowing you to run multiple collector instances to handle increased Kafka message throughput. For more details check [this guide](docs/scaling.md).
+SOC4Kafka supports horizontal scaling, allowing you to run multiple collector instances to handle increased Kafka message throughput. For more details check [this guide](https://splunk.github.io/splunk-opentelemetry-collector-for-kafka/main/scaling/).
 
 ## Load Balancing
 
-SOC4Kafka supports load balancing across multiple collector instances, distributing the Kafka message processing workload evenly to improve reliability and performance. For more details check [this guide](docs/loadbalancing.md).
+SOC4Kafka supports load balancing across multiple collector instances, distributing the Kafka message processing workload evenly to improve reliability and performance. For more details check [this guide](https://splunk.github.io/splunk-opentelemetry-collector-for-kafka/main/loadbalancing/).
 
 ## Migration 
 
-Migration from Splunk Connect for Kafka to SOC4Kafka is [described here](docs/migration.md).
+Migration from Splunk Connect for Kafka to SOC4Kafka is [described here](https://splunk.github.io/splunk-opentelemetry-collector-for-kafka/main/migration/).
 
 ## Troubleshooting
 
-For troubleshooting check [this guide](docs/troubleshooting.md).
+For troubleshooting check [this guide](https://splunk.github.io/splunk-opentelemetry-collector-for-kafka/main/helm/troubleshooting/).

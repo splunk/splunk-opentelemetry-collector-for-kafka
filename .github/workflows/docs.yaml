@@ -38,5 +38,5 @@ jobs:
 
       - name: Deploy docs
         run: |
-          mike deploy --push --update-aliases "${{ steps.version.outputs.version }}" latest
-          mike set-default --push latest
+          mike deploy --push --update-aliases "${{ steps.version.outputs.version }}" main
+          mike set-default --push main
