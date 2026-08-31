@@ -33,10 +33,18 @@ env:
 
 jobs:
   integration-test:
+    name: integration test (${{ matrix.kafka_environment.name }}, Splunk ${{ matrix.CI_SPLUNK_VERSION }}, K8s ${{ matrix.MICROK8S_CHANNEL }})
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
+        kafka_environment:
+          - name: cp-7.5-zookeeper
+            mode: zookeeper
+            manifest: ci_scripts/k8s-kafka.yml
+          - name: kafka-4.3-kraft
+            mode: kraft
+            manifest: ci_scripts/k8s-kafka-kraft.yml
         CI_SPLUNK_VERSION:
           - "10.2.2"
           - "9.4.10"
@@ -53,6 +61,8 @@ jobs:
     env:
       CI_SPLUNK_VERSION: ${{ matrix.CI_SPLUNK_VERSION }}
       MICROK8S_CHANNEL: ${{ matrix.MICROK8S_CHANNEL }}
+      KAFKA_MODE: ${{ matrix.kafka_environment.mode }}
+      KAFKA_MANIFEST: ${{ matrix.kafka_environment.manifest }}
 
     steps:
       - name: Checkout
@@ -83,11 +93,20 @@ jobs:
       # -- Kafka -----------------------------------------------------------
       - name: Deploy Kafka
         run: |
-          sed -i "s|__NODE_IP__|${NODE_IP}|g" ci_scripts/k8s-kafka.yml
-          sudo microk8s kubectl apply -f ci_scripts/k8s-kafka.yml
+          sed -i "s|__NODE_IP__|${NODE_IP}|g" "${KAFKA_MANIFEST}"
 
-          echo "Waiting for Zookeeper..."
-          sudo microk8s kubectl wait --for=condition=Ready pod/zookeeper --timeout=120s
+          if [ "${KAFKA_MODE}" = "kraft" ]; then
+            KAFKA_CLUSTER_ID=$(openssl rand -base64 16 | tr '+/' '-_' | tr -d '=')
+            echo "Generated Kafka cluster ID: ${KAFKA_CLUSTER_ID}"
+            sed -i "s|__KAFKA_CLUSTER_ID__|${KAFKA_CLUSTER_ID}|g" "${KAFKA_MANIFEST}"
+          fi
+
+          sudo microk8s kubectl apply -f "${KAFKA_MANIFEST}"
+
+          if [ "${KAFKA_MODE}" = "zookeeper" ]; then
+            echo "Waiting for Zookeeper..."
+            sudo microk8s kubectl wait --for=condition=Ready pod/zookeeper --timeout=120s
+          fi
 
           echo "Waiting for Kafka..."
           sudo microk8s kubectl wait --for=condition=Ready pod/kafka --timeout=120s
@@ -221,6 +240,11 @@ jobs:
           # Kafka logs
           sudo microk8s kubectl logs kafka --tail=200 > /tmp/k8s-debug/kafka.log 2>&1
 
+          # ZooKeeper logs
+          if [ "${KAFKA_MODE}" = "zookeeper" ]; then
+            sudo microk8s kubectl logs zookeeper --tail=200 > /tmp/k8s-debug/zookeeper.log 2>&1
+          fi
+
       - name: Print collector logs on failure
         if: always() && (steps.run-integration-tests.outcome == 'failure' || env.KUBERNETES_DEBUG_INFO == 'true')
         run: |
@@ -234,6 +258,6 @@ jobs:
         if: always() && (steps.run-integration-tests.outcome == 'failure' || env.KUBERNETES_DEBUG_INFO == 'true')
         uses: actions/upload-artifact@v4
         with:
-          name: k8s-debug-info-splunk-${{ matrix.CI_SPLUNK_VERSION }}-k8s-${{ matrix.MICROK8S_CHANNEL }}
+          name: k8s-debug-info-${{ matrix.kafka_environment.name }}-splunk-${{ matrix.CI_SPLUNK_VERSION }}-k8s-${{ matrix.MICROK8S_CHANNEL }}
           path: /tmp/k8s-debug/
           retention-days: 5

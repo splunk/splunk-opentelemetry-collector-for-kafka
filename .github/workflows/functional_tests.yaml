@@ -26,9 +26,19 @@ env:
 
 jobs:
   functional-test:
+    name: functional test (${{ matrix.kafka_environment.name }})
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        kafka_environment:
+          - name: cp-7.5-zookeeper
+            compose_file: ./.github/docker_files/kafka_docker_compose.yaml
+          - name: kafka-4.3-kraft
+            compose_file: ./.github/docker_files/kafka_kraft_docker_compose.yaml
     env:
       CI_SPLUNK_HEADER_TEST_INDEX: kafka-header-index
+      KAFKA_COMPOSE_FILE: ${{ matrix.kafka_environment.compose_file }}
 
     steps:
       - name: Checkout
@@ -43,17 +53,22 @@ jobs:
       - name: Upload test results artifact
         uses: actions/upload-artifact@v4
         with:
-          name: otel-collector-logs
+          name: otel-collector-logs-${{ matrix.kafka_environment.name }}
           path: ./tests/logs/
           retention-days: 5
         if: always()
 
   performance-test:
-    name: perf test (record size:${{matrix.kafka.record_size }}, num records:${{matrix.kafka.num_records}})
+    name: perf test (${{ matrix.kafka_environment.name }}, record size:${{matrix.kafka.record_size }}, num records:${{matrix.kafka.num_records}})
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
+        kafka_environment:
+          - name: cp-7.5-zookeeper
+            compose_file: ./.github/docker_files/kafka_docker_compose.yaml
+          - name: kafka-4.3-kraft
+            compose_file: ./.github/docker_files/kafka_kraft_docker_compose.yaml
         kafka:
           - num_records: "1000000"
             record_size: "1000"
@@ -77,6 +92,7 @@ jobs:
       NUM_MSG: ${{matrix.kafka.num_records}}
       RECORD_SIZE: ${{matrix.kafka.record_size}}
       TOPIC_NAME: "kafka-perf-test"
+      KAFKA_COMPOSE_FILE: ${{ matrix.kafka_environment.compose_file }}
 
     steps:
       - name: Checkout
