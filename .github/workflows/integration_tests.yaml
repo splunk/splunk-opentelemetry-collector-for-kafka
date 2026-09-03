@@ -42,9 +42,11 @@ jobs:
           - name: kafka-3.8.1
             mode: zookeeper
             manifest: ci_scripts/k8s-kafka.yml
+            image_tag: "7.8.10"
           - name: kafka-4.3.1
             mode: kraft
             manifest: ci_scripts/k8s-kafka-kraft.yml
+            image_tag: "8.3.1"
         CI_SPLUNK_VERSION:
           - "10.2.2"
           - "9.4.10"
@@ -63,6 +65,7 @@ jobs:
       MICROK8S_CHANNEL: ${{ matrix.MICROK8S_CHANNEL }}
       KAFKA_MODE: ${{ matrix.kafka_environment.mode }}
       KAFKA_MANIFEST: ${{ matrix.kafka_environment.manifest }}
+      CONFLUENT_IMAGE_TAG: ${{ matrix.kafka_environment.image_tag }}
 
     steps:
       - name: Checkout
@@ -93,6 +96,7 @@ jobs:
       # -- Kafka -----------------------------------------------------------
       - name: Deploy Kafka
         run: |
+          sed -i "s|__CONFLUENT_IMAGE_TAG__|${CONFLUENT_IMAGE_TAG}|g" "${KAFKA_MANIFEST}"
           sed -i "s|__NODE_IP__|${NODE_IP}|g" "${KAFKA_MANIFEST}"
 
           if [ "${KAFKA_MODE}" = "kraft" ]; then

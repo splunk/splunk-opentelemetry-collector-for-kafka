@@ -34,11 +34,14 @@ jobs:
         kafka_environment:
           - name: kafka-3.8.1
             compose_file: ./.github/docker_files/kafka_docker_compose.yaml
+            image_tag: "7.8.10"
           - name: kafka-4.3.1
             compose_file: ./.github/docker_files/kafka_kraft_docker_compose.yaml
+            image_tag: "8.3.1"
     env:
       CI_SPLUNK_HEADER_TEST_INDEX: kafka-header-index
       KAFKA_COMPOSE_FILE: ${{ matrix.kafka_environment.compose_file }}
+      CONFLUENT_IMAGE_TAG: ${{ matrix.kafka_environment.image_tag }}
 
     steps:
       - name: Checkout
@@ -67,8 +70,10 @@ jobs:
         kafka_environment:
           - name: kafka-3.8.1
             compose_file: ./.github/docker_files/kafka_docker_compose.yaml
+            image_tag: "7.8.10"
           - name: kafka-4.3.1
             compose_file: ./.github/docker_files/kafka_kraft_docker_compose.yaml
+            image_tag: "8.3.1"
         kafka:
           - num_records: "1000000"
             record_size: "1000"
@@ -93,6 +98,7 @@ jobs:
       RECORD_SIZE: ${{matrix.kafka.record_size}}
       TOPIC_NAME: "kafka-perf-test"
       KAFKA_COMPOSE_FILE: ${{ matrix.kafka_environment.compose_file }}
+      CONFLUENT_IMAGE_TAG: ${{ matrix.kafka_environment.image_tag }}
 
     steps:
       - name: Checkout

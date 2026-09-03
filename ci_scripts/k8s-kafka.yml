@@ -8,7 +8,7 @@ spec:
   hostNetwork: true
   containers:
     - name: zookeeper
-      image: docker.io/confluentinc/cp-zookeeper:7.8.10
+      image: docker.io/confluentinc/cp-zookeeper:__CONFLUENT_IMAGE_TAG__
       ports:
         - name: client
           containerPort: 2181
@@ -47,7 +47,7 @@ spec:
   hostNetwork: true
   containers:
     - name: kafka
-      image: docker.io/confluentinc/cp-kafka:7.8.10
+      image: docker.io/confluentinc/cp-kafka:__CONFLUENT_IMAGE_TAG__
       ports:
         - name: broker-external
           containerPort: 9092
