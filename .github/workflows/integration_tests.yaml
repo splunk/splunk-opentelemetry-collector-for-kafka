@@ -39,10 +39,10 @@ jobs:
       fail-fast: false
       matrix:
         kafka_environment:
-          - name: cp-7.5-zookeeper
+          - name: kafka-3.x.x
             mode: zookeeper
             manifest: ci_scripts/k8s-kafka.yml
-          - name: kafka-4.3-kraft
+          - name: kafka-4.x.x
             mode: kraft
             manifest: ci_scripts/k8s-kafka-kraft.yml
         CI_SPLUNK_VERSION:

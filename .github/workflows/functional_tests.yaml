@@ -32,9 +32,9 @@ jobs:
       fail-fast: false
       matrix:
         kafka_environment:
-          - name: cp-7.5-zookeeper
+          - name: kafka-3.x.x
             compose_file: ./.github/docker_files/kafka_docker_compose.yaml
-          - name: kafka-4.3-kraft
+          - name: kafka-4.x.x
             compose_file: ./.github/docker_files/kafka_kraft_docker_compose.yaml
     env:
       CI_SPLUNK_HEADER_TEST_INDEX: kafka-header-index
@@ -65,9 +65,9 @@ jobs:
       fail-fast: false
       matrix:
         kafka_environment:
-          - name: cp-7.5-zookeeper
+          - name: kafka-3.x.x
             compose_file: ./.github/docker_files/kafka_docker_compose.yaml
-          - name: kafka-4.3-kraft
+          - name: kafka-4.x.x
             compose_file: ./.github/docker_files/kafka_kraft_docker_compose.yaml
         kafka:
           - num_records: "1000000"
