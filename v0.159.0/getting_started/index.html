@@ -21,11 +21,11 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="zensical-0.0.57">
+      <meta name="generator" content="zensical-0.0.59">
     
     
       
-        <title>Getting started - Splunk OpenTelemetry Collector for Kafka (SOC4Kafka)</title>
+        <title>Overview - Splunk OpenTelemetry Collector for Kafka (SOC4Kafka)</title>
       
     
     
@@ -121,7 +121,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Getting started
+              Overview
             
           </span>
         </div>
@@ -1217,7 +1217,7 @@
   
 
 
-  <h1 id="__skip">Getting started</h1>
+  <h1 id="__skip">Overview</h1>
 
 <h2 id="how-to-start-with-soc4kafka">How to start with SOC4Kafka?<a class="headerlink" href="#how-to-start-with-soc4kafka" title="Permanent link">&para;</a></h2>
 <p>Choose an installation method that fits your environment:</p>
@@ -1231,11 +1231,10 @@
 Get the newest release (prefixed with <code>v</code>) using <a href="https://github.com/signalfx/splunk-otel-collector/releases">this link</a>, download
 the package suited for your platform.</p>
 <p>For instance, if you are using Linux on an AMD64 architecture, you can execute the following <code>wget</code> command:</p>
-<div class="codehilite"><pre><span></span><code><span class="n">wget</span><span class="w"> </span><span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">signalfx</span><span class="o">/</span><span class="n">splunk</span><span class="o">-</span><span class="n">otel</span><span class="o">-</span><span class="n">collector</span><span class="o">/</span><span class="n">releases</span><span class="o">/</span><span class="n">download</span><span class="o">/</span><span class="n">v0</span><span class="o">.</span><span class="mf">158.0</span><span class="o">/</span><span class="n">otelcol_linux_amd64</span>
+<div class="highlight"><pre><span></span><code>wget https://github.com/signalfx/splunk-otel-collector/releases/download/v0.158.0/otelcol_linux_amd64
 </code></pre></div>
-
 <h3 id="create-a-minimal-config-template">Create a minimal config template<a class="headerlink" href="#create-a-minimal-config-template" title="Permanent link">&para;</a></h3>
-<div class="codehilite"><pre><span></span><code><span class="nt">receivers</span><span class="p">:</span>
+<div class="highlight"><pre><span></span><code><span class="nt">receivers</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">kafka</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">brokers</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">&lt;Brokers&gt;</span><span class="p p-Indicator">]</span>
 <span class="w">    </span><span class="nt">logs</span><span class="p">:</span>
@@ -1275,7 +1274,6 @@ the package suited for your platform.</p>
 <span class="w">      </span><span class="nt">processors</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">resourcedetection</span><span class="p p-Indicator">]</span>
 <span class="w">      </span><span class="nt">exporters</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">splunk_hec</span><span class="p p-Indicator">]</span>
 </code></pre></div>
-
 <h4 id="configuration-table">Configuration Table<a class="headerlink" href="#configuration-table" title="Permanent link">&para;</a></h4>
 <p>Mind that this is just a minimal configuration. You can customize it further based on your requirements by referring to the official documentation linked in the Component column.</p>
 <table>
@@ -1437,7 +1435,7 @@ the package suited for your platform.</p>
 </tbody>
 </table>
 <h4 id="example-configuration">Example configuration<a class="headerlink" href="#example-configuration" title="Permanent link">&para;</a></h4>
-<div class="codehilite"><pre><span></span><code><span class="nt">receivers</span><span class="p">:</span>
+<div class="highlight"><pre><span></span><code><span class="nt">receivers</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">kafka</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">brokers</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">"kafka-broker-1:9092"</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">"kafka-broker-2:9092"</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">"kafka-broker-3:9092"</span><span class="p p-Indicator">]</span>
 <span class="w">    </span><span class="nt">logs</span><span class="p">:</span>
@@ -1477,25 +1475,21 @@ the package suited for your platform.</p>
 <span class="w">      </span><span class="nt">processors</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">resourcedetection</span><span class="p p-Indicator">]</span>
 <span class="w">      </span><span class="nt">exporters</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">splunk_hec</span><span class="p p-Indicator">]</span>
 </code></pre></div>
-
 <p>Fill the file with your data and save it with a <code>.yaml</code> extension. For example <code>config.yaml</code>.</p>
 <h3 id="run-splunk-otel-collector-package-with-config-file">Run Splunk OTel Collector package with config file<a class="headerlink" href="#run-splunk-otel-collector-package-with-config-file" title="Permanent link">&para;</a></h3>
 <p>To run SOC4Kafka Connect, use the base package along with a completed configuration template.</p>
-<div class="codehilite"><pre><span></span><code><span class="p">.</span><span class="o">/</span><span class="p">&lt;</span><span class="nx">otel_package</span><span class="p">&gt;</span><span class="w"> </span><span class="o">--</span><span class="nx">config</span><span class="w"> </span><span class="p">&lt;</span><span class="nx">config_file</span><span class="p">&gt;</span>
+<div class="highlight"><pre><span></span><code>./&lt;otel_package&gt; --config &lt;config_file&gt;
 </code></pre></div>
-
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Ensure the file has executable permissions before running the command. On Linux-based systems you can add executable permissions using the following command:</p>
 </div>
-<div class="codehilite"><pre><span></span><code><span class="nx">chmod</span><span class="w"> </span><span class="nx">a</span><span class="o">+</span><span class="nx">x</span><span class="w"> </span><span class="p">&lt;</span><span class="nx">otel_package</span><span class="p">&gt;</span>
+<div class="highlight"><pre><span></span><code>chmod a+x &lt;otel_package&gt;
 </code></pre></div>
-
 <p><strong>Example</strong>: For Linux on AMD64 architecture:</p>
-<div class="codehilite"><pre><span></span><code>chmod a+x otelcol_linux_amd64
+<div class="highlight"><pre><span></span><code>chmod a+x otelcol_linux_amd64
 ./otelcol_linux_amd64 --config config.yaml
 </code></pre></div>
-
 <p>To understand the collector&rsquo;s pipeline design, refer to the <a href="../otel_design/">Design</a> guide.</p>
 
 
@@ -1555,7 +1549,7 @@ the package suited for your platform.</p>
       <script id="__config" type="application/json">{"annotate":null,"base":"..","features":[],"search":"../assets/javascripts/workers/search.7d14d953.min.js","tags":null,"translations":{"clipboard.copied":"Copied to clipboard","clipboard.copy":"Copy to clipboard","search.result.more.one":"1 more on this page","search.result.more.other":"# more on this page","search.result.none":"No matching documents","search.result.one":"1 matching document","search.result.other":"# matching documents","search.result.placeholder":"Type to start searching","search.result.term.missing":"Missing","select.version":"Select version"},"version":{"provider":"mike"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.49251538.min.js"></script>
+      <script src="../assets/javascripts/bundle.6970bfe9.min.js"></script>
       
         <script src="../javascripts/footer.js"></script>
       

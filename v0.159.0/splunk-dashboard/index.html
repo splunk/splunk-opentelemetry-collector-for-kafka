@@ -21,11 +21,11 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="zensical-0.0.57">
+      <meta name="generator" content="zensical-0.0.59">
     
     
       
-        <title>SOC4Kafka Health Dashboard - Splunk OpenTelemetry Collector for Kafka (SOC4Kafka)</title>
+        <title>Splunk Dashboard - Splunk OpenTelemetry Collector for Kafka (SOC4Kafka)</title>
       
     
     
@@ -121,7 +121,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              SOC4Kafka Health Dashboard
+              Splunk Dashboard
             
           </span>
         </div>
@@ -1315,7 +1315,7 @@
 <ol>
 <li>Configure receivers:</li>
 </ol>
-<div class="codehilite"><pre><span></span><code><span class="nt">receivers</span><span class="p">:</span>
+<div class="highlight"><pre><span></span><code><span class="nt">receivers</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">prometheus</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">config</span><span class="p">:</span>
 <span class="w">      </span><span class="nt">scrape_configs</span><span class="p">:</span>
@@ -1365,21 +1365,19 @@
 <span class="w">            </span><span class="nt">enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 <span class="w">      </span><span class="nt">network</span><span class="p">:</span>
 </code></pre></div>
-
 <ol start="2">
 <li>Add <strong>resourcedetection</strong> to allow filtering by host</li>
 </ol>
-<div class="codehilite"><pre><span></span><code><span class="nt">processors</span><span class="p">:</span>
+<div class="highlight"><pre><span></span><code><span class="nt">processors</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">resourcedetection</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">detectors</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">"system"</span><span class="p p-Indicator">]</span>
 <span class="w">    </span><span class="nt">system</span><span class="p">:</span>
 <span class="w">      </span><span class="nt">hostname_sources</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">"os"</span><span class="p p-Indicator">]</span>
 </code></pre></div>
-
 <ol start="3">
 <li>Add exporter for metrics</li>
 </ol>
-<div class="codehilite"><pre><span></span><code><span class="nt">exporters</span><span class="p">:</span>
+<div class="highlight"><pre><span></span><code><span class="nt">exporters</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">splunk_hec/metrics</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">token</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;hec-token&gt;</span>
 <span class="w">    </span><span class="nt">endpoint</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http://&lt;splunk-address&gt;:8088/services/collector</span>
@@ -1396,13 +1394,12 @@
 <span class="w">      </span><span class="nt">batch</span><span class="p">:</span>
 <span class="w">        </span><span class="nt">min_size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1000</span>
 </code></pre></div>
-
 <p>Make sure you&rsquo;ve created a metric type index:</p>
 <p><img alt="metric-index.png" src="../images/dashboard/metric-index.png" /></p>
 <ol start="4">
-<li>Create <strong>telemetry</strong> service</li>
-</ol>
-<div class="codehilite"><pre><span></span><code><span class="nt">service</span><span class="p">:</span>
+<li>
+<p>Create <strong>telemetry</strong> service
+<div class="highlight"><pre><span></span><code><span class="nt">service</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">telemetry</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">metrics</span><span class="p">:</span>
 <span class="w">      </span><span class="nt">level</span><span class="p">:</span><span class="w"> </span><span class="s">"detailed"</span>
@@ -1412,19 +1409,19 @@
 <span class="w">              </span><span class="nt">prometheus</span><span class="p">:</span>
 <span class="w">                </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="s">'0.0.0.0'</span>
 <span class="w">                </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8888</span>
-</code></pre></div>
-
-<ol start="5">
-<li>Add pipeline for metrics</li>
+</code></pre></div></p>
+</li>
+<li>
+<p>Add pipeline for metrics</p>
+</li>
 </ol>
-<div class="codehilite"><pre><span></span><code><span class="nt">service</span><span class="p">:</span>
+<div class="highlight"><pre><span></span><code><span class="nt">service</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">pipelines</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">metrics</span><span class="p">:</span>
 <span class="w">      </span><span class="nt">receivers</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="w"> </span><span class="nv">prometheus</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">hostmetrics</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">kafkametrics</span><span class="w"> </span><span class="p p-Indicator">]</span>
 <span class="w">      </span><span class="nt">processors</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">resourcedetection</span><span class="p p-Indicator">]</span>
 <span class="w">      </span><span class="nt">exporters</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="w"> </span><span class="nv">splunk_hec/metrics</span><span class="w"> </span><span class="p p-Indicator">]</span>
 </code></pre></div>
-
 <p>Configure other receivers &amp; exporters as normal.</p>
 <h3 id="create-dashboard-in-splunk">Create Dashboard in Splunk<a class="headerlink" href="#create-dashboard-in-splunk" title="Permanent link">&para;</a></h3>
 <div class="admonition note">
@@ -1499,7 +1496,7 @@
       <script id="__config" type="application/json">{"annotate":null,"base":"..","features":[],"search":"../assets/javascripts/workers/search.7d14d953.min.js","tags":null,"translations":{"clipboard.copied":"Copied to clipboard","clipboard.copy":"Copy to clipboard","search.result.more.one":"1 more on this page","search.result.more.other":"# more on this page","search.result.none":"No matching documents","search.result.one":"1 matching document","search.result.other":"# matching documents","search.result.placeholder":"Type to start searching","search.result.term.missing":"Missing","select.version":"Select version"},"version":{"provider":"mike"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.49251538.min.js"></script>
+      <script src="../assets/javascripts/bundle.6970bfe9.min.js"></script>
       
         <script src="../javascripts/footer.js"></script>
       

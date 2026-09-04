@@ -21,11 +21,11 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="zensical-0.0.57">
+      <meta name="generator" content="zensical-0.0.59">
     
     
       
-        <title>SOC4Kafka Installation Guide - OCI Streaming to Splunk - Splunk OpenTelemetry Collector for Kafka (SOC4Kafka)</title>
+        <title>OCI Streaming - Splunk OpenTelemetry Collector for Kafka (SOC4Kafka)</title>
       
     
     
@@ -121,7 +121,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              SOC4Kafka Installation Guide - OCI Streaming to Splunk
+              OCI Streaming
             
           </span>
         </div>
@@ -1687,18 +1687,16 @@ failed install can cause the collector to loop indefinitely on startup.</p>
 <h3 id="a1-install-dependencies">A.1 Install dependencies<a class="headerlink" href="#a1-install-dependencies" title="Permanent link">&para;</a></h3>
 <p>These packages are used for connectivity testing and producing test messages. They are not required
 for the collector itself to run.</p>
-<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>apt-get<span class="w"> </span>update
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>apt-get<span class="w"> </span>update
 sudo<span class="w"> </span>apt-get<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>kafkacat<span class="w"> </span>curl<span class="w"> </span>netcat-openbsd
 </code></pre></div>
-
 <h3 id="a2-download-the-collector-binary">A.2 Download the collector binary<a class="headerlink" href="#a2-download-the-collector-binary" title="Permanent link">&para;</a></h3>
 <p>SOC4Kafka releases are published on GitHub. Download the binary for your target version, make it
 executable, and place it in a working directory.</p>
-<div class="codehilite"><pre><span></span><code>mkdir<span class="w"> </span>-p<span class="w"> </span>~/soc4kafka<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">cd</span><span class="w"> </span>~/soc4kafka
+<div class="highlight"><pre><span></span><code>mkdir<span class="w"> </span>-p<span class="w"> </span>~/soc4kafka<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">cd</span><span class="w"> </span>~/soc4kafka
 wget<span class="w"> </span>https://github.com/signalfx/splunk-otel-collector/releases/download/v0.158.0/otelcol_linux_amd64
 chmod<span class="w"> </span>+x<span class="w"> </span>otelcol_linux_amd64
 </code></pre></div>
-
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Check the <a href="https://github.com/splunk/splunk-opentelemetry-collector-for-kafka/releases">releases page</a>
@@ -1707,7 +1705,7 @@ for newer versions and substitute <code>v0.158.0</code> accordingly.</p>
 <h3 id="a3-create-the-secrets-file">A.3 Create the secrets file<a class="headerlink" href="#a3-create-the-secrets-file" title="Permanent link">&para;</a></h3>
 <p>Create <code>~/soc4kafka/collector.env</code> and restrict its permissions. This file holds all secrets so they
 never appear in the config file or in process arguments.</p>
-<div class="codehilite"><pre><span></span><code>cat<span class="w"> </span>&gt;<span class="w"> </span>~/soc4kafka/collector.env<span class="w"> </span><span class="s">&lt;&lt;'EOF'</span>
+<div class="highlight"><pre><span></span><code>cat<span class="w"> </span>&gt;<span class="w"> </span>~/soc4kafka/collector.env<span class="w"> </span><span class="s">&lt;&lt;'EOF'</span>
 <span class="s">KAFKA_BOOTSTRAP=&lt;KAFKA_BOOTSTRAP&gt;</span>
 <span class="s">KAFKA_SASL_USER=&lt;SASL_USERNAME&gt;</span>
 <span class="s">KAFKA_SASL_PASS='&lt;OCI_AUTH_TOKEN&gt;'</span>
@@ -1717,7 +1715,6 @@ never appear in the config file or in process arguments.</p>
 <span class="s">EOF</span>
 chmod<span class="w"> </span><span class="m">600</span><span class="w"> </span>~/soc4kafka/collector.env
 </code></pre></div>
-
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Wrap <code>KAFKA_SASL_PASS</code> in <strong>single quotes</strong> so the shell does not expand special characters in the
@@ -1726,7 +1723,7 @@ token value.</p>
 <h3 id="a4-create-the-collector-config">A.4 Create the collector config<a class="headerlink" href="#a4-create-the-collector-config" title="Permanent link">&para;</a></h3>
 <p>Create <code>~/soc4kafka/config.yaml</code> with the content below. Substitute <code>&lt;CONSUMER_GROUP&gt;</code> and <code>&lt;TOPIC&gt;</code>
 directly in the file - these are not secrets and do not need to be in the env file.</p>
-<div class="codehilite"><pre><span></span><code><span class="nt">receivers</span><span class="p">:</span>
+<div class="highlight"><pre><span></span><code><span class="nt">receivers</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">kafka</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">brokers</span><span class="p">:</span>
 <span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${env:KAFKA_BOOTSTRAP}</span>
@@ -1770,15 +1767,13 @@ directly in the file - these are not secrets and do not need to be in the env fi
 <span class="w">      </span><span class="nt">processors</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">resourcedetection</span><span class="p p-Indicator">]</span>
 <span class="w">      </span><span class="nt">exporters</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">splunk_hec</span><span class="p p-Indicator">]</span>
 </code></pre></div>
-
 <h3 id="a5-verify-connectivity-before-starting-the-collector">A.5 Verify connectivity before starting the collector<a class="headerlink" href="#a5-verify-connectivity-before-starting-the-collector" title="Permanent link">&para;</a></h3>
 <p>Check that the VM can reach Splunk HEC:</p>
-<div class="codehilite"><pre><span></span><code>nc<span class="w"> </span>-vz<span class="w"> </span>&lt;SPLUNK_HEC_HOST&gt;<span class="w"> </span><span class="m">8088</span>
+<div class="highlight"><pre><span></span><code>nc<span class="w"> </span>-vz<span class="w"> </span>&lt;SPLUNK_HEC_HOST&gt;<span class="w"> </span><span class="m">8088</span>
 </code></pre></div>
-
 <p>Check that the VM can reach the Kafka broker and authenticate (this is the single best end-to-end
 connectivity test - success means DNS, routing, TLS, and SASL all work):</p>
-<div class="codehilite"><pre><span></span><code><span class="nb">set</span><span class="w"> </span>-a<span class="p">;</span><span class="w"> </span><span class="nb">source</span><span class="w"> </span>~/soc4kafka/collector.env<span class="p">;</span><span class="w"> </span><span class="nb">set</span><span class="w"> </span>+a
+<div class="highlight"><pre><span></span><code><span class="nb">set</span><span class="w"> </span>-a<span class="p">;</span><span class="w"> </span><span class="nb">source</span><span class="w"> </span>~/soc4kafka/collector.env<span class="p">;</span><span class="w"> </span><span class="nb">set</span><span class="w"> </span>+a
 kafkacat<span class="w"> </span>-L<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>-b<span class="w"> </span><span class="s2">"</span><span class="nv">$KAFKA_BOOTSTRAP</span><span class="s2">"</span><span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>-X<span class="w"> </span>security.protocol<span class="o">=</span>SASL_SSL<span class="w"> </span><span class="se">\</span>
@@ -1786,45 +1781,40 @@ kafkacat<span class="w"> </span>-L<span class="w"> </span><span class="se">\</sp
 <span class="w">  </span>-X<span class="w"> </span>sasl.username<span class="o">=</span><span class="s2">"</span><span class="nv">$KAFKA_SASL_USER</span><span class="s2">"</span><span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>-X<span class="w"> </span>sasl.password<span class="o">=</span><span class="s2">"</span><span class="nv">$KAFKA_SASL_PASS</span><span class="s2">"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-20
 </code></pre></div>
-
 <p>You should see <code>&lt;TOPIC&gt;</code> listed in the output. If it times out or returns an auth error, resolve that
 before proceeding - the collector will exhibit the same failure.</p>
 <h3 id="a6-start-the-collector">A.6 Start the collector<a class="headerlink" href="#a6-start-the-collector" title="Permanent link">&para;</a></h3>
 <p>Run in the foreground first to watch the startup logs:</p>
-<div class="codehilite"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>~/soc4kafka
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>~/soc4kafka
 <span class="nb">set</span><span class="w"> </span>-a<span class="p">;</span><span class="w"> </span><span class="nb">source</span><span class="w"> </span>./collector.env<span class="p">;</span><span class="w"> </span><span class="nb">set</span><span class="w"> </span>+a
 ./otelcol_linux_amd64<span class="w"> </span>--config<span class="w"> </span>config.yaml
 </code></pre></div>
-
 <p>A healthy startup looks like:</p>
-<div class="codehilite"><pre><span></span><code><span class="n">Everything</span><span class="w"> </span><span class="n">is</span><span class="w"> </span><span class="n">ready</span><span class="p">.</span><span class="w"> </span><span class="n">Begin</span><span class="w"> </span><span class="n">running</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="n">processing</span><span class="w"> </span><span class="n">data</span><span class="p">.</span>
-<span class="p">...</span><span class="n">joined</span><span class="p">,</span><span class="w"> </span><span class="n">balancing</span><span class="w"> </span><span class="n">group</span><span class="w">   </span><span class="nl">group:</span><span class="w"> </span><span class="o">&lt;</span><span class="n">CONSUMER_GROUP</span><span class="o">&gt;</span>
-<span class="p">...</span><span class="n">synced</span><span class="w">                    </span><span class="nl">assigned:</span><span class="w"> </span><span class="o">&lt;</span><span class="n">TOPIC</span><span class="o">&gt;</span><span class="p">[</span><span class="mh">0</span><span class="p">]</span>
-<span class="p">...</span><span class="n">beginning</span><span class="w"> </span><span class="n">heartbeat</span><span class="w"> </span><span class="n">loop</span>
+<div class="highlight"><pre><span></span><code>Everything is ready. Begin running and processing data.
+...joined, balancing group   group: &lt;CONSUMER_GROUP&gt;
+...synced                    assigned: &lt;TOPIC&gt;[0]
+...beginning heartbeat loop
 </code></pre></div>
-
 <p>If you see <code>NOT_COORDINATOR</code> repeating, stop the collector, change <code>group_id</code> and <code>client_id</code> to a
 new name in <code>config.yaml</code>, and restart.</p>
 <h3 id="a7-install-as-a-systemd-service">A.7 Install as a systemd service<a class="headerlink" href="#a7-install-as-a-systemd-service" title="Permanent link">&para;</a></h3>
 <p>Once the collector starts cleanly, promote it to a managed service so it restarts automatically and
 its logs are captured by journald.</p>
 <p>Copy files into place:</p>
-<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>mkdir<span class="w"> </span>-p<span class="w"> </span>/opt/soc4kafka<span class="w"> </span>/etc/soc4kafka
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>mkdir<span class="w"> </span>-p<span class="w"> </span>/opt/soc4kafka<span class="w"> </span>/etc/soc4kafka
 sudo<span class="w"> </span>cp<span class="w"> </span>~/soc4kafka/otelcol_linux_amd64<span class="w"> </span>/opt/soc4kafka/
 sudo<span class="w"> </span>cp<span class="w"> </span>~/soc4kafka/config.yaml<span class="w"> </span>/opt/soc4kafka/
 sudo<span class="w"> </span>cp<span class="w"> </span>~/soc4kafka/collector.env<span class="w"> </span>/etc/soc4kafka/collector.env
 sudo<span class="w"> </span>chmod<span class="w"> </span><span class="m">600</span><span class="w"> </span>/etc/soc4kafka/collector.env
 </code></pre></div>
-
 <p>Create the service user and set ownership:</p>
-<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>useradd<span class="w"> </span>--system<span class="w"> </span>--no-create-home<span class="w"> </span>--shell<span class="w"> </span>/usr/sbin/nologin<span class="w"> </span>otel
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>useradd<span class="w"> </span>--system<span class="w"> </span>--no-create-home<span class="w"> </span>--shell<span class="w"> </span>/usr/sbin/nologin<span class="w"> </span>otel
 sudo<span class="w"> </span>chown<span class="w"> </span>otel:otel<span class="w"> </span>/opt/soc4kafka/otelcol_linux_amd64
 sudo<span class="w"> </span>chown<span class="w"> </span>otel:otel<span class="w"> </span>/opt/soc4kafka/config.yaml
 sudo<span class="w"> </span>chown<span class="w"> </span>otel:otel<span class="w"> </span>/etc/soc4kafka/collector.env
 </code></pre></div>
-
 <p>Create the unit file:</p>
-<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>tee<span class="w"> </span>/etc/systemd/system/soc4kafka.service<span class="w"> </span>&gt;<span class="w"> </span>/dev/null<span class="w"> </span><span class="s">&lt;&lt;'EOF'</span>
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>tee<span class="w"> </span>/etc/systemd/system/soc4kafka.service<span class="w"> </span>&gt;<span class="w"> </span>/dev/null<span class="w"> </span><span class="s">&lt;&lt;'EOF'</span>
 <span class="s">[Unit]</span>
 <span class="s">Description=SOC4Kafka collector (OCI Streaming -&gt; Splunk)</span>
 <span class="s">After=network-online.target</span>
@@ -1842,15 +1832,13 @@ sudo<span class="w"> </span>chown<span class="w"> </span>otel:otel<span class="w
 <span class="s">WantedBy=multi-user.target</span>
 <span class="s">EOF</span>
 </code></pre></div>
-
 <p>Enable and start:</p>
-<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>systemctl<span class="w"> </span>daemon-reload
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>systemctl<span class="w"> </span>daemon-reload
 sudo<span class="w"> </span>systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>--now<span class="w"> </span>soc4kafka
 sudo<span class="w"> </span>journalctl<span class="w"> </span>-u<span class="w"> </span>soc4kafka<span class="w"> </span>-f
 </code></pre></div>
-
 <h3 id="a8-send-a-test-message-and-confirm-in-splunk">A.8 Send a test message and confirm in Splunk<a class="headerlink" href="#a8-send-a-test-message-and-confirm-in-splunk" title="Permanent link">&para;</a></h3>
-<div class="codehilite"><pre><span></span><code><span class="nb">set</span><span class="w"> </span>-a<span class="p">;</span><span class="w"> </span><span class="nb">source</span><span class="w"> </span>~/soc4kafka/collector.env<span class="p">;</span><span class="w"> </span><span class="nb">set</span><span class="w"> </span>+a
+<div class="highlight"><pre><span></span><code><span class="nb">set</span><span class="w"> </span>-a<span class="p">;</span><span class="w"> </span><span class="nb">source</span><span class="w"> </span>~/soc4kafka/collector.env<span class="p">;</span><span class="w"> </span><span class="nb">set</span><span class="w"> </span>+a
 <span class="nb">printf</span><span class="w"> </span><span class="s1">'{"hello":"splunk","ts":"%s"}\n'</span><span class="w"> </span><span class="s2">"</span><span class="k">$(</span>date<span class="w"> </span>-u<span class="w"> </span>+%FT%TZ<span class="k">)</span><span class="s2">"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>kafkacat<span class="w"> </span>-P<span class="w"> </span><span class="se">\</span>
 <span class="w">    </span>-b<span class="w"> </span><span class="s2">"</span><span class="nv">$KAFKA_BOOTSTRAP</span><span class="s2">"</span><span class="w"> </span><span class="se">\</span>
@@ -1860,15 +1848,12 @@ sudo<span class="w"> </span>journalctl<span class="w"> </span>-u<span class="w">
 <span class="w">    </span>-X<span class="w"> </span>sasl.username<span class="o">=</span><span class="s2">"</span><span class="nv">$KAFKA_SASL_USER</span><span class="s2">"</span><span class="w"> </span><span class="se">\</span>
 <span class="w">    </span>-X<span class="w"> </span>sasl.password<span class="o">=</span><span class="s2">"</span><span class="nv">$KAFKA_SASL_PASS</span><span class="s2">"</span>
 </code></pre></div>
-
 <p>In Splunk search:</p>
-<div class="codehilite"><pre><span></span><code><span class="nx">index</span><span class="p">=&lt;</span><span class="nx">SPLUNK_INDEX</span><span class="p">&gt;</span><span class="w"> </span><span class="nx">sourcetype</span><span class="p">=</span><span class="nx">oci</span><span class="p">:</span><span class="nx">streaming</span><span class="p">:</span><span class="nx">text</span>
+<div class="highlight"><pre><span></span><code>index=&lt;SPLUNK_INDEX&gt; sourcetype=oci:streaming:text
 </code></pre></div>
-
 <p>You can also monitor collector throughput from the VM:</p>
-<div class="codehilite"><pre><span></span><code>curl<span class="w"> </span>-s<span class="w"> </span>http://127.0.0.1:8888/metrics<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">'otelcol_(receiver_accepted|exporter_sent)'</span>
+<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>-s<span class="w"> </span>http://127.0.0.1:8888/metrics<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">'otelcol_(receiver_accepted|exporter_sent)'</span>
 </code></pre></div>
-
 <p><code>receiver_accepted_log_records_total</code> should increment when you produce; <code>exporter_sent_log_records_total</code>
 should follow shortly after as the batch flushes.</p>
 <hr />
@@ -1887,24 +1872,21 @@ MicroK8s on an OCI Ubuntu VM and will differ on other distributions or cloud pro
 <code>microk8s kubectl</code> - not the system-level tools.</p>
 </div>
 <h3 id="b1-install-microk8s">B.1 Install MicroK8s<a class="headerlink" href="#b1-install-microk8s" title="Permanent link">&para;</a></h3>
-<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>snap<span class="w"> </span>install<span class="w"> </span>microk8s<span class="w"> </span>--classic<span class="w"> </span>--channel<span class="o">=</span><span class="m">1</span>.33/stable
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>snap<span class="w"> </span>install<span class="w"> </span>microk8s<span class="w"> </span>--classic<span class="w"> </span>--channel<span class="o">=</span><span class="m">1</span>.33/stable
 sudo<span class="w"> </span>usermod<span class="w"> </span>-a<span class="w"> </span>-G<span class="w"> </span>microk8s<span class="w"> </span><span class="s2">"</span><span class="nv">$USER</span><span class="s2">"</span>
 sudo<span class="w"> </span>chown<span class="w"> </span>-f<span class="w"> </span>-R<span class="w"> </span><span class="s2">"</span><span class="nv">$USER</span><span class="s2">"</span><span class="w"> </span>~/.kube
 newgrp<span class="w"> </span>microk8s
 </code></pre></div>
-
 <p>Enable the addons the chart needs:</p>
-<div class="codehilite"><pre><span></span><code>microk8s<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>hostpath-storage
+<div class="highlight"><pre><span></span><code>microk8s<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>hostpath-storage
 microk8s<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>rbac
 microk8s<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>metrics-server
 </code></pre></div>
-
 <p>Enable DNS pinned to the <strong>OCI VCN resolver</strong>. This resolver handles both private OCI names (your
 broker&rsquo;s private endpoint) and public names (your Splunk HEC host) - using it as the single
 upstream is important:</p>
-<div class="codehilite"><pre><span></span><code>microk8s<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>dns:169.254.169.254
+<div class="highlight"><pre><span></span><code>microk8s<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>dns:169.254.169.254
 </code></pre></div>
-
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>Do <strong>not</strong> add a public resolver like <code>8.8.8.8</code> alongside it. The OCI Streaming broker resolves
@@ -1914,23 +1896,20 @@ connection failures.</p>
 <h3 id="b2-fix-the-oci-host-firewall">B.2 Fix the OCI host firewall<a class="headerlink" href="#b2-fix-the-oci-host-firewall" title="Permanent link">&para;</a></h3>
 <p>The OCI Ubuntu image ships a firewall rule that blocks forwarded traffic. This prevents pods from
 reaching the Kubernetes API server, causing CoreDNS and Calico to crash-loop. Remove the rule:</p>
-<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>iptables<span class="w"> </span>-L<span class="w"> </span>FORWARD<span class="w"> </span>-n<span class="w"> </span>--line-numbers<span class="w"> </span><span class="p">|</span><span class="w"> </span>head
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>iptables<span class="w"> </span>-L<span class="w"> </span>FORWARD<span class="w"> </span>-n<span class="w"> </span>--line-numbers<span class="w"> </span><span class="p">|</span><span class="w"> </span>head
 sudo<span class="w"> </span>iptables<span class="w"> </span>-D<span class="w"> </span>FORWARD<span class="w"> </span><span class="m">1</span><span class="w">    </span><span class="c1"># removes the REJECT rule (usually at position 1)</span>
 </code></pre></div>
-
 <p>Pods recover within about 60 seconds. <strong>Make the fix permanent</strong> - the rule returns on reboot
 otherwise:</p>
-<div class="codehilite"><pre><span></span><code><span class="c1"># Edit the persisted ruleset and remove the REJECT line, then reload:</span>
+<div class="highlight"><pre><span></span><code><span class="c1"># Edit the persisted ruleset and remove the REJECT line, then reload:</span>
 sudo<span class="w"> </span>grep<span class="w"> </span>-nE<span class="w"> </span><span class="s1">'REJECT|icmp-host-prohibited'</span><span class="w"> </span>/etc/iptables/rules.v4
 <span class="c1"># Delete the matching line from the file, then:</span>
 sudo<span class="w"> </span>netfilter-persistent<span class="w"> </span>reload
 </code></pre></div>
-
 <p>On a test VM you can instead disable the OS firewall entirely - the OCI VCN security list still
 controls ingress at the cloud layer:</p>
-<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>systemctl<span class="w"> </span>disable<span class="w"> </span>--now<span class="w"> </span>netfilter-persistent
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>systemctl<span class="w"> </span>disable<span class="w"> </span>--now<span class="w"> </span>netfilter-persistent
 </code></pre></div>
-
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p><strong>If Calico still crash-loops</strong> after removing the FORWARD rule, your image also has an INPUT-chain
@@ -1946,13 +1925,12 @@ ranges with your actual service CIDR (<code>grep service-cluster-ip-range /var/s
 and pod CIDR (<code>grep cluster-cidr /var/snap/microk8s/current/args/*</code>).</p>
 </div>
 <h3 id="b3-create-the-namespace">B.3 Create the namespace<a class="headerlink" href="#b3-create-the-namespace" title="Permanent link">&para;</a></h3>
-<div class="codehilite"><pre><span></span><code>microk8s<span class="w"> </span>kubectl<span class="w"> </span>create<span class="w"> </span>namespace<span class="w"> </span>soc4kafka
+<div class="highlight"><pre><span></span><code>microk8s<span class="w"> </span>kubectl<span class="w"> </span>create<span class="w"> </span>namespace<span class="w"> </span>soc4kafka
 </code></pre></div>
-
 <h3 id="b4-create-the-kubernetes-secrets">B.4 Create the Kubernetes secrets<a class="headerlink" href="#b4-create-the-kubernetes-secrets" title="Permanent link">&para;</a></h3>
 <p>The collector reads credentials from Kubernetes Secrets injected as environment variables - they
 never appear in the Helm values file.</p>
-<div class="codehilite"><pre><span></span><code><span class="c1"># Kafka SASL password - the key name "password" is required by the chart</span>
+<div class="highlight"><pre><span></span><code><span class="c1"># Kafka SASL password - the key name "password" is required by the chart</span>
 microk8s<span class="w"> </span>kubectl<span class="w"> </span>-n<span class="w"> </span>soc4kafka<span class="w"> </span>create<span class="w"> </span>secret<span class="w"> </span>generic<span class="w"> </span>kafka-sasl<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--from-literal<span class="o">=</span><span class="nv">password</span><span class="o">=</span><span class="s1">'&lt;OCI_AUTH_TOKEN&gt;'</span>
 
@@ -1960,7 +1938,6 @@ microk8s<span class="w"> </span>kubectl<span class="w"> </span>-n<span class="w"
 microk8s<span class="w"> </span>kubectl<span class="w"> </span>-n<span class="w"> </span>soc4kafka<span class="w"> </span>create<span class="w"> </span>secret<span class="w"> </span>generic<span class="w"> </span>splunk-hec<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--from-literal<span class="o">=</span>splunk-hec-token<span class="o">=</span><span class="s1">'&lt;SPLUNK_HEC_TOKEN&gt;'</span>
 </code></pre></div>
-
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>Wrap values in <strong>single quotes</strong> to prevent the shell from interpreting special characters.</p>
@@ -1968,7 +1945,7 @@ microk8s<span class="w"> </span>kubectl<span class="w"> </span>-n<span class="w"
 <h3 id="b5-create-valuesyaml">B.5 Create <code>values.yaml</code><a class="headerlink" href="#b5-create-valuesyaml" title="Permanent link">&para;</a></h3>
 <p>Create this file on the VM (e.g. at <code>~/soc4kafka_microk8s/values.yaml</code>) before running the Helm
 install. Substitute all <code>&lt;PLACEHOLDERS&gt;</code> with your real values.</p>
-<div class="codehilite"><pre><span></span><code><span class="nt">replicaCount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<div class="highlight"><pre><span></span><code><span class="nt">replicaCount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
 
 <span class="nt">kafkaReceivers</span><span class="p">:</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">main</span>
@@ -2028,9 +2005,8 @@ install. Substitute all <code>&lt;PLACEHOLDERS&gt;</code> with your real values.
 <span class="nt">collectorMetrics</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 </code></pre></div>
-
 <h3 id="b6-install-the-chart">B.6 Install the chart<a class="headerlink" href="#b6-install-the-chart" title="Permanent link">&para;</a></h3>
-<div class="codehilite"><pre><span></span><code>microk8s<span class="w"> </span>helm3<span class="w"> </span>repo<span class="w"> </span>add<span class="w"> </span>splunk-opentelemetry-collector-for-kafka<span class="w"> </span><span class="se">\</span>
+<div class="highlight"><pre><span></span><code>microk8s<span class="w"> </span>helm3<span class="w"> </span>repo<span class="w"> </span>add<span class="w"> </span>splunk-opentelemetry-collector-for-kafka<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>https://splunk.github.io/splunk-opentelemetry-collector-for-kafka
 microk8s<span class="w"> </span>helm3<span class="w"> </span>repo<span class="w"> </span>update
 
@@ -2039,7 +2015,6 @@ microk8s<span class="w"> </span>helm3<span class="w"> </span>upgrade<span class=
 <span class="w">  </span>-n<span class="w"> </span>soc4kafka<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>-f<span class="w"> </span>~/soc4kafka_microk8s/values.yaml
 </code></pre></div>
-
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>Always include <code>-n soc4kafka</code>. Without it the release lands in the <code>default</code> namespace and will be
@@ -2047,21 +2022,18 @@ difficult to find.</p>
 </div>
 <h3 id="b7-verify-the-deployment">B.7 Verify the deployment<a class="headerlink" href="#b7-verify-the-deployment" title="Permanent link">&para;</a></h3>
 <p>Check that all pods are running:</p>
-<div class="codehilite"><pre><span></span><code>microk8s<span class="w"> </span>kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-A
+<div class="highlight"><pre><span></span><code>microk8s<span class="w"> </span>kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-A
 </code></pre></div>
-
 <p>Tail the collector logs and look for the healthy startup sequence:</p>
-<div class="codehilite"><pre><span></span><code>microk8s<span class="w"> </span>kubectl<span class="w"> </span>-n<span class="w"> </span>soc4kafka<span class="w"> </span>logs<span class="w"> </span>-f<span class="w"> </span><span class="se">\</span>
+<div class="highlight"><pre><span></span><code>microk8s<span class="w"> </span>kubectl<span class="w"> </span>-n<span class="w"> </span>soc4kafka<span class="w"> </span>logs<span class="w"> </span>-f<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>deploy/soc4kafka-splunk-opentelemetry-collector-for-kafka
 </code></pre></div>
-
 <p>Expected output:</p>
-<div class="codehilite"><pre><span></span><code><span class="n">Everything</span><span class="w"> </span><span class="n">is</span><span class="w"> </span><span class="n">ready</span><span class="p">.</span><span class="w"> </span><span class="n">Begin</span><span class="w"> </span><span class="n">running</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="n">processing</span><span class="w"> </span><span class="n">data</span><span class="p">.</span>
-<span class="n">franz</span><span class="w">   </span><span class="n">joined</span><span class="p">,</span><span class="w"> </span><span class="n">balancing</span><span class="w"> </span><span class="n">group</span><span class="w">   </span><span class="nl">group:</span><span class="w"> </span><span class="o">&lt;</span><span class="n">CONSUMER_GROUP</span><span class="o">&gt;</span>
-<span class="n">franz</span><span class="w">   </span><span class="n">synced</span><span class="w">                    </span><span class="nl">assigned:</span><span class="w"> </span><span class="o">&lt;</span><span class="n">TOPIC</span><span class="o">&gt;</span><span class="p">[</span><span class="mh">0</span><span class="p">]</span>
-<span class="n">franz</span><span class="w">   </span><span class="n">assigning</span><span class="w"> </span><span class="n">partitions</span><span class="w">      </span><span class="p">...</span>
+<div class="highlight"><pre><span></span><code>Everything is ready. Begin running and processing data.
+franz   joined, balancing group   group: &lt;CONSUMER_GROUP&gt;
+franz   synced                    assigned: &lt;TOPIC&gt;[0]
+franz   assigning partitions      ...
 </code></pre></div>
-
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>If you see <code>NOT_COORDINATOR</code> repeating, change <code>client_id</code> and <code>group_id</code> to a new name in
@@ -2069,7 +2041,7 @@ difficult to find.</p>
 </div>
 <h3 id="b8-send-a-test-message-and-confirm-in-splunk">B.8 Send a test message and confirm in Splunk<a class="headerlink" href="#b8-send-a-test-message-and-confirm-in-splunk" title="Permanent link">&para;</a></h3>
 <p>Produce a message from the VM (install <code>kafkacat</code> first if needed: <code>sudo apt-get install -y kafkacat</code>):</p>
-<div class="codehilite"><pre><span></span><code><span class="nb">echo</span><span class="w"> </span><span class="s2">"hello-from-microk8s-</span><span class="k">$(</span>date<span class="w"> </span>-Is<span class="k">)</span><span class="s2">"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>kafkacat<span class="w"> </span>-P<span class="w"> </span><span class="se">\</span>
+<div class="highlight"><pre><span></span><code><span class="nb">echo</span><span class="w"> </span><span class="s2">"hello-from-microk8s-</span><span class="k">$(</span>date<span class="w"> </span>-Is<span class="k">)</span><span class="s2">"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>kafkacat<span class="w"> </span>-P<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>-b<span class="w"> </span>&lt;KAFKA_BOOTSTRAP&gt;<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>-t<span class="w"> </span>&lt;TOPIC&gt;<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>-X<span class="w"> </span>security.protocol<span class="o">=</span>SASL_SSL<span class="w"> </span><span class="se">\</span>
@@ -2078,10 +2050,9 @@ difficult to find.</p>
 <span class="w">  </span>-X<span class="w"> </span>sasl.password<span class="o">=</span><span class="s1">'&lt;OCI_AUTH_TOKEN&gt;'</span><span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>-X<span class="w"> </span>ssl.ca.location<span class="o">=</span>/etc/ssl/certs/ca-certificates.crt
 </code></pre></div>
-
 <p>Alternatively use the OCI Console: <strong>Streaming → Streams → select stream → Produce Test Message</strong>.</p>
 <p>In Splunk search:</p>
-<div class="codehilite"><pre><span></span><code><span class="nx">index</span><span class="p">=&lt;</span><span class="nx">SPLUNK_INDEX</span><span class="p">&gt;</span><span class="w"> </span><span class="nx">sourcetype</span><span class="p">=</span><span class="s">"oci:streaming:text"</span><span class="w"> </span><span class="nx">earliest</span><span class="p">=</span><span class="o">-</span><span class="mi">5</span><span class="nx">m</span>
+<div class="highlight"><pre><span></span><code>index=&lt;SPLUNK_INDEX&gt; sourcetype="oci:streaming:text" earliest=-5m
 </code></pre></div>
 
 
@@ -2141,7 +2112,7 @@ difficult to find.</p>
       <script id="__config" type="application/json">{"annotate":null,"base":"..","features":[],"search":"../assets/javascripts/workers/search.7d14d953.min.js","tags":null,"translations":{"clipboard.copied":"Copied to clipboard","clipboard.copy":"Copy to clipboard","search.result.more.one":"1 more on this page","search.result.more.other":"# more on this page","search.result.none":"No matching documents","search.result.one":"1 matching document","search.result.other":"# matching documents","search.result.placeholder":"Type to start searching","search.result.term.missing":"Missing","select.version":"Select version"},"version":{"provider":"mike"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.49251538.min.js"></script>
+      <script src="../assets/javascripts/bundle.6970bfe9.min.js"></script>
       
         <script src="../javascripts/footer.js"></script>
       

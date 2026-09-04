@@ -21,7 +21,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="zensical-0.0.57">
+      <meta name="generator" content="zensical-0.0.59">
     
     
       
@@ -1289,7 +1289,7 @@ The receiver does not only subscribe to existing topics that match the regex, bu
 <p>You can exclude specific topics from being processed using the <code>kafka.logs.exclude_topics</code> field. This is useful when your regex pattern matches many topics, but you want to filter out certain ones from log collection.</p>
 <p>The <code>kafka.logs.exclude_topics</code> field accepts a list of topic names or regex patterns that should be excluded from processing. Topics matching any pattern in the exclude list will be ignored, even if they match the subscription regex pattern. Learn more about regex topics <a href="https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/kafkareceiver#regex-topic-patterns-with-exclusions">here</a>.</p>
 <h4 id="example-config">Example Config<a class="headerlink" href="#example-config" title="Permanent link">&para;</a></h4>
-<div class="codehilite"><pre><span></span><code><span class="nt">receivers</span><span class="p">:</span>
+<div class="highlight"><pre><span></span><code><span class="nt">receivers</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">kafka</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">brokers</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">&lt;Brokers&gt;</span><span class="p p-Indicator">]</span>
 <span class="w">    </span><span class="nt">logs</span><span class="p">:</span>
@@ -1323,10 +1323,9 @@ The receiver does not only subscribe to existing topics that match the regex, bu
 <span class="w">      </span><span class="nt">receivers</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">kafka</span><span class="p p-Indicator">]</span>
 <span class="w">      </span><span class="nt">exporters</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">splunk_hec</span><span class="p p-Indicator">]</span>
 </code></pre></div>
-
 <h3 id="configuration-examples">Configuration Examples<a class="headerlink" href="#configuration-examples" title="Permanent link">&para;</a></h3>
 <h4 id="example-1-subscribe-to-all-topics-except-system-topics">Example 1: Subscribe to All Topics Except System Topics<a class="headerlink" href="#example-1-subscribe-to-all-topics-except-system-topics" title="Permanent link">&para;</a></h4>
-<div class="codehilite"><pre><span></span><code><span class="nt">receivers</span><span class="p">:</span>
+<div class="highlight"><pre><span></span><code><span class="nt">receivers</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">kafka</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">brokers</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">"localhost:9092"</span><span class="p p-Indicator">]</span>
 <span class="w">    </span><span class="nt">logs</span><span class="p">:</span>
@@ -1336,10 +1335,9 @@ The receiver does not only subscribe to existing topics that match the regex, bu
 <span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^__.*</span>
 <span class="w">      </span><span class="nt">encoding</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">text</span>
 </code></pre></div>
-
 <p>This configuration subscribes to all topics but excludes any topics starting with __ (Kafka internal topics).</p>
 <h4 id="example-2-subscribe-to-application-logs-with-pattern-exclusions">Example 2: Subscribe to Application Logs with Pattern Exclusions<a class="headerlink" href="#example-2-subscribe-to-application-logs-with-pattern-exclusions" title="Permanent link">&para;</a></h4>
-<div class="codehilite"><pre><span></span><code><span class="nt">receivers</span><span class="p">:</span>
+<div class="highlight"><pre><span></span><code><span class="nt">receivers</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">kafka</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">brokers</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">"localhost:9092"</span><span class="p p-Indicator">]</span>
 <span class="w">    </span><span class="nt">logs</span><span class="p">:</span>
@@ -1350,10 +1348,9 @@ The receiver does not only subscribe to existing topics that match the regex, bu
 <span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^app-debug-.*</span>
 <span class="w">      </span><span class="nt">encoding</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">text</span>
 </code></pre></div>
-
 <p>This configuration subscribes to topics matching <code>app-*</code> pattern but excludes topics matching <code>app-test-*</code> and <code>app-debug-*</code> patterns.</p>
 <h4 id="example-3-multiple-topic-patterns-with-exclusions">Example 3: Multiple Topic Patterns with Exclusions<a class="headerlink" href="#example-3-multiple-topic-patterns-with-exclusions" title="Permanent link">&para;</a></h4>
-<div class="codehilite"><pre><span></span><code><span class="nt">receivers</span><span class="p">:</span>
+<div class="highlight"><pre><span></span><code><span class="nt">receivers</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">kafka</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">brokers</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">"localhost:9092"</span><span class="p p-Indicator">]</span>
 <span class="w">    </span><span class="nt">logs</span><span class="p">:</span>
@@ -1365,7 +1362,6 @@ The receiver does not only subscribe to existing topics that match the regex, bu
 <span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^.*-old$</span>
 <span class="w">      </span><span class="nt">encoding</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">text</span>
 </code></pre></div>
-
 <p>This configuration subscribes to multiple regex patterns while excluding topics ending with -archive or -old.</p>
 <p>Note that <code>exclude_topics</code> doesn&rsquo;t have to be regex, it can be an exact name. When using exact names no <code>^</code> at the beginning is necessary.</p>
 
@@ -1426,7 +1422,7 @@ The receiver does not only subscribe to existing topics that match the regex, bu
       <script id="__config" type="application/json">{"annotate":null,"base":"..","features":[],"search":"../assets/javascripts/workers/search.7d14d953.min.js","tags":null,"translations":{"clipboard.copied":"Copied to clipboard","clipboard.copy":"Copy to clipboard","search.result.more.one":"1 more on this page","search.result.more.other":"# more on this page","search.result.none":"No matching documents","search.result.one":"1 matching document","search.result.other":"# matching documents","search.result.placeholder":"Type to start searching","search.result.term.missing":"Missing","select.version":"Select version"},"version":{"provider":"mike"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.49251538.min.js"></script>
+      <script src="../assets/javascripts/bundle.6970bfe9.min.js"></script>
       
         <script src="../javascripts/footer.js"></script>
       
