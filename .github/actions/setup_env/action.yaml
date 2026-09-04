@@ -12,7 +12,7 @@ runs:
     - name: Start Kafka
       uses: hoverkraft-tech/compose-action@v2.0.1
       with:
-        compose-file: "./.github/docker_files/kafka_docker_compose.yaml"
+        compose-file: ${{ env.KAFKA_COMPOSE_FILE }}
 
     - name: Wait for Kafka Initialization
       shell: bash

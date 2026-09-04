@@ -1,13 +1,18 @@
----
 receivers:
   kafka/{{ .KafkaTopicName1 }}:
     brokers: [ {{ .KafkaBrokerAddress }} ]
+    client_id: "multiple-topics-{{ .KafkaTopicName1 }}"
+    group_id: "multiple-topics-{{ .KafkaTopicName1 }}"
+    initial_offset: earliest
     logs:
       topics:
         - {{ .KafkaTopicName1 }}
       encoding: "text"
   kafka/{{ .KafkaTopicName2 }}:
     brokers: [ {{ .KafkaBrokerAddress }} ]
+    client_id: "multiple-topics-{{ .KafkaTopicName2 }}"
+    group_id: "multiple-topics-{{ .KafkaTopicName2 }}"
+    initial_offset: earliest
     logs:
       topics:
         - {{ .KafkaTopicName2 }}
