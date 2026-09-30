@@ -1,10 +1,10 @@
 # Configuration
 
-## Core Configuration
+## Core configuration
 
-### Kafka Receivers
+### Kafka receivers
 
-Define one or more Kafka receivers. All standard Kafka receiver configuration options are supported. See the [SOC4Kafka design documentation](../otel_design.md) for details.
+Define one or more Kafka receivers. All standard Kafka receiver configuration options are supported. See the [SOC4Kafka design documentation](../otel_design-updated.md) for details.
 
 ```yaml
 kafkaReceivers:
@@ -24,13 +24,13 @@ kafkaReceivers:
 
 !!! note
 
-    Kafka authentication passwords (plain_text, SASL, or Kerberos) can reference existing Kubernetes secrets using the `secret` field. See [Secret Management](secrets.md) for details.
+    Kafka authentication passwords (plain_text, SASL, or Kerberos) can reference existing Kubernetes secrets using the `secret` field. See [Secret management](secrets-updated.md) for details.
 
-**TLS:** For TLS-enabled Kafka brokers (e.g. port 9093), add a `tls` block. See [TLS Configuration](tls.md) for full details and examples.
+**TLS:** For TLS-enabled Kafka brokers (e.g. port 9093), add a `tls` block. See [TLS configuration](tls-updated.md) for full details and examples.
 
-### Splunk HEC Exporters
+### Splunk HTTP Event Collector (HEC) exporters
 
-Define one or more Splunk HEC exporters. All standard Splunk HEC exporter configuration options are supported. See the [SOC4Kafka design documentation](../otel_design.md) for details.
+Define one or more Splunk HEC exporters. All standard Splunk HEC exporter configuration options are supported. See the [SOC4Kafka design documentation](../otel_design-updated.md) for details.
 
 ```yaml
 splunkExporters:
@@ -56,15 +56,15 @@ splunkExporters:
 
 !!! note
 
-    Instead of providing `token` directly, you can reference an existing Kubernetes secret using the `secret` field. See [Secret Management](secrets.md) for details.
+    Instead of providing `token` directly, you can reference an existing Kubernetes secret using the `secret` field. See [Secret management](secrets-updated.md) for details.
 
-**TLS:** Use `https://` in the endpoint for TLS. The same `tls` options as for Kafka apply. See [TLS Configuration](tls.md).
+**TLS:** Use `https://` in the endpoint for TLS. The same `tls` options as for Kafka apply. See [TLS configuration](tls-updated.md).
 
 **Queueing and batching:** The chart applies HEC exporter defaults from `defaults.exporters.splunk_hec`. The default queue uses `block_on_overflow: true` so the collector applies backpressure when Splunk HEC is slow instead of immediately rejecting data at queue capacity. Batching is configured under `sending_queue.batch`; the default pipelines no longer use the processor `batch`.
 
 ### Pipelines
 
-Connect receivers to exporters. See the [SOC4Kafka design documentation](../otel_design.md) for details.
+Connect receivers to exporters. See the [SOC4Kafka design documentation](../otel_design-updated.md) for details.
 
 **Chart-specific:** You can omit `processors`; the chart then uses `defaults.pipelineProcessors` (default: `["resourcedetection"]`). Override per pipeline or change the default in `values.yaml`.
 
@@ -81,11 +81,11 @@ pipelines:
       - resourcedetection
 ```
 
-## Advanced Configuration
+## Advanced configuration
 
 See [values.yaml](https://github.com/splunk/splunk-opentelemetry-collector-for-kafka/blob/main/helm-chart/splunk-opentelemetry-collector-for-kafka/values.yaml) for all available configuration options. Key areas:
 
-- **TLS** ([tls.md](tls.md)): Configure TLS for Kafka receivers and Splunk HEC exporters.
+- **TLS** ([tls.md](tls-updated.md)): Configure TLS for Kafka receivers and Splunk HEC exporters.
 - **Component Defaults** (`defaults`): Override default OpenTelemetry component settings
 - **Config Override** (`configOverride`): Provide complete OpenTelemetry config override
 - **Resources** (`resources`): Set CPU and memory limits/requests
@@ -95,7 +95,7 @@ See [values.yaml](https://github.com/splunk/splunk-opentelemetry-collector-for-k
 - **Collector Logs** (`collectorLogs`): Enable collection of the collector's own logs to files and stdout/stderr
 - **Collector Metrics** (`collectorMetrics`): Enable collection of collector internal metrics and system metrics (CPU, memory, disk, network)
 
-### Collector Logs
+### Collector logs
 
 Enable collection of the OpenTelemetry Collector's own logs. When enabled, logs are written to files in `/var/log/otelcol` (using an emptyDir volume) and also to stdout/stderr for Kubernetes log aggregation.
 
@@ -135,7 +135,7 @@ collectorLogs:
 
     Log files are stored in an `emptyDir` volume, which means they are ephemeral and will be lost when the pod is deleted. However, logs are forwarded to Splunk, so they are preserved there.
 
-### Metrics Collection
+### Metrics collection
 
 Enable collection of collector internal metrics and system metrics. When enabled, the chart automatically configures:
 
@@ -161,11 +161,11 @@ collectorMetrics:
 
 !!! note
 
-    Make sure you have a metrics-type index in Splunk for the metrics data. See the [Splunk Dashboard documentation](../splunk-dashboard.md) for details.
+    Make sure you have a metrics-type index in Splunk for the metrics data. See the [SOC4Kafka health dashboard](../splunk-dashboard-updated.md) for details.
 
 **Advanced Configuration:** For custom metrics configuration (different exporter, scrapers, intervals, etc.), use `configOverride` to override the generated configuration.
 
-## Configuration Precedence
+## Configuration precedence
 
 The chart merges configuration in the following order (highest to lowest priority):
 
@@ -209,7 +209,7 @@ configOverride:
         num_consumers: 20  # This wins - configOverride has highest priority
 ```
 
-## Automatic Pod Restarts
+## Automatic pod restarts
 
 The chart includes automatic pod restart triggers:
 

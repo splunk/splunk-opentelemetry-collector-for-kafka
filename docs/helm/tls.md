@@ -1,8 +1,8 @@
-# TLS Configuration
+# TLS configuration
 
-This document describes how to configure TLS for **Kafka receivers** (e.g. port 9093) and **Splunk HEC exporters**. Both use the same `tls` options; the options table and patterns below apply to each.
+This document describes how to configure TLS for **Kafka receivers** (e.g. port 9093) and **Splunk HTTP Event Collector (HEC) exporters**. Both use the same `tls` options; the options table and patterns below apply to each.
 
-## Kafka Receiver TLS
+## Kafka receiver TLS
 
 When your Kafka brokers use TLS (for example, port 9093 with SSL), configure the `tls` block under each Kafka receiver.
 
@@ -42,7 +42,7 @@ kafkaReceivers:
 
 Additional TLS settings are supported by the collector and passed through to the config. For the full reference, see the [OpenTelemetry Collector TLS Configuration Settings](https://github.com/open-telemetry/opentelemetry-collector/blob/main/config/configtls/README.md).
 
-## Splunk HEC Exporter TLS
+## Splunk HEC exporter TLS
 
 The Splunk HEC exporter uses TLS when the `endpoint` URL uses `https://`. The **same `tls` options** as for Kafka receivers apply (see the [TLS options](#tls-options) table above).
 
@@ -123,5 +123,5 @@ You may set `insecure_skip_verify: true` for self-signed or internal brokers. Do
 
 ## See also
 
-- [Configuration](configuration.md) – Core configuration options
-- [Secret Management](secrets.md) – Managing tokens and passwords securely
+- [Configuration](configuration-updated.md) – Core configuration options
+- [Secret management](secrets-updated.md) – Managing tokens and passwords securely

@@ -1,6 +1,6 @@
 ## Load balancing
 
-### Change in Load Balancing Strategy for Splunk HEC
+### Change in load balancing strategy for Splunk HTTP Event Collector (HEC)
 
 Unlike the previous SC4Kafka connector, SOC4Kafka collector delegates the responsibility of load balancing and high availability for Splunk HEC endpoints to dedicated infrastructure components. This aligns with modern architectural best practices and provides a more scalable and resilient solution than client-side logic.
 
@@ -10,7 +10,7 @@ The collector should be configured with a single HEC endpoint. In a multi-indexe
 
 The standard architecture involves placing an external load balancer in front of your Splunk indexer pool. This centralizes traffic management, health checks, and failover logic.
 
-### Implementation Example: Using Nginx
+### Implementation example: using Nginx
 
 Nginx is a lightweight, high-performance, and popular choice for this role. Splunk provides [an official, step-by-step guide for this exact use case](https://dev.splunk.com/enterprise/docs/devtools/httpeventcollector/confignginxloadhttp/), which we recommend following for production deployments.
 

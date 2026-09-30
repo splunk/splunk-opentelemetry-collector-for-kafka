@@ -1,6 +1,6 @@
 # Installation Guide
 
-## Quick Start
+## Quick start
 
 1. Create a `values.yaml` file with your configuration:
 
@@ -55,7 +55,7 @@ helm upgrade --install soc4kafka splunk-opentelemetry-collector-for-kafka/splunk
 
 !!! note
 
-    For information about managing secrets (auto-created or existing Kubernetes secrets), see [Secret Management](secrets.md).
+    For information about managing secrets (auto-created or existing Kubernetes secrets), see [Secret management](secrets-updated.md).
 
 ## Upgrading
 
@@ -76,7 +76,7 @@ By default, the chart uses a **rolling update** strategy (`maxSurge: 25%`, `maxU
 
 !!! warning
 
-    When you change collector configuration (for example, index, pipeline, or Splunk HEC settings) and run `helm upgrade`, only a subset of pods receive the new config at a time. Until the rollout finishes, some pods still run with the old config. As a result, events from different Kafka partitions can be indexed or processed differently during the rollout (e.g. different index or sourcetype). With 25%, fewer partitions are affected in each wave. After all pods are updated, behaviour is consistent again.
+    When you change collector configuration (for example, index, pipeline, or Splunk HTTP Event Collector (HEC) settings) and run `helm upgrade`, only a subset of pods receive the new config at a time. Until the rollout finishes, some pods still run with the old config. As a result, events from different Kafka partitions can be indexed or processed differently during the rollout (e.g. different index or sourcetype). With 25%, fewer partitions are affected in each wave. After all pods are updated, behaviour is consistent again.
 
 If you need strictly sequential or consistent indexing during config changes, you can set `strategy.type: Recreate` in your values. That restarts all pods at once; expect a short period with no ingestion until the new pods are ready.
 

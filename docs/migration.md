@@ -1,17 +1,17 @@
-## Migration from Splunk Connect for Kafka into Splunk OTel Collector for Kafka
+## Migration from Splunk Connect for Kafka to Splunk OTel Collector for Kafka
 
 Naming: 
 
 - SC4Kafka - the [Splunk Connect for Kafka](https://github.com/splunk/kafka-connect-splunk)
 - SOC4Kafka - the Splunk OTel Collector for Kafka (the current project)
 
-The biggest difference between SC4Kafka and SOC4Kafka is that:
+The main differences between SC4Kafka and SOC4Kafka include:
 
 | **Field**                  | **SC4Kafka**                                                                          | **SOC4Kafka**                                                                                                                                                                                                    |
 |----------------------------|---------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **Type**                   | Connector based on **Kafka Connect**, installed as an add-on for Kafka.               | Standalone product that works independently of Kafka.                                                                                                                                                            |
 | **Message Retrieval**      | Retrieves events directly from Kafka.                                                 | Consumes messages from Kafka via the Kafka OpenTelemetry Receiver (native Kafka consumer protocol).                                                                                                             |
-| **Processing**             | Sends events directly to Splunk using the **Splunk HEC exporter**.                    | Processes messages internally and supports customization using **transform processors** before sending them to the **Splunk HEC exporter**.                                                                      |
+| **Processing**             | Sends events directly to Splunk using the **Splunk HTTP Event Collector (HEC) exporter**.                    | Processes messages internally and supports customization using **transform processors** before sending them to the **Splunk HEC exporter**.                                                                      |
 | **Integration with Kafka** | Tightly integrated as part of the Kafka ecosystem.                                    | Can run independently and be deployed on an external server, separate from the Kafka cluster.                                                                                                                    |
 | **Scaling**                | Scaling is managed using the `tasks.max` setting and supports multiple HEC endpoints. | Scaling is achieved by deploying multiple SOC4Kafka instances with the same `group_id`. Multiple HEC endpoints are not supported, but you can create multiple Splunk HEC exporters and add them to the pipeline. |
 
@@ -22,14 +22,14 @@ The biggest difference between SC4Kafka and SOC4Kafka is that:
 ### SC4Kafka to SOC4Kafka mapping of configuration parameters
 
 The configuration settings for SC4Kafka cannot be directly transferred to SOC4Kafka due to differences in their architecture and design. However, many configuration parameters have equivalent settings in SOC4Kafka.
-A detailed description of the configuration parameter mappings can be found in the following [table](migration_config_values.md), which provides a comparison of the corresponding properties in both solutions.
+A detailed description of the configuration parameter mappings can be found in the following [table](migration_config_values-updated.md), which provides a comparison of the corresponding properties in both solutions.
 
 ## Migration process from SC4Kafka to SOC4Kafka
 
 Before migrating please get familiar with the [migration strategies](#recommended-migration-strategy).
 
 --- 
-### Important Notes:
+### Important notes:
 - **Migration from the old SC4Kafka connector to SOC4Kafka collector is a manual process.** There is no automated tool available for this migration.
 - Begin with a simple configuration, then gradually add more settings. This approach helps in isolating and troubleshooting potential issues during the migration.
 
@@ -38,10 +38,10 @@ Before migrating please get familiar with the [migration strategies](#recommende
 Migrating from SC4Kafka to SOC4Kafka involves several steps to ensure a smooth transition. Below are the key steps to follow during the migration process:
 
 1. **Review Current SC4Kafka Configuration**: Start by thoroughly reviewing your existing SC4Kafka configuration. Document all the settings, including topics, indexes, sourcetypes, and any custom configurations you have in place. 
-    In order to read the existing SC4Kafka configuration you can use REST API calls as described in the [section below](#reading-sc4kafka-existing-configuration).
-2. **Map Configuration Parameters**: Use the [configuration mapping table](migration_config_values.md) to identify equivalent settings in SOC4Kafka. This will help you understand how to translate your SC4Kafka configuration into SOC4Kafka format.
+    In order to read the existing SC4Kafka configuration you can use REST API calls as described in the [Reading the existing Splunk Connect for Kafka configuration](#reading-sc4kafka-existing-configuration).
+2. **Map Configuration Parameters**: Use the [configuration mapping table](migration_config_values-updated.md) to identify equivalent settings in SOC4Kafka. This will help you understand how to translate your SC4Kafka configuration into SOC4Kafka format.
 3. **Create SOC4Kafka Configuration**: Based on the mapped parameters, create a new configuration file for SOC4Kafka. Make sure to include all relevant settings, such as Kafka brokers, topics, Splunk HEC endpoint, and token.
-4. **Set Up SOC4Kafka**: [Install SOC4Kafka](./helm/installation.md) on your desired server. Ensure that you have the necessary permissions and access to both Kafka and Splunk.
+4. **Set Up SOC4Kafka**: [Install SOC4Kafka](helm/installation-updated.md) on your desired server. Ensure that you have the necessary permissions and access to both Kafka and Splunk.
 5. **Test the Configuration**: Before fully switching over, test the SOC4Kafka configuration in a controlled environment. Verify that it can successfully connect to Kafka, retrieve messages, and send them to Splunk.
 6. **Monitor and Validate**: Once you have deployed SOC4Kafka, closely monitor its performance and validate that all messages are being correctly forwarded to Splunk. Check for any discrepancies in data or performance issues.
 7. **Decommission SC4Kafka**: After confirming that SOC4Kafka is functioning as expected, you can decommission your SC4Kafka setup. 
@@ -68,7 +68,7 @@ When migrating from SC4Kafka to SOC4Kafka following commands may be useful:
 
 ## Migration examples:
 
-Following examples demonstrate how to migrate common SC4Kafka configurations to SOC4Kafka.
+The following examples show how to migrate common SC4Kafka configurations to SOC4Kafka.
 The section contains examples for:
 
 - Basic config for Kafka string messages
@@ -134,11 +134,11 @@ service:
       exporters: [splunk_hec]
 ```
 
-![1.png](images/migration/basic-message.png)
+![Splunk search result for a message from the basic Kafka configuration](images/migration/basic-message.png)
 
 ### Timestamp extraction
 
-Even though by default kafka events from SOC4Kafka are marked with time of collecting data, if only we have a timestamp included as a part of the log body we can extract it. For example if the event is:
+By default, SOC4Kafka assigns events the time when it collects them. To use a timestamp from the log body instead, extract it with a transform processor. For example, consider this event:
 
 ```
 [2025-06-26 11:45:00]  the message with a timestamp
@@ -188,7 +188,7 @@ service:
 
 and the event in Splunk would be:
 
-![3.png](images/migration/message-with-timestamp.png)
+![Splunk search result showing the timestamp extracted from a Kafka message](images/migration/message-with-timestamp.png)
 
 ### Set host automatically
 
@@ -239,12 +239,11 @@ service:
      exporters: [splunk_hec]
 ```
 
-![2.png](images/migration/message-with-host.png)
+![Splunk search result showing the host detected by SOC4Kafka](images/migration/message-with-host.png)
 
 ### Extract headers
 
-If there are additional headers present in the incoming data, they can be extracted and added as event attributes. This allows for greater flexibility in customizing event metadata.
-In the following examples, we will extract the following headers and include them as event attributes:
+If incoming data includes additional headers, you can extract them as event attributes. The following examples extract these headers:
 
 - index
 - source
@@ -317,18 +316,18 @@ service:
 
 This is how events generated by SC4Kafka are displayed in Splunk:
 
-![sc4kafka-headers.png](images/migration/sc4kafka-headers.png)
+![Splunk event with headers extracted by Splunk Connect for Kafka](images/migration/sc4kafka-headers.png)
 
 Similarly, events generated by SOC4Kafka are presented in a comparable format:
 
-![soc4kafka-headers.png](images/migration/soc4kafka-headers.png)
+![Splunk event with headers extracted by SOC4Kafka](images/migration/soc4kafka-headers.png)
 
-### Send data from multiple kafka topics to multiple Splunk HEC endpoints
+### Send data from multiple Kafka topics to multiple Splunk HEC endpoints
 
 In SC4Kafka, you can provide a list of topics along with a corresponding list of indexes, where each topic's data is mapped to its respective index (e.g., the first topic maps to the first index, the second topic to the second index, and so on).
 
 
-In SOC4Kafka, the configuration is more flexible and modular. You define Kafka receivers and Splunk HEC exporters separately and connect them using a pipeline structure. Additionally, you can configure different source and sourcetype values directly within the settings of each Splunk HEC exporter, enabling greater customization for data routing and metadata assignment.
+In SOC4Kafka, configure Kafka receivers and Splunk HEC exporters separately, then connect them in a pipeline. Each exporter can use different source and sourcetype values.
 
 #### SC4Kafka config
 
@@ -417,19 +416,19 @@ service:
 
 The events generated by SC4Kafka are:
 
-![sc4kafka-two-pat.png](images/migration/sc4kafka-two-pat.png)
-![sc4kafka-three-pat.png](images/migration/sc4kafka-three-pat.png)
+![Splunk Connect for Kafka event from the two-pat topic](images/migration/sc4kafka-two-pat.png)
+![Splunk Connect for Kafka event from the three-pat topic](images/migration/sc4kafka-three-pat.png)
 
 While the events from SOC4Kafka are:
 
-![soc4kafka-two-pat.png](images/migration/soc4kafka-two-pat.png)
-![sock4kafka-three-pat.png](images/migration/sock4kafka-three-pat.png)
+![SOC4Kafka event from the two-pat topic](images/migration/soc4kafka-two-pat.png)
+![SOC4Kafka event from the three-pat topic](images/migration/sock4kafka-three-pat.png)
 
-Mind that SOC4Kafka allows you to configure a unique sourcetype and source for each individual topic. This flexibility simplifies filtering and organizing data within Splunk, ensuring better control over your event categorization and search results.
+SOC4Kafka lets you configure a unique source and sourcetype for each topic. Use these values to filter and organize events in Splunk.
 
 ### Sending events that are already in HEC format
 
-In SC4Kafka you can collect events that are already formatted in HEC format, by setting `splunk.hec.json.event.formatted` option to `true`.
+To collect events that already use HEC format in SC4Kafka, set `splunk.hec.json.event.formatted` to `true`.
 
 #### SC4Kafka config
 
@@ -489,7 +488,7 @@ service:
       exporters: [splunk_hec]
 ```
 
-Example of event in this format:
+The following event uses this format:
 
 ```json
 {
@@ -512,10 +511,10 @@ Example of event in this format:
 
 The example message appears like this in Splunk search results when properly configured:
 
-![formatted-msg.png](images/migration/formatted-msg.png)
+![Splunk search result for an event already formatted for HEC](images/migration/formatted-msg.png)
 
 
-## Recommended Migration Strategy
+## Recommended migration strategy
 
 There are several considerations to take into account when migrating from SC4Kafka to SOC4Kafka. 
 During the transitional phase—when both SC4Kafka and SOC4Kafka are enabled and SC4Kafka has not yet been 
@@ -561,7 +560,7 @@ connect-kafka-connect-splunk topic1          0          3100135         3100135 
 
 This output confirms which partitions are currently assigned to SC4Kafka and whether offsets are being actively committed.
 
-### Strategy 1: Use different consumer groups
+### Strategy 1: use different consumer groups
 
 If no `group_id` is explicitly configured in SOC4Kafka, the connector uses its default consumer group ID: `otel_collector`. Because this consumer group ID differs from the one used by SC4Kafka, both connectors will independently consume the same Kafka topic.
 
@@ -574,7 +573,7 @@ As a result:
 This approach is not recommended for production use unless duplicate ingestion is explicitly acceptable or temporary 
 duplication is accounted for during the migration window.
 
-### Strategy 2: Use the Same Consumer Group ID
+### Strategy 2: use the same consumer group ID
 
 In this strategy, SC4Kafka and SOC4Kafka are configured to use the same Kafka consumer group ID. This causes both connectors to participate in the same consumer group and share partition assignments rather than independently consuming all messages.
 
@@ -604,14 +603,14 @@ When both connectors are running with the same consumer group:
 * Kafka determines partition ownership dynamically during group rebalances
 
 However, Kafka consumer groups are designed for parallel work sharing, not for active/standby failover. So when you decommission
-SC4Kafka with the same `group_id` configured,  SOC4Kafka will take over uncommitted partitions. Offsets that were processed but not yet committed by SC4Kafka may be replayed, this replay can result in duplicate events being ingested into Splunk.
+SC4Kafka with the same `group_id` configured,  SOC4Kafka will take over uncommitted partitions. SC4Kafka might replay offsets that it processed but had not committed. This replay can result in duplicate events in Splunk.
 
 !!! note
     Kafka consumer groups are optimized for resilience and throughput, not for seamless connector replacement. This strategy reduces duplication compared to using separate consumer groups but does not eliminate it entirely.
 
 Using the same consumer group ID for SC4Kafka and SOC4Kafka is the recommended migration approach when both connectors must temporarily coexist. This strategy minimizes duplicate ingestion compared to using separate consumer groups and allows for a controlled transition, provided that connector shutdown is carefully coordinated.
 
-### Strategy 3: Use Separate Topics (Parallel Topics Migration)
+### Strategy 3: use separate topics (parallel topics migration)
 
 
 In this strategy, new Kafka topics are introduced specifically for SOC4Kafka, while SC4Kafka continues to consume from the existing topics. Event producers are reconfigured to send data to the new topics, allowing both connectors to operate in parallel without sharing consumer groups or partitions.

@@ -1,25 +1,25 @@
 # Troubleshooting
 
-## Check Pod Status
+## Check pod status
 
 ```bash
 kubectl get pods -l app.kubernetes.io/name=splunk-opentelemetry-collector-for-kafka
 ```
 
-## View Logs
+## View logs
 
 ```bash
 kubectl logs -l app.kubernetes.io/name=splunk-opentelemetry-collector-for-kafka -f
 ```
 
-## Check Configuration
+## Check configuration
 
 ```bash
 # View the generated OpenTelemetry config
 kubectl get configmap -l app.kubernetes.io/name=splunk-opentelemetry-collector-for-kafka -o yaml
 ```
 
-## Health Check
+## Health check
 
 ```bash
 # Port forward to health endpoint
@@ -32,31 +32,31 @@ curl http://localhost:13133/
 kubectl port-forward -l app.kubernetes.io/name=splunk-opentelemetry-collector-for-kafka 13133:13133
 ```
 
-## Common Issues
+## Common issues
 
-### Pods Not Starting
+### Pods not starting
 
 - Check if secrets exist and have correct keys
 - Verify Kafka brokers are reachable
 - Check resource limits
 - Review pod events: `kubectl describe pod <pod-name>`
 
-### No Data in Splunk
+### No data in Splunk
 
-- Verify HEC token is correct
+- Verify HTTP Event Collector (HEC) token is correct
 - Check Splunk HEC endpoint is accessible
 - Review collector logs for errors
 - Verify pipeline configuration matches receiver/exporter names
 - Check network connectivity from cluster to Splunk HEC endpoint
 
-### Authentication Failures
+### Authentication failures
 
 - Ensure secrets exist with key `password` for Kafka auth
 - Verify secret names match configuration
 - Check username/password are correct
 - Review Kafka broker authentication requirements
 
-### Configuration Errors
+### Configuration errors
 
 - Verify receiver/exporter names in pipelines match actual names
 - Check that at least one receiver, exporter, and pipeline is configured

@@ -1,11 +1,10 @@
 ## Subscribing to topics using regex
 
-The Kafka receiver in the OpenTelemetry Collector supports subscribing to topics using regular expressions. This feature allows you to dynamically subscribe to multiple topics that match a specific pattern, making it easier to manage and collect logs from various sources.
-To enable this feature, prefix your topic with the `^` character. This indicates that the topic value is a regex pattern.
+Use a regular expression to subscribe to Kafka topics that match a pattern.
+Prefix the pattern with the `^` character to identify it as a regular expression.
 
-### How Regex Topic Subscription Works
-The Kafka receiver supports subscribing to topics using regular expressions. When you use a regex pattern (e.g., ^myPrefix.*), the receiver continuously monitors the Kafka cluster for new topics that match the pattern.
-The receiver does not only subscribe to existing topics that match the regex, but also detects new matching topics as they are created.
+### How regex topic subscription works
+The Kafka receiver subscribes to existing topics that match the pattern and detects new matching topics as they are created. For example, `^myPrefix.*` matches topics that begin with `myPrefix`.
 
 !!! note
     Ensure that your regex pattern is valid and correctly formatted to avoid any subscription issues.
@@ -14,9 +13,9 @@ The receiver does not only subscribe to existing topics that match the regex, bu
 
 You can exclude specific topics from being processed using the `kafka.logs.exclude_topics` field. This is useful when your regex pattern matches many topics, but you want to filter out certain ones from log collection.
 
-The `kafka.logs.exclude_topics` field accepts a list of topic names or regex patterns that should be excluded from processing. Topics matching any pattern in the exclude list will be ignored, even if they match the subscription regex pattern. Learn more about regex topics [here](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/kafkareceiver#regex-topic-patterns-with-exclusions).
+The `kafka.logs.exclude_topics` field accepts a list of topic names or regex patterns that should be excluded from processing. Topics matching any pattern in the exclude list will be ignored, even if they match the subscription regex pattern. Learn more about regex topics [Kafka receiver regex topic exclusions documentation](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/kafkareceiver#regex-topic-patterns-with-exclusions).
 
-#### Example Config
+#### Example config
 
 ```yaml
 receivers:
@@ -54,9 +53,9 @@ service:
       exporters: [splunk_hec]
 ```
 
-### Configuration Examples
+### Configuration examples
 
-#### Example 1: Subscribe to All Topics Except System Topics
+#### Example 1: subscribe to all topics except system topics
 
 ```yaml
 receivers:
@@ -72,7 +71,7 @@ receivers:
 
 This configuration subscribes to all topics but excludes any topics starting with __ (Kafka internal topics).
 
-#### Example 2: Subscribe to Application Logs with Pattern Exclusions
+#### Example 2: subscribe to application logs with pattern exclusions
 
 ```yaml
 receivers:
@@ -89,7 +88,7 @@ receivers:
 
 This configuration subscribes to topics matching `app-*` pattern but excludes topics matching `app-test-*` and `app-debug-*` patterns.
 
-#### Example 3: Multiple Topic Patterns with Exclusions
+#### Example 3: multiple topic patterns with exclusions
 
 ```yaml
 receivers:

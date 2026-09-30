@@ -1,6 +1,6 @@
 # Examples
 
-## Basic Single Receiver/Exporter
+## Basic single receiver/exporter
 
 ```yaml
 kafkaReceivers:
@@ -39,7 +39,7 @@ pipelines:
     # processors omitted: defaults to ["resourcedetection"]
 ```
 
-## Multiple Topics to Multiple Indexes
+## Multiple topics to multiple indexes
 
 ```yaml
 kafkaReceivers:
@@ -136,9 +136,9 @@ pipelines:
       - primary
 ```
 
-See [TLS Configuration](tls.md) for all options and security recommendations.
+See [TLS configuration](tls-updated.md) for all options and security recommendations.
 
-## Authenticated Kafka with Secret Management
+## Authenticated Kafka with secret management
 
 ```yaml
 kafkaReceivers:
@@ -172,7 +172,7 @@ pipelines:
       - primary
 ```
 
-## With Collector Logs Enabled
+## With collector logs enabled
 
 Enable collection of the collector's own logs for debugging and monitoring:
 
@@ -232,7 +232,7 @@ The chart automatically adds:
 - `file_storage` extension for checkpointing
 - `logs/internal` pipeline connecting filelog → processors → referenced exporter
 
-## With Metrics Collection Enabled
+## With metrics collection enabled
 
 Enable collection of collector internal metrics and system metrics (CPU, memory, disk, network):
 

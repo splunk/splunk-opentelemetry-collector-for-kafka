@@ -18,7 +18,7 @@ It covers two deployment forms - pick the one that fits your environment:
 Collect the following before touching the VM. Everything in this document is a
 `<PLACEHOLDER>` - substitute your real values as you go.
 
-### From OCI Console
+### From OCI console
 
 | What you need | Where to find it | Placeholder |
 |---|---|---|
@@ -55,11 +55,11 @@ failed install can cause the collector to loop indefinitely on startup.
 
 ---
 
-## Option A - Bare metal / systemd
+## Option A - bare metal / systemd
 
 All commands run on the OCI VM over SSH.
 
-### A.1 Install dependencies
+### A.1 install dependencies
 
 These packages are used for connectivity testing and producing test messages. They are not required
 for the collector itself to run.
@@ -69,7 +69,7 @@ sudo apt-get update
 sudo apt-get install -y kafkacat curl netcat-openbsd
 ```
 
-### A.2 Download the collector binary
+### A.2 download the collector binary
 
 SOC4Kafka releases are published on GitHub. Download the binary for your target version, make it
 executable, and place it in a working directory.
@@ -84,7 +84,7 @@ chmod +x otelcol_linux_amd64
     Check the [releases page](https://github.com/splunk/splunk-opentelemetry-collector-for-kafka/releases)
     for newer versions and substitute `v0.158.0` accordingly.
 
-### A.3 Create the secrets file
+### A.3 create the secrets file
 
 Create `~/soc4kafka/collector.env` and restrict its permissions. This file holds all secrets so they
 never appear in the config file or in process arguments.
@@ -105,7 +105,7 @@ chmod 600 ~/soc4kafka/collector.env
     Wrap `KAFKA_SASL_PASS` in **single quotes** so the shell does not expand special characters in the
     token value.
 
-### A.4 Create the collector config
+### A.4 create the collector config
 
 Create `~/soc4kafka/config.yaml` with the content below. Substitute `<CONSUMER_GROUP>` and `<TOPIC>`
 directly in the file - these are not secrets and do not need to be in the env file.
@@ -156,7 +156,7 @@ service:
       exporters: [splunk_hec]
 ```
 
-### A.5 Verify connectivity before starting the collector
+### A.5 verify connectivity before starting the collector
 
 Check that the VM can reach Splunk HEC:
 
@@ -180,7 +180,7 @@ kafkacat -L \
 You should see `<TOPIC>` listed in the output. If it times out or returns an auth error, resolve that
 before proceeding - the collector will exhibit the same failure.
 
-### A.6 Start the collector
+### A.6 start the collector
 
 Run in the foreground first to watch the startup logs:
 
@@ -202,7 +202,7 @@ Everything is ready. Begin running and processing data.
 If you see `NOT_COORDINATOR` repeating, stop the collector, change `group_id` and `client_id` to a
 new name in `config.yaml`, and restart.
 
-### A.7 Install as a systemd service
+### A.7 install as a systemd service
 
 Once the collector starts cleanly, promote it to a managed service so it restarts automatically and
 its logs are captured by journald.
@@ -256,7 +256,7 @@ sudo systemctl enable --now soc4kafka
 sudo journalctl -u soc4kafka -f
 ```
 
-### A.8 Send a test message and confirm in Splunk
+### A.8 send a test message and confirm in Splunk
 
 ```bash
 set -a; source ~/soc4kafka/collector.env; set +a
@@ -303,7 +303,7 @@ All commands run on the OCI VM over SSH.
     MicroK8s ships its own bundled `helm3` and `kubectl`. The commands below use `microk8s helm3` and
     `microk8s kubectl` - not the system-level tools.
 
-### B.1 Install MicroK8s
+### B.1 install MicroK8s
 
 ```bash
 sudo snap install microk8s --classic --channel=1.33/stable
@@ -333,7 +333,7 @@ microk8s enable dns:169.254.169.254
     to a private VCN IP, and a public resolver will return NXDOMAIN for it, causing intermittent
     connection failures.
 
-### B.2 Fix the OCI host firewall
+### B.2 fix the OCI host firewall
 
 The OCI Ubuntu image ships a firewall rule that blocks forwarded traffic. This prevents pods from
 reaching the Kubernetes API server, causing CoreDNS and Calico to crash-loop. Remove the rule:
@@ -378,13 +378,13 @@ sudo systemctl disable --now netfilter-persistent
     ranges with your actual service CIDR (`grep service-cluster-ip-range /var/snap/microk8s/current/args/*`)
     and pod CIDR (`grep cluster-cidr /var/snap/microk8s/current/args/*`).
 
-### B.3 Create the namespace
+### B.3 create the namespace
 
 ```bash
 microk8s kubectl create namespace soc4kafka
 ```
 
-### B.4 Create the Kubernetes secrets
+### B.4 create the Kubernetes secrets
 
 The collector reads credentials from Kubernetes Secrets injected as environment variables - they
 never appear in the Helm values file.
@@ -401,7 +401,7 @@ microk8s kubectl -n soc4kafka create secret generic splunk-hec \
 !!! warning
     Wrap values in **single quotes** to prevent the shell from interpreting special characters.
 
-### B.5 Create `values.yaml`
+### B.5 create `values.yaml`
 
 Create this file on the VM (e.g. at `~/soc4kafka_microk8s/values.yaml`) before running the Helm
 install. Substitute all `<PLACEHOLDERS>` with your real values.
@@ -468,7 +468,7 @@ collectorMetrics:
   enabled: false
 ```
 
-### B.6 Install the chart
+### B.6 install the chart
 
 ```bash
 microk8s helm3 repo add splunk-opentelemetry-collector-for-kafka \
@@ -485,7 +485,7 @@ microk8s helm3 upgrade --install soc4kafka \
     Always include `-n soc4kafka`. Without it the release lands in the `default` namespace and will be
     difficult to find.
 
-### B.7 Verify the deployment
+### B.7 verify the deployment
 
 Check that all pods are running:
 
@@ -513,7 +513,7 @@ franz   assigning partitions      ...
     If you see `NOT_COORDINATOR` repeating, change `client_id` and `group_id` to a new name in
     `values.yaml` and re-run the `helm3 upgrade` command from step B.6.
 
-### B.8 Send a test message and confirm in Splunk
+### B.8 send a test message and confirm in Splunk
 
 Produce a message from the VM (install `kafkacat` first if needed: `sudo apt-get install -y kafkacat`):
 

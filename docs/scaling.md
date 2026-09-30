@@ -1,6 +1,6 @@
 ## Scaling SOC4Kafka
 
-To handle higher throughput, you can deploy multiple instances of the SOC4Kafka. Kafka natively supports partition-based scaling, allowing multiple consumers within the same consumer group to share the workload.
+To handle higher throughput, deploy multiple SOC4Kafka instances. Kafka supports partition-based scaling, which lets consumers in the same consumer group share the workload.
 
 ### Steps to scale horizontally
 

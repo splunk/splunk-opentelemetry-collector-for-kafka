@@ -1,6 +1,6 @@
 ## Quickstart Guide
 
-Welcome to the Quickstart Guide! This guide will help you get up and running with SOC4Kafka in just a few simple steps.
+This guide shows you how to install SOC4Kafka with Ansible.
 
 !!! note
     This guide covers the setup of a simple, basic configuration to get you started quickly. Once the `values.yaml` file is generated, it can be further adjusted and customized to suit your specific needs. For more advanced configuration options, please refer to the documentation.
@@ -11,29 +11,29 @@ Welcome to the Quickstart Guide! This guide will help you get up and running wit
     This guide is applicable for Linux and macOS systems. Windows is not supported.
 
 
-Before you begin, ensure you have the following prerequisites in place:
+Before you begin, confirm that you have the following prerequisites:
 
 - A running instance of Splunk
     - with a valid HTTP Event Collector (HEC) token from your Splunk instance
     - index created for Kafka logs (e.g., `kafka_otel`)
 - A running instance of Kafka
-- Network connectivity between your Kafka instance and Splunk and the VM where SOC4Kafka will be installed
-- Ansible installed on VM where SOC4Kafka will be installed
+- Network connectivity among your Kafka instance, Splunk, and the VM where you will install SOC4Kafka
+- Ansible installed on the VM where you will install SOC4Kafka
 
-### Quickstart Steps
+### Quickstart steps
 1. Download Ansible script: [install_soc4kafka_collector.yaml](https://github.com/splunk/splunk-opentelemetry-collector-for-kafka/blob/main/quickstart/install_soc4kafka_collector.yaml)
 
 ```bash
 wget https://raw.githubusercontent.com/splunk/splunk-opentelemetry-collector-for-kafka/refs/heads/main/quickstart/install_soc4kafka_collector.yaml
 ```
-2. Fill in the variables in the Ansible script. More information about the variables can be found in the [Variables Description](#variables-description) section below.
+2. Fill in the variables in the Ansible script. More information about the variables can be found in the [Variables description](#variables-description) section below.
 
 3. Run the Ansible playbook:
 ```bash
 ansible-playbook install_soc4kafka_collector.yaml
 ```
 
-4. Verify Ansible script ran successfully, you should see the command which needs to be run to start the collector, something like:
+4. After the playbook runs, look for a command to start the collector, such as:
 ```bash
 ./<otelcol_binary_file_name> --config values.yaml
 ```
@@ -41,9 +41,9 @@ ansible-playbook install_soc4kafka_collector.yaml
 5. Run the above command to start the collector.
 
 Once the collector is running, you should start seeing logs in your Splunk instance. 
-Now you are ready to explore more advanced configurations and features of SOC4Kafka!
+Continue with the advanced configuration topics to learn about more SOC4Kafka features.
 
-### Variables Description
+### Variables description
 
 | Variable              | Type    | Description                                                                                     | Allowed Values       | Default                  | Example                                                |
 |-----------------------|---------|-------------------------------------------------------------------------------------------------|----------------------|--------------------------|--------------------------------------------------------|

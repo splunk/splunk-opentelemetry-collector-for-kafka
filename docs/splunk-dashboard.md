@@ -1,78 +1,78 @@
-# SOC4Kafka Health Dashboard
+# SOC4Kafka health dashboard
 
-The SOC4Kafka dashboard is a preconfigured Splunk dashboard that allows users to monitor key metrics in their Kafka environment. It collects data from all three sources to provide a comprehensive overview of the performance and health of the environment.
+Use the SOC4Kafka dashboard to monitor Kafka metrics. It combines data from three sources to show the environment’s performance and health.
 
 ## Overview
 
 The dashboard consists of seven tabs, each dedicated to monitoring key aspects of the system. Each tab includes its own graphs, gauges, and inputs for selecting appropriate data. Additionally, there are three common input buttons for all tabs:
 
-- **Time Range**: Used to set the date-time range for the metrics. Note that some gauges always display the latest information, such as the Active Collectors Gauge.
-- **Log Indexes**: Used to select the indexes you are interested in. Note that for all dashboard features to work, you need to select both indexes used for collecting events and metrics.
-- **Time Span**: All data will be aggregated using an appropriate function within this span, also known as the resolution of time-based graphs.
+- **Time Range**: Select the date and time range for the metrics. Some gauges, such as Active Collectors, always show the latest information.
+- **Log Indexes**: Select both the event and metrics indexes to display all dashboard features.
+- **Time Span**: Choose the interval for aggregating data in time-based graphs.
 
-![global-inputs.png](images/dashboard/global-inputs.png)
+![Dashboard filters for time range, log indexes, and time span](images/dashboard/global-inputs.png)
 
 ### General
 
-The **General** tab shows all the most important information regarding SOC4Kafka health. A table with information about active instances of collectors and a gauge representing the number of active Kafka brokers is presented. Note that the Active Collector gauge always displays information from the last 5 minutes.
+The **General** tab shows SOC4Kafka health, including a table of active collector instances and a gauge for active Kafka brokers. The Active Collectors gauge shows data from the last 5 minutes.
 
-![global-tab-active-instances.png](images/dashboard/global-tab-active-instances.png)
+![General dashboard tab showing active collector instances and Kafka brokers](images/dashboard/global-tab-active-instances.png)
 
-Further, a graph of received and exported messages for each instance is presented. These graphs aggregate values across all receivers/exporters on a given instance. Below this section, you can select an instance you are interested in to see a more detailed view.
+Graphs show the number of messages received and exported by each instance. They aggregate values across the instance’s receivers and exporters. Select an instance to view more detail.
 
-![global-tab-receiver-exporter.png](images/dashboard/global-tab-receiver-exporter.png)
-![global-tab-receiver-exporter-per-instance.png](images/dashboard/global-tab-receiver-exporter-per-instance.png)
+![Messages received and exported by each collector instance](images/dashboard/global-tab-receiver-exporter.png)
+![Receiver and exporter metrics for a selected collector instance](images/dashboard/global-tab-receiver-exporter-per-instance.png)
 
-Lastly, information about the exporter queue is displayed.
+The tab also shows information about the exporter queue.
 
-![global-tab-queue.png](images/dashboard/global-tab-queue.png)
+![Exporter queue metrics in the General dashboard tab](images/dashboard/global-tab-queue.png)
 
 ### Kafka
 
-This tab represents all the data directly related to the Kafka instance, such as the list of topics, the number of topics and replicas for each topic, and the list of consumer groups. Charts representing Kafka offset and lag are also presented.
+The **Kafka** tab shows topics, topic replicas, consumer groups, Kafka offsets, and consumer lag.
 
-![kafka-tab.png](images/dashboard/kafka-tab.png)
+![Kafka dashboard tab showing topic and consumer group metrics](images/dashboard/kafka-tab.png)
 
-Make sure that for the last two charts, the appropriate topic is selected for each consumer group; otherwise, the graph will show no results.
+For the last two charts, select the appropriate topic for each consumer group. Otherwise, the charts show no results.
 
-### CPU, Memory, Disk, Network
+### CPU, memory, disk, network
 
 The next four tabs present data associated with the system metrics of machines running SOC4Kafka instances.
 
-The first one, **CPU**, includes: the number of CPU logical cores, process CPU utilization, and system CPU utilization. Please note that you can choose which types of tasks should be included in data statistics. The default is system and CPU mode, but if you are interested in other tasks, you can select them here.
+The **CPU** tab shows the number of logical CPU cores, process CPU utilization, and system CPU utilization. You can choose which task types to include in the statistics. By default, the dashboard includes system and CPU modes.
 
-![cpu-tab.png](images/dashboard/cpu-tab.png)
-![cpu-tab.png](images/dashboard/cpu-tab-2.png)
+![CPU metrics in the SOC4Kafka dashboard](images/dashboard/cpu-tab.png)
+![Additional CPU metrics in the SOC4Kafka dashboard](images/dashboard/cpu-tab-2.png)
 
-The **Memory** tab includes data like: system memory utilization, total available memory, system, and memory usage. Similar to the CPU tab, you can choose different memory metrics to be included in the graphs.
+The **Memory** tab shows system memory utilization, total available memory, and system and memory usage. You can choose which memory metrics to include in the graphs.
 
-![memory-tab.png](images/dashboard/memory-tab.png)
+![Memory metrics in the SOC4Kafka dashboard](images/dashboard/memory-tab.png)
 
-The **Disk** tab presents information about disk usage. Please note that the filesystem utilization gauge represents the usage of space of a selected filesystem. The filesystem can be selected in the dropdown on the left.
+The **Disk** tab shows disk usage. The filesystem utilization gauge shows the selected filesystem’s space usage. Select a filesystem from the drop-down list.
 
-![disk-tab.png](images/dashboard/disk-tab.png)
+![Disk usage metrics in the SOC4Kafka dashboard](images/dashboard/disk-tab.png)
 
-Lastly, **Network** shows information about network traffic.
+The **Network** tab shows network traffic.
 
-![network-tab.png](images/dashboard/network-tab.png)
+![Network metrics in the SOC4Kafka dashboard](images/dashboard/network-tab.png)
 
 ### Events
 
-The **Events** tab collects data associated with events received by the Splunk instance. Using dropdowns on the left, you can filter events by hostname, source, and sourcetype. You can also see the distribution of these values among indexed events. Please note that in environments with large data ingress, collecting metrics for this tab may take more time than for others.
+The **Events** tab collects data associated with events received by the Splunk instance. Use the drop-down lists to filter events by hostname, source, and sourcetype and view the distribution of those values among indexed events. In environments with high data ingress, this tab might take longer to load.
 
-![events-tab.png](images/dashboard/events-tab.png)
+![Events dashboard tab with filters for hostname, source, and sourcetype](images/dashboard/events-tab.png)
 
-## Install the Dashboard
+## Install the dashboard
 
 ### Configuration for SOC4Kafka
 
-To provide you with all the most important data, we are using three distinct sources of telemetry data:
+The dashboard uses three telemetry data sources:
 
 1. **hostmetrics** receiver [documentation](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/hostmetricsreceiver)
 2. **kafkametrics** receiver [documentation](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/kafkametricsreceiver)
-3. **Internal Telemetry** of Open Telemetry Collector [documentation](https://opentelemetry.io/docs/collector/internal-telemetry/#lists-of-internal-metrics)
+3. **Internal Telemetry** of OpenTelemetry Collector [documentation](https://opentelemetry.io/docs/collector/internal-telemetry/#lists-of-internal-metrics)
 
-All of these must be configured to ensure the correct functioning of the dashboard.
+Configure all three sources for the dashboard to display its data.
 
 1. Configure receivers:
 
@@ -159,9 +159,9 @@ exporters:
         min_size: 1000
 ```
 
-Make sure you've created a metric type index:
+Create a metrics-type index:
 
-![metric-index.png](images/dashboard/metric-index.png)
+![Splunk metric index configuration](images/dashboard/metric-index.png)
 
 4. Create **telemetry** service
 ```yaml
@@ -190,7 +190,7 @@ service:
 
    Configure other receivers & exporters as normal.
 
-### Create Dashboard in Splunk
+### Create dashboard in Splunk
 
 !!! note
 
@@ -198,6 +198,6 @@ service:
 
 1. In Splunk, open **Search & Reporting -> Dashboards**
 2. Click on **Create New Dashboard** and create a new dashboard. Make sure to choose **Dashboard Studio** and **Grid** options.
-3. In the edit view, go to the **source code editor** and replace the initial configuration with this [JSON file](../dashboards/SOC4Kafka-health-dashboard.json)
+3. In the edit view, go to the **source code editor** and replace the initial configuration with this [JSON file](../../dashboards/SOC4Kafka-health-dashboard.json)
 
 4. Save your changes

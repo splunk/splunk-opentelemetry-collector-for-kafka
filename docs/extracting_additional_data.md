@@ -2,7 +2,7 @@
 
 ### Headers
 
-SOC4Kafka collector supports extracting data from headers.
+The SOC4Kafka collector supports extracting data from headers.
 
 #### Example configuration
 
@@ -49,8 +49,8 @@ service:
 ```
 
 In the configuration above, the Kafka receiver includes a list of header names to extract. The extracted headers will be added to the log attributes in the following format: `kafka.header.<header_name>: <header_value>`
-Moreover, the Splunk HEC exporter allows configuring attribute keys that can modify the metadata of the log. In the example above, the following attributes: `kafka.header.index`, `kafka.header.host`, `kafka.header.source` and `kafka.header.sourcetype` will not be added to the log as separate fields. Instead, they will update the `index`, `host`, `source` and `sourcetype` attributes of the event sent to Splunk.
-Using headers configuration like the one shown above, we can ingest the following message into Splunk, with `kafka.header.myHeader1` and `kafka.header.myHeader2` attached to the log attributes. The `host`, `source`, `sourcetype` and index are set using corresponding headers. 
+Configure the Splunk HTTP Event Collector (HEC) exporter to map attribute keys to event metadata. In the example above, the following attributes: `kafka.header.index`, `kafka.header.host`, `kafka.header.source` and `kafka.header.sourcetype` will not be added to the log as separate fields. Instead, they will update the `index`, `host`, `source` and `sourcetype` attributes of the event sent to Splunk.
+With this header configuration, the collector sends the message to Splunk with `kafka.header.myHeader1` and `kafka.header.myHeader2` as log attributes. The `host`, `source`, `sourcetype` and index are set using corresponding headers. 
 
 #### How it looks in Splunk
 
@@ -62,7 +62,7 @@ To extract the timestamp from a log message, we can use a transform processor.
 
 ![SOC4Kafka timestamp extraction](images/kafka-timestamp-extraction.png)
 
-The full documentation for the processor can be found at [this link](https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/processor/transformprocessor/README.md). However, we only need a subset of its functionalities. Below is the minimal configuration required for timestamp extraction using the transform processor:
+See the [Transform Processor documentation](https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/processor/transformprocessor/README.md) for details. The following example shows the minimum configuration for extracting timestamps:
 
 ```yaml
 transform:
