@@ -1,10 +1,10 @@
 # Collector for Kafka documentation IA draft
 
-Flat working directory for content mapping. These files are placeholders; source content has not been moved. The hierarchy below is the current proposed page tree. Subdirectories and links can be added after the IA is settled.
+Working outline and source-to-target map for the IA refactor. Content has been moved into the pages listed below; copyediting and technical review remain. The hierarchy below is the current page tree.
 
 `[provisional]` means confirm the topic and scope with engineering before treating the page as committed structure.
 
-- `collector-for-kafka-intro.md` — landing page; include the feature summary for now
+- `docs/index.md` — landing page (logical topic: `collector-for-kafka-intro`)
   - `collector-for-kafka-design.md`
 - `collector-for-kafka-deploy.md` — choose a deployment method
   - `collector-for-kafka-kubernetes.md`
@@ -51,9 +51,13 @@ Flat working directory for content mapping. These files are placeholders; source
 
 Status records content transfer only. Local Markdown links resolve; copyediting and technical review remain.
 
+## Markdown-to-DITA filename exception
+
+The landing page is stored at `docs/index.md` so Zensical serves it at the site root. Its logical topic name remains `collector-for-kafka-intro`; use `collector-for-kafka-intro.dita` for the DITA topic filename when converting the Markdown set. Other pages can keep matching Markdown and DITA basenames.
+
 | Source file or section | Target page(s) | Action | Status |
 | --- | --- | --- | --- |
-| `docs/index.md` — overview, requirements, platforms, features, migration and monitoring links | `collector-for-kafka-intro.md` | Merge and split | Moved |
+| Original `docs/index.md` — overview, requirements, platforms, features, migration and monitoring links | `docs/index.md` (landing page; logical topic `collector-for-kafka-intro`) | Merge and split | Moved; stored at root for Zensical; DITA filename exception recorded above |
 | `docs/otel_design.md` | `collector-for-kafka-design.md` | Move | Moved |
 | `docs/getting_started.md` — deployment choices, manual-install introduction, package download/run, minimal config and table | `collector-for-kafka-deploy.md`, `collector-for-kafka-manual-install.md`, `collector-for-kafka-configure.md` | Split | Moved |
 | `docs/quickstart_guide.md` — Ansible quickstart and variables | `collector-for-kafka-ansible-install.md` | Move | Moved; other Ansible pages remain provisional |

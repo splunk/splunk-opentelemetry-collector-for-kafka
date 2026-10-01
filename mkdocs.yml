@@ -41,27 +41,49 @@ theme:
     accent: "orange"
 
 nav:
-  - Home: "index.md"
-  - Design: "otel_design.md"
-  - How to run:
-      - Overview: "getting_started.md"
+  - Collector for Kafka: "index.md"
+  - Design: "ia-refactor/collector-for-kafka-design.md"
+  - Deploy:
+      - Overview: "ia-refactor/collector-for-kafka-deploy.md"
       - Kubernetes:
-          - Installation: "helm/installation.md"
-          - Configuration: "helm/configuration.md"
-          - Secrets: "helm/secrets.md"
-          - TLS: "helm/tls.md"
-          - Examples: "helm/examples.md"
-          - Troubleshooting: "helm/troubleshooting.md"
-      - Ansible: "quickstart_guide.md"
-      - OCI Streaming: "oci_installation.md"
-  - Advanced Configuration:
-      - Multiple topics: "multiple_topics.md"
-      - Regex topics: "regex_topics.md"
-      - Extracting additional data: "extracting_additional_data.md"
-  - Scaling: "scaling.md"
-  - Load Balancing: "loadbalancing.md"
-  - Migration from SC4Kafka:
-      - Overview: "migration.md"
-      - Config value mapping: "migration_config_values.md"
-  - Splunk Dashboard: "splunk-dashboard.md"
-  - Collecting SOC4Kafka's own logs: "collecting_own_logs.md"
+          - Overview: "ia-refactor/collector-for-kafka-kubernetes.md"
+          - Install with Helm: "ia-refactor/collector-for-kafka-kubernetes-install-helm.md"
+          - Configure the Helm chart: "ia-refactor/collector-for-kafka-kubernetes-configure-helm.md"
+          - Troubleshoot the Helm deployment: "ia-refactor/collector-for-kafka-kubernetes-troubleshoot-helm.md"
+          - Upgrade with Helm: "ia-refactor/collector-for-kafka-kubernetes-upgrade-helm.md"
+          - Uninstall with Helm: "ia-refactor/collector-for-kafka-kubernetes-uninstall-helm.md"
+      - Ansible:
+          - Overview: "ia-refactor/collector-for-kafka-ansible.md"
+          - Install: "ia-refactor/collector-for-kafka-ansible-install.md"
+          - Configure: "ia-refactor/collector-for-kafka-ansible-configure.md"
+          - Troubleshoot: "ia-refactor/collector-for-kafka-ansible-troubleshoot.md"
+          - Upgrade: "ia-refactor/collector-for-kafka-ansible-upgrade.md"
+          - Uninstall: "ia-refactor/collector-for-kafka-ansible-uninstall.md"
+      - Manual:
+          - Overview: "ia-refactor/collector-for-kafka-manual.md"
+          - Install: "ia-refactor/collector-for-kafka-manual-install.md"
+      - OCI Streaming: "ia-refactor/collector-for-kafka-oci-streaming.md"
+  - Configure:
+      - Overview: "ia-refactor/collector-for-kafka-configure.md"
+      - Secrets: "ia-refactor/collector-for-kafka-configure-secrets.md"
+      - TLS: "ia-refactor/collector-for-kafka-configure-tls.md"
+      - Examples: "ia-refactor/collector-for-kafka-configure-examples.md"
+      - Advanced configuration:
+          - Overview: "ia-refactor/collector-for-kafka-configure-advanced.md"
+          - Multiple topics: "ia-refactor/collector-for-kafka-configure-multiple-topics.md"
+          - Regex topics: "ia-refactor/collector-for-kafka-configure-regex-topics.md"
+          - Extract data: "ia-refactor/collector-for-kafka-configure-extract-data.md"
+  - Operate:
+      - Overview: "ia-refactor/collector-for-kafka-operate.md"
+      - Scale: "ia-refactor/collector-for-kafka-scale.md"
+      - Load balancing: "ia-refactor/collector-for-kafka-load-balance.md"
+      - Troubleshooting: "ia-refactor/collector-for-kafka-troubleshoot.md"
+  - Monitor:
+      - Overview: "ia-refactor/collector-for-kafka-monitor.md"
+      - Dashboard: "ia-refactor/collector-for-kafka-dashboard.md"
+      - Collector logs: "ia-refactor/collector-for-kafka-collector-logs.md"
+  - Migrate from Splunk Connect for Kafka:
+      - Overview: "ia-refactor/collector-for-kafka-migrate-from-sc4kafka.md"
+      - Configuration mapping: "ia-refactor/collector-for-kafka-migrate-config.md"
+      - Examples: "ia-refactor/collector-for-kafka-migrate-examples.md"
+      - Strategy: "ia-refactor/collector-for-kafka-migrate-strategy.md"
