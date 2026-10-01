@@ -267,3 +267,45 @@ echo "Starting OpenTelemetry Collector with timestamp: $TIMESTAMP"
 ./<otel_package> --config values_timestamp.yaml
 ```
 After running the above script, you should see log files with timestamps in their names, such as `otel-collector-20231005_143200.log` and `otel-collector-errors-20231005_143200.log`, making it easier to identify when each log file was created.
+
+# Enable Collector logs with Helm
+
+### Enable Collector logs in the Helm chart
+
+Enable collection of the OpenTelemetry Collector's own logs. When enabled, logs are written to files in `/var/log/otelcol` (using an emptyDir volume) and also to stdout/stderr for Kubernetes log aggregation.
+
+By default, when `collectorLogs.enabled` is `true`, the chart also forwards these logs to Splunk using a `filelog` receiver. This allows you to centrally monitor collector logs from multiple instances.
+
+```yaml
+collectorLogs:
+  enabled: true
+  level: info  # Options: debug, info, warn, error
+  outputPaths:
+    - /var/log/otelcol/otel-collector.log
+    - stdout
+  errorOutputPaths:
+    - /var/log/otelcol/otel-collector-errors.log
+    - stderr
+  # Forward collector logs to Splunk (enabled by default when collectorLogs.enabled is true)
+  forwardToSplunk:
+    enabled: true
+    # Reference to an existing splunkExporter by name (uses it directly, no overrides)
+    # If not specified, uses the first splunkExporter
+    exporter: ""  # Optional: name of splunkExporter to use (e.g., "primary")
+  # File storage extension for checkpointing (prevents re-reading logs on restart)
+  fileStorage:
+    directory: /var/log/otelcol/checkpoint
+    createDirectory: true
+```
+
+**Features:**
+
+- Logs are written to files and stdout/stderr
+- Logs are automatically forwarded to Splunk via `filelog` receiver
+- `file_storage` extension tracks read position to prevent re-reading logs on restart
+- Internal logs are sent using the referenced Splunk exporter (by default the first one); you can use a dedicated exporter to send them to a separate index for easier analysis
+- Uses the first `splunkExporter`'s endpoint and secret by default (can be overridden)
+
+!!! note
+
+    Log files are stored in an `emptyDir` volume, which means they are ephemeral and will be lost when the pod is deleted. However, logs are forwarded to Splunk, so they are preserved there.

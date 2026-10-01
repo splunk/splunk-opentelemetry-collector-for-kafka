@@ -1,4 +1,4 @@
-## Quickstart Guide
+# Install the Collector for Kafka with Ansible
 
 This guide shows you how to install SOC4Kafka with Ansible.
 

@@ -123,5 +123,5 @@ You may set `insecure_skip_verify: true` for self-signed or internal brokers. Do
 
 ## See also
 
-- [Configuration](configuration-updated.md) – Core configuration options
-- [Secret management](secrets-updated.md) – Managing tokens and passwords securely
+- [Configuration](collector-for-kafka-kubernetes-configure-helm.md) – Core configuration options
+- [Secret management](collector-for-kafka-configure-secrets.md) – Managing tokens and passwords securely

@@ -10,28 +10,28 @@ The dashboard consists of seven tabs, each dedicated to monitoring key aspects o
 - **Log Indexes**: Select both the event and metrics indexes to display all dashboard features.
 - **Time Span**: Choose the interval for aggregating data in time-based graphs.
 
-![Dashboard filters for time range, log indexes, and time span](images/dashboard/global-inputs.png)
+![Dashboard filters for time range, log indexes, and time span](../images/dashboard/global-inputs.png)
 
 ### General
 
 The **General** tab shows SOC4Kafka health, including a table of active collector instances and a gauge for active Kafka brokers. The Active Collectors gauge shows data from the last 5 minutes.
 
-![General dashboard tab showing active collector instances and Kafka brokers](images/dashboard/global-tab-active-instances.png)
+![General dashboard tab showing active collector instances and Kafka brokers](../images/dashboard/global-tab-active-instances.png)
 
 Graphs show the number of messages received and exported by each instance. They aggregate values across the instance’s receivers and exporters. Select an instance to view more detail.
 
-![Messages received and exported by each collector instance](images/dashboard/global-tab-receiver-exporter.png)
-![Receiver and exporter metrics for a selected collector instance](images/dashboard/global-tab-receiver-exporter-per-instance.png)
+![Messages received and exported by each collector instance](../images/dashboard/global-tab-receiver-exporter.png)
+![Receiver and exporter metrics for a selected collector instance](../images/dashboard/global-tab-receiver-exporter-per-instance.png)
 
 The tab also shows information about the exporter queue.
 
-![Exporter queue metrics in the General dashboard tab](images/dashboard/global-tab-queue.png)
+![Exporter queue metrics in the General dashboard tab](../images/dashboard/global-tab-queue.png)
 
 ### Kafka
 
 The **Kafka** tab shows topics, topic replicas, consumer groups, Kafka offsets, and consumer lag.
 
-![Kafka dashboard tab showing topic and consumer group metrics](images/dashboard/kafka-tab.png)
+![Kafka dashboard tab showing topic and consumer group metrics](../images/dashboard/kafka-tab.png)
 
 For the last two charts, select the appropriate topic for each consumer group. Otherwise, the charts show no results.
 
@@ -41,26 +41,26 @@ The next four tabs present data associated with the system metrics of machines r
 
 The **CPU** tab shows the number of logical CPU cores, process CPU utilization, and system CPU utilization. You can choose which task types to include in the statistics. By default, the dashboard includes system and CPU modes.
 
-![CPU metrics in the SOC4Kafka dashboard](images/dashboard/cpu-tab.png)
-![Additional CPU metrics in the SOC4Kafka dashboard](images/dashboard/cpu-tab-2.png)
+![CPU metrics in the SOC4Kafka dashboard](../images/dashboard/cpu-tab.png)
+![Additional CPU metrics in the SOC4Kafka dashboard](../images/dashboard/cpu-tab-2.png)
 
 The **Memory** tab shows system memory utilization, total available memory, and system and memory usage. You can choose which memory metrics to include in the graphs.
 
-![Memory metrics in the SOC4Kafka dashboard](images/dashboard/memory-tab.png)
+![Memory metrics in the SOC4Kafka dashboard](../images/dashboard/memory-tab.png)
 
 The **Disk** tab shows disk usage. The filesystem utilization gauge shows the selected filesystem’s space usage. Select a filesystem from the drop-down list.
 
-![Disk usage metrics in the SOC4Kafka dashboard](images/dashboard/disk-tab.png)
+![Disk usage metrics in the SOC4Kafka dashboard](../images/dashboard/disk-tab.png)
 
 The **Network** tab shows network traffic.
 
-![Network metrics in the SOC4Kafka dashboard](images/dashboard/network-tab.png)
+![Network metrics in the SOC4Kafka dashboard](../images/dashboard/network-tab.png)
 
 ### Events
 
 The **Events** tab collects data associated with events received by the Splunk instance. Use the drop-down lists to filter events by hostname, source, and sourcetype and view the distribution of those values among indexed events. In environments with high data ingress, this tab might take longer to load.
 
-![Events dashboard tab with filters for hostname, source, and sourcetype](images/dashboard/events-tab.png)
+![Events dashboard tab with filters for hostname, source, and sourcetype](../images/dashboard/events-tab.png)
 
 ## Install the dashboard
 
@@ -161,7 +161,7 @@ exporters:
 
 Create a metrics-type index:
 
-![Splunk metric index configuration](images/dashboard/metric-index.png)
+![Splunk metric index configuration](../images/dashboard/metric-index.png)
 
 4. Create **telemetry** service
 ```yaml

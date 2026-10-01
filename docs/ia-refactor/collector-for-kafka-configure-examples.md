@@ -136,7 +136,7 @@ pipelines:
       - primary
 ```
 
-See [TLS configuration](tls-updated.md) for all options and security recommendations.
+See [TLS configuration](collector-for-kafka-configure-tls.md) for all options and security recommendations.
 
 ## Authenticated Kafka with secret management
 

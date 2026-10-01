@@ -54,13 +54,13 @@ With this header configuration, the collector sends the message to Splunk with `
 
 #### How it looks in Splunk
 
-![SOC4Kafka headers extraction](images/kafka-header-extraction.png)
+![SOC4Kafka headers extraction](../images/kafka-header-extraction.png)
 
 ### Timestamps
 
 To extract the timestamp from a log message, we can use a transform processor. 
 
-![SOC4Kafka timestamp extraction](images/kafka-timestamp-extraction.png)
+![SOC4Kafka timestamp extraction](../images/kafka-timestamp-extraction.png)
 
 See the [Transform Processor documentation](https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/processor/transformprocessor/README.md) for details. The following example shows the minimum configuration for extracting timestamps:
 

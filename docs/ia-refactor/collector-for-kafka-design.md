@@ -1,4 +1,4 @@
-## Design
+# Design
 
 SOC4Kafka uses the OpenTelemetry Collector framework and includes three pipeline component types:
 
@@ -6,7 +6,7 @@ SOC4Kafka uses the OpenTelemetry Collector framework and includes three pipeline
 - Processors
 - Exporters
 
-![SOC4Kafka scheme](images/kafka-otel-scheme.png)
+![SOC4Kafka scheme](../images/kafka-otel-scheme.png)
 
 ### Receivers
 
@@ -19,4 +19,3 @@ Processors are optional pipeline components that transform data before export. D
 ### Exporters
 
 Use the Splunk HEC exporter to send data to a Splunk index. See the [Splunk HEC exporter documentation](https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/exporter/splunkhecexporter/README.md) for configuration details.
-

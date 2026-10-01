@@ -1,8 +1,8 @@
 ## Collecting events from multiple topics
 
-Start with the [Create a minimal config template](getting_started-updated.md#create-a-minimal-config-template). Add a Kafka receiver for each topic you want to monitor. You can connect all receivers to one exporter or configure a separate exporter for each receiver.
+Start with the [Create a minimal config template](collector-for-kafka-configure.md#create-a-minimal-config-template). Add a Kafka receiver for each topic you want to monitor. You can connect all receivers to one exporter or configure a separate exporter for each receiver.
 
-![SOC4Kafka multiple topics](images/kafka-multiple-topics.png)
+![SOC4Kafka multiple topics](../images/kafka-multiple-topics.png)
 
 ### Example config
 

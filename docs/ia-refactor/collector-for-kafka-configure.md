@@ -1,26 +1,4 @@
-## Get started with SOC4Kafka
-
-Choose an installation method that fits your environment:
-
-- [Install the Collector for Kubernetes using Helm](helm/installation-updated.md)
-- [Install the Collector for Linux using Ansible](ansible/quickstart_guide-updated.md)
-- [Install the Collector manually](tbd.md)
-
-
-
-
-**Manual:** Follow the steps below to run the collector from a downloaded package and config file. For a full command-by-command walkthrough against a real source, see the [SOC4Kafka Installation Guide - OCI Streaming to Splunk](oci_installation-updated.md) guide.
-
-### Download the Splunk OTel Collector package
-
-SOC4Kafka uses the Splunk OpenTelemetry Collector package. Choose an installation method that suits your environment.
-Download the package for your platform from the [Splunk OpenTelemetry Collector releases](https://github.com/signalfx/splunk-otel-collector/releases). Release numbers start with `v`.
-
-For example, on Linux with an AMD64 architecture, run the following `wget` command:
-
-```commandline
-wget https://github.com/signalfx/splunk-otel-collector/releases/download/v0.158.0/otelcol_linux_amd64
-```
+# Configure the Collector for Kafka
 
 ### Create a minimal config template
 
@@ -66,7 +44,7 @@ service:
       exporters: [splunk_hec]
 ```
 
-#### Configuration table
+## Configuration table
 
 This is a minimal configuration. To customize it, see the component documentation linked in the table.
 
@@ -91,7 +69,7 @@ This is a minimal configuration. To customize it, see the component documentatio
 |                |                                                                                                                                       | `pipelines.logs.processors` | Specifies the processor(s) for the log pipeline.                                           | No           | `[]` (empty)      |
 |                |                                                                                                                                       | `pipelines.logs.exporters`  | Specifies the exporter(s) for the log pipeline.                                            | Yes          | N/A               |
 
-#### Example configuration
+## Example configuration
 
 ```yaml
 receivers:
@@ -137,27 +115,4 @@ service:
 
 Fill the file with your data and save it with a `.yaml` extension. For example `config.yaml`.
 
-### Run the Splunk OTel Collector package with a config file
-
-To run SOC4Kafka, use the base package along with a completed configuration template.
-
-```commandline
-./<otel_package> --config <config_file>
-```
-
-!!! note
-
-    Make sure the file has executable permissions before running the command. On Linux-based systems you can add executable permissions using the following command:
-
-```commandline
-chmod a+x <otel_package>
-```
-
-**Example**: For Linux on AMD64 architecture:
-
-```commandline
-chmod a+x otelcol_linux_amd64
-./otelcol_linux_amd64 --config config.yaml
-```
-
-To understand the collector's pipeline design, refer to the [Design](otel_design-updated.md) guide.
+For component roles and pipeline design, see [Collector design](collector-for-kafka-design.md). For deployment-specific chart values, see [Configure the Helm chart](collector-for-kafka-kubernetes-configure-helm.md).

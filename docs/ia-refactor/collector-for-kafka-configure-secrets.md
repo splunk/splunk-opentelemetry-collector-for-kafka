@@ -68,4 +68,3 @@ kubectl create secret generic kafka-auth-secret \
 - All secrets are automatically mounted as environment variables and referenced in the OpenTelemetry configuration
 - Splunk HEC token secrets use key `splunk-hec-token`
 - Kafka authentication secrets use key `password`
-

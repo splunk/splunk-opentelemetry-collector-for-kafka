@@ -1,61 +1,4 @@
-# Installation Guide
-
-## Quick start
-
-1. Create a `values.yaml` file with your configuration:
-
-```yaml
-kafkaReceivers:
-  - name: main
-    brokers:
-      - "kafka-broker:9092"
-    logs:
-      topics:
-        - "application-logs"
-      encoding: text
-    group_id: "soc4kafka-main"
-
-splunkExporters:
-  - name: primary
-    endpoint: "https://splunk-hec:8088/services/collector"
-    token: "your-splunk-hec-token"
-    source: "soc4kafka"
-    sourcetype: "otel:logs"
-    index: "main"
-    sending_queue:
-      enabled: true
-      num_consumers: 10
-      queue_size: 10000
-      block_on_overflow: true
-      sizer: items
-      batch:
-        min_size: 1000
-
-pipelines:
-  - name: main-logs
-    type: logs
-    receivers:
-      - main
-    exporters:
-      - primary
-    # processors optional; defaults to ["resourcedetection"] (defaults.pipelineProcessors in values.yaml)
-```
-
-2. Add helm repository:
-
-```bash
-helm repo add splunk-opentelemetry-collector-for-kafka https://splunk.github.io/splunk-opentelemetry-collector-for-kafka
-```
-
-3. Install the chart:
-
-```bash
-helm upgrade --install soc4kafka splunk-opentelemetry-collector-for-kafka/splunk-opentelemetry-collector-for-kafka -f values.yaml
-```
-
-!!! note
-
-    For information about managing secrets (auto-created or existing Kubernetes secrets), see [Secret management](secrets-updated.md).
+# Upgrade the Collector for Kafka Helm release
 
 ## Upgrading
 
@@ -79,13 +22,3 @@ By default, the chart uses a **rolling update** strategy (`maxSurge: 25%`, `maxU
     When you change collector configuration (for example, index, pipeline, or Splunk HTTP Event Collector (HEC) settings) and run `helm upgrade`, only a subset of pods receive the new config at a time. Until the rollout finishes, some pods still run with the old config. As a result, events from different Kafka partitions can be indexed or processed differently during the rollout (e.g. different index or sourcetype). With 25%, fewer partitions are affected in each wave. After all pods are updated, behaviour is consistent again.
 
 If you need strictly sequential or consistent indexing during config changes, you can set `strategy.type: Recreate` in your values. That restarts all pods at once; expect a short period with no ingestion until the new pods are ready.
-
-## Uninstallation
-
-```bash
-helm uninstall soc4kafka
-```
-
-!!! note
-
-    This will delete the deployment, but secrets created outside the chart will remain. Auto-created secrets will be deleted.
