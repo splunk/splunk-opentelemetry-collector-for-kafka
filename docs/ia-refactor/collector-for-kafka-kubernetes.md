@@ -1,3 +1,3 @@
 # Deploy the Collector for Kafka on Kubernetes
 
-Use Helm to install and manage the Collector. See [Install](collector-for-kafka-kubernetes-install-helm.md), [configure the Helm chart](collector-for-kafka-kubernetes-configure-helm.md), [troubleshoot](collector-for-kafka-kubernetes-troubleshoot-helm.md), [upgrade](collector-for-kafka-kubernetes-upgrade-helm.md), or [uninstall](collector-for-kafka-kubernetes-uninstall-helm.md) the chart.
+Use Helm to install and manage the Collector for Kafka on Kubernetes. See [Install the Collector for Kafka with Helm](collector-for-kafka-kubernetes-install-helm.md), [Configure the Helm chart](collector-for-kafka-kubernetes-configure-helm.md), [Troubleshoot the Helm deployment](collector-for-kafka-kubernetes-troubleshoot-helm.md), [Upgrade the Helm release](collector-for-kafka-kubernetes-upgrade-helm.md), or [Uninstall the Helm release](collector-for-kafka-kubernetes-uninstall-helm.md).

@@ -1,10 +1,10 @@
-# Secret management
+# Manage secrets for the Helm chart
 
-The chart supports secrets for Splunk HTTP Event Collector (HEC) tokens and Kafka authentication passwords. Secrets can be auto-created or referenced from existing Kubernetes secrets.
+The chart supports secrets for Splunk HTTP Event Collector (HEC) tokens and Kafka authentication passwords. You can have the chart create a Secret or reference an existing Kubernetes Secret.
 
 ## Splunk HEC tokens
 
-### Auto-created secrets
+### Secrets created by the chart
 
 If you provide a `token` value, the chart automatically creates a Kubernetes Secret:
 
@@ -14,11 +14,11 @@ splunkExporters:
     token: "your-splunk-hec-token"  # Secret will be auto-created
 ```
 
-The secret will be named `{release-name}-hec-{exporter-name}` with key `splunk-hec-token`.
+The chart names the Secret `{release-name}-hec-{exporter-name}` and uses the `splunk-hec-token` key.
 
-### Referenced secrets
+### Reference existing Secrets
 
-Reference an existing Kubernetes secret:
+Reference an existing Kubernetes Secret:
 
 ```yaml
 splunkExporters:
@@ -28,7 +28,7 @@ splunkExporters:
 
 ## Kafka authentication passwords
 
-Kafka authentication passwords (plain_text, SASL, or Kerberos) must reference existing Kubernetes secrets:
+For Kafka authentication with `plain_text`, SASL, or Kerberos, reference an existing Kubernetes Secret:
 
 ```yaml
 kafkaReceivers:
@@ -63,8 +63,8 @@ kubectl create secret generic kafka-auth-secret \
   --from-literal=password=YOUR_KAFKA_TOKEN
 ```
 
-## Important notes
+## Secret requirements
 
-- All secrets are automatically mounted as environment variables and referenced in the OpenTelemetry configuration
-- Splunk HEC token secrets use key `splunk-hec-token`
-- Kafka authentication secrets use key `password`
+- The chart mounts all secrets as environment variables and references them in the OpenTelemetry configuration.
+- Use the `splunk-hec-token` key for Splunk HEC token Secrets.
+- Use the `password` key for Kafka authentication Secrets.

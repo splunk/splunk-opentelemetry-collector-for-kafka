@@ -1,10 +1,10 @@
-## Extracting additional data
+# Extract data from headers and timestamps
 
-### Headers
+## Extract data from headers
 
-The SOC4Kafka collector supports extracting data from headers.
+The Collector for Kafka can extract data from Kafka message headers.
 
-#### Example configuration
+### Example configuration
 
 ```yaml
 receivers:
@@ -48,21 +48,23 @@ service:
       exporters: [splunk_hec]
 ```
 
-In the configuration above, the Kafka receiver includes a list of header names to extract. The extracted headers will be added to the log attributes in the following format: `kafka.header.<header_name>: <header_value>`
-Configure the Splunk HTTP Event Collector (HEC) exporter to map attribute keys to event metadata. In the example above, the following attributes: `kafka.header.index`, `kafka.header.host`, `kafka.header.source` and `kafka.header.sourcetype` will not be added to the log as separate fields. Instead, they will update the `index`, `host`, `source` and `sourcetype` attributes of the event sent to Splunk.
-With this header configuration, the collector sends the message to Splunk with `kafka.header.myHeader1` and `kafka.header.myHeader2` as log attributes. The `host`, `source`, `sourcetype` and index are set using corresponding headers. 
+In this configuration, the Kafka receiver lists the headers to extract. The receiver adds each extracted header as a log attribute in the format `kafka.header.<header_name>: <header_value>`.
 
-#### How it looks in Splunk
+Configure the Splunk HTTP Event Collector (HEC) exporter to map attribute keys to event metadata. The `kafka.header.index`, `kafka.header.host`, `kafka.header.source`, and `kafka.header.sourcetype` attributes update the event's `index`, `host`, `source`, and `sourcetype` metadata. The exporter does not add these values as separate log fields.
 
-![SOC4Kafka headers extraction](../images/kafka-header-extraction.png)
+With this configuration, the collector sends `kafka.header.myHeader1` and `kafka.header.myHeader2` as log attributes. It sets the event's `host`, `source`, `sourcetype`, and `index` values from the corresponding headers.
 
-### Timestamps
+### View the extracted headers in Splunk
 
-To extract the timestamp from a log message, we can use a transform processor. 
+![Collector for Kafka headers extraction](../images/kafka-header-extraction.png)
 
-![SOC4Kafka timestamp extraction](../images/kafka-timestamp-extraction.png)
+## Extract timestamps
 
-See the [Transform Processor documentation](https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/processor/transformprocessor/README.md) for details. The following example shows the minimum configuration for extracting timestamps:
+Use a transform processor to extract a timestamp from a log message.
+
+![Example of a timestamp extracted from a Kafka message](../images/kafka-timestamp-extraction.png)
+
+For details, see the [transform processor documentation](https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/processor/transformprocessor/README.md). The following example shows the minimum configuration for extracting timestamps:
 
 ```yaml
 transform:
@@ -73,12 +75,13 @@ transform:
      - delete_key(log.attributes, "extracted_ts")
 ```
 
-The `set(log.attributes["extracted_ts"], ExtractPatterns(log.body, "<timestamp_regex>"))` statement captures the timestamp and sets a helper log attribute `"extracted_ts"`. The `<timestamp_regex>` must be a valid regex containing a named capturing group timestamp. An example of such a regex is: `\\[(?P<timestamp>[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2})\\]`.
+The `set(log.attributes["extracted_ts"], ExtractPatterns(log.body, "<timestamp_regex>"))` statement captures the timestamp and stores it in the helper log attribute `"extracted_ts"`. The `<timestamp_regex>` value must be a valid regular expression with a named capture group called `timestamp`. For example: `\\[(?P<timestamp>[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2})\\]`.
 
-The `set(log.time, Time(log.attributes["extracted_ts"]["timestamp"], "<format>", "<timezone>")` statement sets the actual timestamp of the log. It converts the extracted timestamp into the log record timestamp. The `<format>` variable specifies a strptime-style timestamp format and `<timezone>` is an optional variable that specifies a timezone name. 
+The `set(log.time, Time(log.attributes["extracted_ts"]["timestamp"], "<format>", "<timezone>")` statement sets the log record's timestamp. The `<format>` value specifies a strptime-style timestamp format. The optional `<timezone>` value specifies a time zone name.
+
 Finally, the `delete_key(log.attributes, "extracted_ts")` statement removes the helper log attribute `"extracted_ts"`.
 
-Timestamp extraction configuration: 
+The following example configures timestamp extraction:
 
 ```yaml
 receivers:

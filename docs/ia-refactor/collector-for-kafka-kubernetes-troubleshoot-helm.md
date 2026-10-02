@@ -1,4 +1,6 @@
-# Troubleshooting
+# Troubleshoot the Helm deployment
+
+Use these checks to investigate common issues with the Helm deployment.
 
 ## Check pod status
 
@@ -19,7 +21,7 @@ kubectl logs -l app.kubernetes.io/name=splunk-opentelemetry-collector-for-kafka 
 kubectl get configmap -l app.kubernetes.io/name=splunk-opentelemetry-collector-for-kafka -o yaml
 ```
 
-## Health check
+## Check collector health
 
 ```bash
 # Port forward to health endpoint
@@ -28,7 +30,7 @@ kubectl port-forward svc/<release-name>-splunk-opentelemetry-collector-for-kafka
 # Check health
 curl http://localhost:13133/
 
-# Or directly via pod:
+# Or connect directly to a pod:
 kubectl port-forward -l app.kubernetes.io/name=splunk-opentelemetry-collector-for-kafka 13133:13133
 ```
 
@@ -36,29 +38,29 @@ kubectl port-forward -l app.kubernetes.io/name=splunk-opentelemetry-collector-fo
 
 ### Pods not starting
 
-- Check if secrets exist and have correct keys
-- Verify Kafka brokers are reachable
-- Check resource limits
-- Review pod events: `kubectl describe pod <pod-name>`
+- Confirm that the Secrets exist and use the required keys.
+- Confirm that the Kafka brokers are reachable.
+- Check the resource limits.
+- Review pod events by running `kubectl describe pod <pod-name>`.
 
 ### No data in Splunk
 
-- Verify HTTP Event Collector (HEC) token is correct
-- Check Splunk HEC endpoint is accessible
-- Review collector logs for errors
-- Verify pipeline configuration matches receiver/exporter names
-- Check network connectivity from cluster to Splunk HEC endpoint
+- Confirm that the HTTP Event Collector (HEC) token is correct.
+- Confirm that the Splunk HEC endpoint is accessible.
+- Review collector logs for errors.
+- Confirm that the pipeline configuration uses the correct receiver and exporter names.
+- Check network connectivity from the cluster to the Splunk HEC endpoint.
 
 ### Authentication failures
 
-- Ensure secrets exist with key `password` for Kafka auth
-- Verify secret names match configuration
-- Check username/password are correct
-- Review Kafka broker authentication requirements
+- Confirm that the Secrets exist and include the `password` key for Kafka authentication.
+- Confirm that the Secret names match the configuration.
+- Check that the username and password are correct.
+- Review the Kafka broker authentication requirements.
 
 ### Configuration errors
 
-- Verify receiver/exporter names in pipelines match actual names
-- Check that at least one receiver, exporter, and pipeline is configured
-- Review the generated ConfigMap for syntax errors
-- Check Helm template rendering: `helm template . -f values.yaml`
+- Confirm that the receiver and exporter names in the pipelines match their configured names.
+- Confirm that the configuration includes at least one receiver, exporter, and pipeline.
+- Review the generated ConfigMap for syntax errors.
+- Render the Helm templates by running `helm template . -f values.yaml`.

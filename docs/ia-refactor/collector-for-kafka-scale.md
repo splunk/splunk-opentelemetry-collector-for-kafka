@@ -1,17 +1,17 @@
-## Scaling SOC4Kafka
+# Scale the Collector for Kafka
 
-To handle higher throughput, deploy multiple SOC4Kafka instances. Kafka supports partition-based scaling, which lets consumers in the same consumer group share the workload.
+To increase throughput, deploy multiple instances of the Collector for Kafka. Kafka distributes partitions among consumers in the same consumer group.
 
-### Steps to scale horizontally
+## Scale horizontally
 
-#### Configure Kafka partitions
+### Configure Kafka partitions
 
-1. Ensure the Kafka topics you are consuming from are partitioned appropriately.
-2. The number of partitions should match or exceed the number of collector instances to ensure even distribution.
+1. Make sure that each Kafka topic has enough partitions for the expected number of collector instances.
+2. Set the number of partitions to match or exceed the number of collector instances to distribute the workload across instances.
 
-#### Use the same consumer group
+### Use the same consumer group
 
-Configure all SOC4Kafka collectors to use the same `group_id`. Kafka ensures that each partition is consumed by only one collector instance within a consumer group.
+Configure each instance of the Collector for Kafka to use the same `group_id`. Kafka assigns each partition to one consumer in the group.
 
 ```yaml
 receivers:
@@ -48,4 +48,4 @@ service:
 ```
 
 !!! note
-    Replace `<GROUP ID>` with a name that will be shared across all SOC4Kafka instances. This ensures that all instances are part of the same consumer group.
+    Replace `<GROUP ID>` with a name shared by all instances of the Collector for Kafka. This setting puts all instances in the same consumer group.

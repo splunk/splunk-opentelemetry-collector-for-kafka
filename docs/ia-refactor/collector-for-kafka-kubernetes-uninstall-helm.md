@@ -1,6 +1,6 @@
 # Uninstall the Collector for Kafka Helm release
 
-## Uninstallation
+## Uninstall the Helm release
 
 ```bash
 helm uninstall soc4kafka
@@ -8,4 +8,4 @@ helm uninstall soc4kafka
 
 !!! note
 
-    This will delete the deployment, but secrets created outside the chart will remain. Auto-created secrets will be deleted.
+    This command deletes the deployment and any Secrets created by the chart. Secrets created outside the chart remain.

@@ -1,20 +1,20 @@
-## Load balancing
+# Load balance Splunk HEC traffic
 
-### Change in load balancing strategy for Splunk HTTP Event Collector (HEC)
+## Configure a load balancer for Splunk HEC
 
-Unlike the previous SC4Kafka connector, SOC4Kafka collector delegates the responsibility of load balancing and high availability for Splunk HEC endpoints to dedicated infrastructure components. This aligns with modern architectural best practices and provides a more scalable and resilient solution than client-side logic.
+Splunk Connect for Kafka includes client-side load balancing. The Collector for Kafka sends data to one Splunk HTTP Event Collector (HEC) endpoint. In a multi-indexer environment, configure that endpoint to use a load balancer. The load balancer manages traffic, health checks, and failover.
 
-The collector should be configured with a single HEC endpoint. In a multi-indexer environment, this endpoint must be the address of a load balancer.
+Configure the collector with one HEC endpoint. In a multi-indexer environment, set this endpoint to the address of a load balancer.
 
-### Recommended architecture
+## Place a load balancer in front of the indexers
 
-The standard architecture involves placing an external load balancer in front of your Splunk indexer pool. This centralizes traffic management, health checks, and failover logic.
+Place an external load balancer in front of the Splunk indexer pool to manage traffic, health checks, and failover.
 
-### Implementation example: using Nginx
+## Configure Nginx as a load balancer
 
-Nginx is a lightweight, high-performance, and popular choice for this role. Splunk provides [an official, step-by-step guide for this exact use case](https://dev.splunk.com/enterprise/docs/devtools/httpeventcollector/confignginxloadhttp/), which we recommend following for production deployments.
+Nginx is one option for load balancing. For production deployments, follow Splunk's [guide to configuring Nginx to load balance HTTP Event Collector traffic](https://dev.splunk.com/enterprise/docs/devtools/httpeventcollector/confignginxloadhttp/).
 
-Below is a minimal working example `nginx.conf` suitable for testing or development environments.
+The following `nginx.conf` example is for development and testing:
 ```
 events {
     worker_connections 1024;

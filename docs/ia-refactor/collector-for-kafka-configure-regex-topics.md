@@ -1,21 +1,20 @@
-## Subscribing to topics using regex
+# Subscribe to topics by using regular expressions
 
-Use a regular expression to subscribe to Kafka topics that match a pattern.
-Prefix the pattern with the `^` character to identify it as a regular expression.
+Use a regular expression to subscribe to Kafka topics that match a pattern. Start the pattern with the `^` character to identify it as a regular expression.
 
-### How regex topic subscription works
+## How regular expression topic subscriptions work
 The Kafka receiver subscribes to existing topics that match the pattern and detects new matching topics as they are created. For example, `^myPrefix.*` matches topics that begin with `myPrefix`.
 
 !!! note
     Ensure that your regex pattern is valid and correctly formatted to avoid any subscription issues.
 
-### Excluding topics
+## Excluding topics
 
 You can exclude specific topics from being processed using the `kafka.logs.exclude_topics` field. This is useful when your regex pattern matches many topics, but you want to filter out certain ones from log collection.
 
 The `kafka.logs.exclude_topics` field accepts a list of topic names or regex patterns that should be excluded from processing. Topics matching any pattern in the exclude list will be ignored, even if they match the subscription regex pattern. Learn more about regex topics [Kafka receiver regex topic exclusions documentation](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/kafkareceiver#regex-topic-patterns-with-exclusions).
 
-#### Example config
+### Example configuration
 
 ```yaml
 receivers:
@@ -53,9 +52,9 @@ service:
       exporters: [splunk_hec]
 ```
 
-### Configuration examples
+## Configuration examples
 
-#### Example 1: subscribe to all topics except system topics
+### Example 1: Subscribe to all topics except system topics
 
 ```yaml
 receivers:
@@ -69,9 +68,9 @@ receivers:
       encoding: text
 ```
 
-This configuration subscribes to all topics but excludes any topics starting with __ (Kafka internal topics).
+This configuration subscribes to all topics but excludes topics that start with `__`, which Kafka uses for internal topics.
 
-#### Example 2: subscribe to application logs with pattern exclusions
+### Example 2: Subscribe to application logs with pattern exclusions
 
 ```yaml
 receivers:
@@ -86,9 +85,9 @@ receivers:
       encoding: text
 ```
 
-This configuration subscribes to topics matching `app-*` pattern but excludes topics matching `app-test-*` and `app-debug-*` patterns.
+This configuration subscribes to topics that match the `app-*` pattern but excludes topics that match the `app-test-*` and `app-debug-*` patterns.
 
-#### Example 3: multiple topic patterns with exclusions
+### Example 3: Use multiple topic patterns with exclusions
 
 ```yaml
 receivers:
@@ -104,6 +103,6 @@ receivers:
       encoding: text
 ```
 
-This configuration subscribes to multiple regex patterns while excluding topics ending with -archive or -old.
+This configuration subscribes to multiple regular expression patterns and excludes topics that end with `-archive` or `-old`.
 
-Note that `exclude_topics` doesn't have to be regex, it can be an exact name. When using exact names no `^` at the beginning is necessary.
+The `exclude_topics` field accepts regular expression patterns or exact topic names. Exact names do not require a leading `^` character.

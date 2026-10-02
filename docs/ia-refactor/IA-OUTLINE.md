@@ -1,6 +1,6 @@
-# Collector for Kafka documentation IA draft
+# Collector for Kafka documentation information architecture draft
 
-Working outline and source-to-target map for the IA refactor. Content has been moved into the pages listed below; copyediting and technical review remain. The hierarchy below is the current page tree.
+This outline records the source-to-target map for the information architecture refactor. Content has been moved into the pages listed below. The hierarchy reflects the current page tree.
 
 `[provisional]` means confirm the topic and scope with engineering before treating the page as committed structure.
 
@@ -49,7 +49,7 @@ Working outline and source-to-target map for the IA refactor. Content has been m
 
 ## Source-to-target map
 
-Status records content transfer only. Local Markdown links resolve; copyediting and technical review remain.
+Status records content transfer only. Copyediting is complete; technical review remains.
 
 ## Markdown-to-DITA filename exception
 

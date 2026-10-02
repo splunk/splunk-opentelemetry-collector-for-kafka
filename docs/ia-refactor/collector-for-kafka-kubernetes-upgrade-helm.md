@@ -1,6 +1,6 @@
 # Upgrade the Collector for Kafka Helm release
 
-## Upgrading
+## Upgrade the Helm release
 
 ```bash
 # Update your values.yaml file with new configuration, then upgrade
@@ -11,14 +11,14 @@ helm upgrade soc4kafka splunk-opentelemetry-collector-for-kafka/splunk-opentelem
 ```
 
 !!! note
-    **Best Practice:** Always use values files (`-f values.yaml`) instead of `--set` flags. This makes your configuration version-controlled, easier to maintain, and reusable across environments.
+    Use values files, such as `-f values.yaml`, instead of `--set` flags. This keeps your configuration under version control and lets you reuse it across environments.
 
-### Rolling updates (default behaviour)
+### Rolling updates (default behavior)
 
-By default, the chart uses a **rolling update** strategy (`maxSurge: 25%`, `maxUnavailable: 25%`). Pods are updated in waves so that the majority stay running during an upgrade.
+By default, the chart uses a **rolling update** strategy (`maxSurge: 25%`, `maxUnavailable: 25%`). It updates pods in waves so that most pods keep running during an upgrade.
 
 !!! warning
 
-    When you change collector configuration (for example, index, pipeline, or Splunk HTTP Event Collector (HEC) settings) and run `helm upgrade`, only a subset of pods receive the new config at a time. Until the rollout finishes, some pods still run with the old config. As a result, events from different Kafka partitions can be indexed or processed differently during the rollout (e.g. different index or sourcetype). With 25%, fewer partitions are affected in each wave. After all pods are updated, behaviour is consistent again.
+    When you change the collector configuration, such as the index, pipeline, or Splunk HTTP Event Collector (HEC) settings, and run `helm upgrade`, only some pods receive the new configuration at a time. Until the rollout finishes, other pods continue to use the old configuration. Events from different Kafka partitions can therefore be indexed or processed differently during the rollout, for example, with different indexes or sourcetypes. After all pods are updated, the configuration is consistent.
 
-If you need strictly sequential or consistent indexing during config changes, you can set `strategy.type: Recreate` in your values. That restarts all pods at once; expect a short period with no ingestion until the new pods are ready.
+To apply configuration changes sequentially and keep indexing consistent, set `strategy.type: Recreate` in your values file. This restarts all pods at once. Data collection pauses until the new pods are ready.

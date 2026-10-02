@@ -1,6 +1,6 @@
 # Install the Collector for Kafka with Helm
 
-## Quick start
+## Install the Helm chart
 
 1. Create a `values.yaml` file with your configuration:
 
@@ -41,7 +41,7 @@ pipelines:
     # processors optional; defaults to ["resourcedetection"] (defaults.pipelineProcessors in values.yaml)
 ```
 
-2. Add helm repository:
+2. Add the Helm repository:
 
 ```bash
 helm repo add splunk-opentelemetry-collector-for-kafka https://splunk.github.io/splunk-opentelemetry-collector-for-kafka
@@ -57,23 +57,16 @@ helm upgrade --install soc4kafka splunk-opentelemetry-collector-for-kafka/splunk
 
     For information about managing secrets (auto-created or existing Kubernetes secrets), see [Secret management](collector-for-kafka-configure-secrets.md).
 
-## OCI Streaming on Kubernetes with MicroK8s and Helm
+## Deploy to OCI Streaming with MicroK8s and Helm
 
-All commands run on the OCI VM over SSH.
+Run all commands from an SSH session on the OCI VM.
 
 !!! info
-    **Kubernetes distribution note:** this guide uses **MicroK8s** as a representative example of a
-    single-node Kubernetes setup. The SOC4Kafka Helm chart is distribution-agnostic and will run on
-    any conformant Kubernetes cluster (EKS, GKE, AKS, K3s, vanilla kubeadm, etc.). If you are using
-    a different distribution, substitute your cluster's `kubectl` and `helm` commands for the
-    `microk8s kubectl` and `microk8s helm3` equivalents used below. The DNS configuration (step B.1),
-    firewall fix (step B.2), and the OCI-specific CIDRs in the step B.2 callout are specific to
-    MicroK8s on an OCI Ubuntu VM and will differ on other distributions or cloud providers.
+    **Kubernetes distribution:** This procedure uses **MicroK8s** as an example of a single-node Kubernetes setup. The Collector for Kafka Helm chart runs on any conformant Kubernetes cluster, including EKS, GKE, AKS, K3s, and kubeadm. If you use another distribution, replace the `microk8s kubectl` and `microk8s helm3` commands with the commands for your cluster. The DNS configuration in step B.1, firewall configuration in step B.2, and OCI-specific CIDR ranges apply to MicroK8s on an OCI Ubuntu VM. They differ on other distributions and cloud providers.
 
-    MicroK8s ships its own bundled `helm3` and `kubectl`. The commands below use `microk8s helm3` and
-    `microk8s kubectl` - not the system-level tools.
+    MicroK8s includes its own `helm3` and `kubectl` commands. This procedure uses `microk8s helm3` and `microk8s kubectl` instead of system-level commands.
 
-### B.1 install MicroK8s
+### B.1 Install MicroK8s
 
 ```bash
 sudo snap install microk8s --classic --channel=1.33/stable
@@ -82,7 +75,7 @@ sudo chown -f -R "$USER" ~/.kube
 newgrp microk8s
 ```
 
-Enable the addons the chart needs:
+Enable the add-ons required by the chart:
 
 ```bash
 microk8s enable hostpath-storage
@@ -90,31 +83,25 @@ microk8s enable rbac
 microk8s enable metrics-server
 ```
 
-Enable DNS pinned to the **OCI VCN resolver**. This resolver handles both private OCI names (your
-broker's private endpoint) and public names (your Splunk HEC host) - using it as the single
-upstream is important:
+Configure DNS to use the **OCI VCN resolver**. It resolves private OCI names, such as your broker's private endpoint, and public names, such as your Splunk HEC host. Use it as the only upstream resolver:
 
 ```bash
 microk8s enable dns:169.254.169.254
 ```
 
 !!! warning
-    Do **not** add a public resolver like `8.8.8.8` alongside it. The OCI Streaming broker resolves
-    to a private VCN IP, and a public resolver will return NXDOMAIN for it, causing intermittent
-    connection failures.
+    Do not add a public resolver such as `8.8.8.8`. The OCI Streaming broker resolves to a private VCN IP address, which a public resolver cannot resolve. Adding a public resolver can cause intermittent connection failures.
 
-### B.2 fix the OCI host firewall
+### B.2 Configure the OCI host firewall
 
-The OCI Ubuntu image ships a firewall rule that blocks forwarded traffic. This prevents pods from
-reaching the Kubernetes API server, causing CoreDNS and Calico to crash-loop. Remove the rule:
+The OCI Ubuntu image includes a firewall rule that blocks forwarded traffic. This prevents pods from reaching the Kubernetes API server and causes CoreDNS and Calico to restart repeatedly. Remove the rule:
 
 ```bash
 sudo iptables -L FORWARD -n --line-numbers | head
 sudo iptables -D FORWARD 1    # removes the REJECT rule (usually at position 1)
 ```
 
-Pods recover within about 60 seconds. **Make the fix permanent** - the rule returns on reboot
-otherwise:
+Pods recover within about 60 seconds. Make the change permanent; otherwise, the rule returns after a reboot:
 
 ```bash
 # Edit the persisted ruleset and remove the REJECT line, then reload:
@@ -123,16 +110,15 @@ sudo grep -nE 'REJECT|icmp-host-prohibited' /etc/iptables/rules.v4
 sudo netfilter-persistent reload
 ```
 
-On a test VM you can instead disable the OS firewall entirely - the OCI VCN security list still
-controls ingress at the cloud layer:
+On a test VM, you can turn off the OS firewall. The OCI VCN security list still controls ingress at the cloud layer:
 
 ```bash
 sudo systemctl disable --now netfilter-persistent
 ```
 
 !!! warning
-    **If Calico still crash-loops** after removing the FORWARD rule, your image also has an INPUT-chain
-    REJECT that blocks pod traffic to the Kubernetes API server VIP (`10.152.183.1`) and pod CIDR
+    **If Calico continues to restart** after you remove the FORWARD rule, the image also has an INPUT-chain
+    REJECT rule that blocks pod traffic to the Kubernetes API server VIP (`10.152.183.1`) and pod CIDR
     (`10.1.0.0/16`). These are standard MicroK8s defaults. Allow them:
 
     `sudo iptables -I INPUT 4 -s 10.152.183.0/24 -j ACCEPT`
@@ -143,21 +129,20 @@ sudo systemctl disable --now netfilter-persistent
 
     `sudo iptables -I INPUT 4 -d 10.1.0.0/16    -j ACCEPT`
     
-    The `-I INPUT 4` inserts before the catch-all REJECT. Confirm position with
+    The `-I INPUT 4` option inserts the rule before the catch-all REJECT. Confirm the position by running
     `sudo iptables -L INPUT -n --line-numbers` first. If you customised MicroK8s CIDRs, replace the
-    ranges with your actual service CIDR (`grep service-cluster-ip-range /var/snap/microk8s/current/args/*`)
+    ranges with your service CIDR (`grep service-cluster-ip-range /var/snap/microk8s/current/args/*`)
     and pod CIDR (`grep cluster-cidr /var/snap/microk8s/current/args/*`).
 
-### B.3 create the namespace
+### B.3 Create the namespace
 
 ```bash
 microk8s kubectl create namespace soc4kafka
 ```
 
-### B.4 create the Kubernetes secrets
+### B.4 Create the Kubernetes Secrets
 
-The collector reads credentials from Kubernetes Secrets injected as environment variables - they
-never appear in the Helm values file.
+The collector reads credentials from Kubernetes Secrets injected as environment variables. This keeps the credentials out of the Helm values file.
 
 ```bash
 # Kafka SASL password - the key name "password" is required by the chart
@@ -169,12 +154,11 @@ microk8s kubectl -n soc4kafka create secret generic splunk-hec \
   --from-literal=splunk-hec-token='<SPLUNK_HEC_TOKEN>'
 ```
 !!! warning
-    Wrap values in **single quotes** to prevent the shell from interpreting special characters.
+    Enclose values in **single quotes** to prevent the shell from interpreting special characters.
 
-### B.5 create `values.yaml`
+### B.5 Create `values.yaml`
 
-Create this file on the VM (e.g. at `~/soc4kafka_microk8s/values.yaml`) before running the Helm
-install. Substitute all `<PLACEHOLDERS>` with your real values.
+Create this file on the VM, for example, at `~/soc4kafka_microk8s/values.yaml`, before you install the chart. Replace each `<PLACEHOLDER>` with the corresponding value.
 
 ```yaml
 replicaCount: 1
@@ -238,7 +222,7 @@ collectorMetrics:
   enabled: false
 ```
 
-### B.6 install the chart
+### B.6 Install the chart
 
 ```bash
 microk8s helm3 repo add splunk-opentelemetry-collector-for-kafka \
@@ -252,18 +236,17 @@ microk8s helm3 upgrade --install soc4kafka \
 ```
 
 !!! warning
-    Always include `-n soc4kafka`. Without it the release lands in the `default` namespace and will be
-    difficult to find.
+    Include `-n soc4kafka` in the command. Otherwise, Helm installs the release in the `default` namespace.
 
-### B.7 verify the deployment
+### B.7 Verify the deployment
 
-Check that all pods are running:
+Confirm that all pods are running:
 
 ```bash
 microk8s kubectl get pods -A
 ```
 
-Tail the collector logs and look for the healthy startup sequence:
+View the collector logs and confirm that the startup sequence completes:
 
 ```bash
 microk8s kubectl -n soc4kafka logs -f \
@@ -280,12 +263,11 @@ franz   assigning partitions      ...
 ```
 
 !!! note
-    If you see `NOT_COORDINATOR` repeating, change `client_id` and `group_id` to a new name in
-    `values.yaml` and re-run the `helm3 upgrade` command from step B.6.
+    If `NOT_COORDINATOR` repeats, change `client_id` and `group_id` to a new name in `values.yaml`. Then run the `helm3 upgrade` command from step B.6 again.
 
-### B.8 send a test message and confirm in Splunk
+### B.8 Send a test message and confirm it appears in Splunk
 
-Produce a message from the VM (install `kafkacat` first if needed: `sudo apt-get install -y kafkacat`):
+Produce a message from the VM. If `kafkacat` is not installed, install it by running `sudo apt-get install -y kafkacat`:
 
 ```bash
 echo "hello-from-microk8s-$(date -Is)" | kafkacat -P \
@@ -298,9 +280,9 @@ echo "hello-from-microk8s-$(date -Is)" | kafkacat -P \
   -X ssl.ca.location=/etc/ssl/certs/ca-certificates.crt
 ```
 
-Alternatively use the OCI Console: **Streaming → Streams → select stream → Produce Test Message**.
+Alternatively, use the OCI Console and select **Streaming → Streams → your stream → Produce Test Message**.
 
-In Splunk search:
+In Splunk, search for the event:
 
 ```
 index=<SPLUNK_INDEX> sourcetype="oci:streaming:text" earliest=-5m

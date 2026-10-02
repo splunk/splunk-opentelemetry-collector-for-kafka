@@ -1,3 +1,3 @@
 # Deploy the Collector for Kafka manually
 
-Manual deployment runs the Collector binary with a configuration file. See [Install the Collector manually](collector-for-kafka-manual-install.md).
+Run the Collector for Kafka binary with a configuration file to deploy it manually. See [Install the Collector for Kafka manually](collector-for-kafka-manual-install.md).

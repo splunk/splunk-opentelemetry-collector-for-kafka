@@ -1,29 +1,29 @@
-# SOC4Kafka health dashboard
+# Monitor the Collector for Kafka with a dashboard
 
-Use the SOC4Kafka dashboard to monitor Kafka metrics. It combines data from three sources to show the environment’s performance and health.
+Use the Collector for Kafka dashboard to monitor Kafka metrics. The dashboard combines data from three sources to show the environment's performance and health.
 
-## Overview
+## Dashboard controls
 
-The dashboard consists of seven tabs, each dedicated to monitoring key aspects of the system. Each tab includes its own graphs, gauges, and inputs for selecting appropriate data. Additionally, there are three common input buttons for all tabs:
+The dashboard has seven tabs. Each tab contains graphs, gauges, and inputs for the data it displays. All tabs share these three controls:
 
-- **Time Range**: Select the date and time range for the metrics. Some gauges, such as Active Collectors, always show the latest information.
-- **Log Indexes**: Select both the event and metrics indexes to display all dashboard features.
-- **Time Span**: Choose the interval for aggregating data in time-based graphs.
+- **Time Range**: Select the date and time range for metrics. Some gauges, such as Active Collectors, always show the latest information.
+- **Log Indexes**: Select the event and metrics indexes to display all dashboard features.
+- **Time Span**: Select the interval for aggregating data in time-based graphs.
 
 ![Dashboard filters for time range, log indexes, and time span](../images/dashboard/global-inputs.png)
 
 ### General
 
-The **General** tab shows SOC4Kafka health, including a table of active collector instances and a gauge for active Kafka brokers. The Active Collectors gauge shows data from the last 5 minutes.
+The **General** tab shows Collector for Kafka health, including a table of active collector instances and a gauge for active Kafka brokers. The Active Collectors gauge shows data from the past 5 minutes.
 
 ![General dashboard tab showing active collector instances and Kafka brokers](../images/dashboard/global-tab-active-instances.png)
 
-Graphs show the number of messages received and exported by each instance. They aggregate values across the instance’s receivers and exporters. Select an instance to view more detail.
+Graphs show the number of messages each instance receives and exports. They aggregate values across the instance's receivers and exporters. Select an instance to view details.
 
 ![Messages received and exported by each collector instance](../images/dashboard/global-tab-receiver-exporter.png)
 ![Receiver and exporter metrics for a selected collector instance](../images/dashboard/global-tab-receiver-exporter-per-instance.png)
 
-The tab also shows information about the exporter queue.
+The tab also shows exporter queue information.
 
 ![Exporter queue metrics in the General dashboard tab](../images/dashboard/global-tab-queue.png)
 
@@ -37,42 +37,42 @@ For the last two charts, select the appropriate topic for each consumer group. O
 
 ### CPU, memory, disk, network
 
-The next four tabs present data associated with the system metrics of machines running SOC4Kafka instances.
+The next four tabs show system metrics for the machines that run instances of the Collector for Kafka.
 
-The **CPU** tab shows the number of logical CPU cores, process CPU utilization, and system CPU utilization. You can choose which task types to include in the statistics. By default, the dashboard includes system and CPU modes.
+The **CPU** tab shows the number of logical CPU cores, process CPU utilization, and system CPU utilization. Select the task types to include in the statistics. By default, the dashboard includes system and CPU modes.
 
-![CPU metrics in the SOC4Kafka dashboard](../images/dashboard/cpu-tab.png)
-![Additional CPU metrics in the SOC4Kafka dashboard](../images/dashboard/cpu-tab-2.png)
+![CPU metrics in the Collector for Kafka dashboard](../images/dashboard/cpu-tab.png)
+![Additional CPU metrics in the Collector for Kafka dashboard](../images/dashboard/cpu-tab-2.png)
 
-The **Memory** tab shows system memory utilization, total available memory, and system and memory usage. You can choose which memory metrics to include in the graphs.
+The **Memory** tab shows system memory utilization, total available memory, and system and memory usage. Select the memory metrics to include in the graphs.
 
-![Memory metrics in the SOC4Kafka dashboard](../images/dashboard/memory-tab.png)
+![Memory metrics in the Collector for Kafka dashboard](../images/dashboard/memory-tab.png)
 
-The **Disk** tab shows disk usage. The filesystem utilization gauge shows the selected filesystem’s space usage. Select a filesystem from the drop-down list.
+The **Disk** tab shows disk usage. The filesystem utilization gauge shows the selected filesystem's space usage. Select a filesystem from the list.
 
-![Disk usage metrics in the SOC4Kafka dashboard](../images/dashboard/disk-tab.png)
+![Disk usage metrics in the Collector for Kafka dashboard](../images/dashboard/disk-tab.png)
 
 The **Network** tab shows network traffic.
 
-![Network metrics in the SOC4Kafka dashboard](../images/dashboard/network-tab.png)
+![Network metrics in the Collector for Kafka dashboard](../images/dashboard/network-tab.png)
 
 ### Events
 
-The **Events** tab collects data associated with events received by the Splunk instance. Use the drop-down lists to filter events by hostname, source, and sourcetype and view the distribution of those values among indexed events. In environments with high data ingress, this tab might take longer to load.
+The **Events** tab shows data about events received by the Splunk platform. Use the lists to filter events by hostname, source, and sourcetype, and to view the distribution of those values among indexed events. In environments with high data ingress, this tab can take longer to load.
 
 ![Events dashboard tab with filters for hostname, source, and sourcetype](../images/dashboard/events-tab.png)
 
 ## Install the dashboard
 
-### Configuration for SOC4Kafka
+### Configure the Collector for Kafka
 
-The dashboard uses three telemetry data sources:
+The dashboard uses these three telemetry data sources:
 
-1. **hostmetrics** receiver [documentation](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/hostmetricsreceiver)
-2. **kafkametrics** receiver [documentation](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/kafkametricsreceiver)
-3. **Internal Telemetry** of OpenTelemetry Collector [documentation](https://opentelemetry.io/docs/collector/internal-telemetry/#lists-of-internal-metrics)
+1. The [hostmetrics receiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/hostmetricsreceiver)
+2. The [kafkametrics receiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/kafkametricsreceiver)
+3. [Internal telemetry](https://opentelemetry.io/docs/collector/internal-telemetry/#lists-of-internal-metrics) from the OpenTelemetry Collector
 
-Configure all three sources for the dashboard to display its data.
+Configure all three sources for the dashboard to display data.
 
 1. Configure receivers:
 
@@ -128,7 +128,7 @@ receivers:
       network:
 ```
 
-2. Add **resourcedetection** to allow filtering by host
+2. Add the `resourcedetection` processor to filter data by host.
 
 ```yaml
 processors:
@@ -138,7 +138,7 @@ processors:
       hostname_sources: ["os"]
 ```
 
-3. Add exporter for metrics
+3. Add an exporter for metrics.
 
 ```yaml
 exporters:
@@ -159,11 +159,11 @@ exporters:
         min_size: 1000
 ```
 
-Create a metrics-type index:
+Create a metrics index:
 
 ![Splunk metric index configuration](../images/dashboard/metric-index.png)
 
-4. Create **telemetry** service
+4. Create the `telemetry` service.
 ```yaml
 service:
   telemetry:
@@ -177,7 +177,7 @@ service:
                 port: 8888
 ```
 
-5. Add pipeline for metrics
+5. Add a pipeline for metrics.
 
 ```yaml
 service:
@@ -188,16 +188,16 @@ service:
       exporters: [ splunk_hec/metrics ]
 ```
 
-   Configure other receivers & exporters as normal.
+   Configure other receivers and exporters as usual.
 
-### Create dashboard in Splunk
+### Create the dashboard in Splunk Web
 
 !!! note
 
-    This dashboard is available only for Splunk version 9.4.0 and higher
+    This dashboard is available only in Splunk version 9.4.0 or later.
 
-1. In Splunk, open **Search & Reporting -> Dashboards**
-2. Click on **Create New Dashboard** and create a new dashboard. Make sure to choose **Dashboard Studio** and **Grid** options.
-3. In the edit view, go to the **source code editor** and replace the initial configuration with this [JSON file](../../dashboards/SOC4Kafka-health-dashboard.json)
+1. In Splunk Web, select **Search & Reporting > Dashboards**.
+2. Select **Create New Dashboard**. Select **Dashboard Studio** and **Grid**.
+3. In the edit view, open the **source code editor** and replace the initial configuration with the contents of this [JSON file](../../dashboards/SOC4Kafka-health-dashboard.json).
 
-4. Save your changes
+4. Save your changes.

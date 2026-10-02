@@ -4,7 +4,7 @@
 
 ### Kafka receivers
 
-Define one or more Kafka receivers. All standard Kafka receiver configuration options are supported. See the [SOC4Kafka design documentation](collector-for-kafka-design.md) for details.
+Define one or more Kafka receivers. The chart supports all standard Kafka receiver options. For details about the receiver, see [Understand the Collector for Kafka design](collector-for-kafka-design.md).
 
 ```yaml
 kafkaReceivers:
@@ -20,17 +20,17 @@ kafkaReceivers:
     group_id: "soc4kafka-main"
 ```
 
-**Chart-specific:** The `name` field is required and used to reference the receiver in pipelines.
+**Chart-specific:** The `name` field is required. Use it to reference the receiver in pipelines.
 
 !!! note
 
-    Kafka authentication passwords (plain_text, SASL, or Kerberos) can reference existing Kubernetes secrets using the `secret` field. See [Secret management](collector-for-kafka-configure-secrets.md) for details.
+    For Kafka authentication with `plain_text`, SASL, or Kerberos, reference an existing Kubernetes Secret by using the `secret` field. See [Manage secrets for the Helm chart](collector-for-kafka-configure-secrets.md) for details.
 
-**TLS:** For TLS-enabled Kafka brokers (e.g. port 9093), add a `tls` block. See [TLS configuration](collector-for-kafka-configure-tls.md) for full details and examples.
+**TLS:** For Kafka brokers that use TLS, add a `tls` block. For details and examples, see [Configure TLS](collector-for-kafka-configure-tls.md).
 
 ### Splunk HTTP Event Collector (HEC) exporters
 
-Define one or more Splunk HEC exporters. All standard Splunk HEC exporter configuration options are supported. See the [SOC4Kafka design documentation](collector-for-kafka-design.md) for details.
+Define one or more Splunk HEC exporters. The chart supports all standard Splunk HEC exporter options. For details about the exporter, see [Understand the Collector for Kafka design](collector-for-kafka-design.md).
 
 ```yaml
 splunkExporters:
@@ -52,19 +52,19 @@ splunkExporters:
         min_size: 1000
 ```
 
-**Chart-specific:** The `name` field is required and used to reference the exporter in pipelines.
+**Chart-specific:** The `name` field is required. Use it to reference the exporter in pipelines.
 
 !!! note
 
-    Instead of providing `token` directly, you can reference an existing Kubernetes secret using the `secret` field. See [Secret management](collector-for-kafka-configure-secrets.md) for details.
+    Instead of entering `token` directly, you can reference an existing Kubernetes Secret by using the `secret` field. See [Manage secrets for the Helm chart](collector-for-kafka-configure-secrets.md) for details.
 
-**TLS:** Use `https://` in the endpoint for TLS. The same `tls` options as for Kafka apply. See [TLS configuration](collector-for-kafka-configure-tls.md).
+**TLS:** Use an `https://` endpoint to connect with TLS. The same `tls` options as for Kafka apply. See [Configure TLS](collector-for-kafka-configure-tls.md).
 
 **Queueing and batching:** The chart applies HEC exporter defaults from `defaults.exporters.splunk_hec`. The default queue uses `block_on_overflow: true` so the collector applies backpressure when Splunk HEC is slow instead of immediately rejecting data at queue capacity. Batching is configured under `sending_queue.batch`; the default pipelines no longer use the processor `batch`.
 
 ### Pipelines
 
-Connect receivers to exporters. See the [SOC4Kafka design documentation](collector-for-kafka-design.md) for details.
+Connect receivers to exporters. For details about pipelines, see [Understand the Collector for Kafka design](collector-for-kafka-design.md).
 
 **Chart-specific:** You can omit `processors`; the chart then uses `defaults.pipelineProcessors` (default: `["resourcedetection"]`). Override per pipeline or change the default in `values.yaml`.
 
@@ -86,27 +86,27 @@ pipelines:
 See [values.yaml](https://github.com/splunk/splunk-opentelemetry-collector-for-kafka/blob/main/helm-chart/splunk-opentelemetry-collector-for-kafka/values.yaml) for all available configuration options. Key areas:
 
 - **TLS** ([tls.md](collector-for-kafka-configure-tls.md)): Configure TLS for Kafka receivers and Splunk HEC exporters.
-- **Component Defaults** (`defaults`): Override default OpenTelemetry component settings
-- **Config Override** (`configOverride`): Provide complete OpenTelemetry config override
-- **Resources** (`resources`): Set CPU and memory limits/requests
-- **Autoscaling** (`autoscaling`): Configure Horizontal Pod Autoscaler
-- **Pod Disruption Budget** (`podDisruptionBudget`): Configure PDB for high availability
-- **Service Account** (`serviceAccount`): Configure service account with workload identity annotations for cloud environments (AWS EKS, GCP GKE, Azure AKS)
-- **Collector Logs** (`collectorLogs`): Enable collection of the collector's own logs to files and stdout/stderr
-- **Collector Metrics** (`collectorMetrics`): Enable collection of collector internal metrics and system metrics (CPU, memory, disk, network)
+- **Component defaults** (`defaults`): Override default OpenTelemetry component settings.
+- **Configuration override** (`configOverride`): Provide a complete OpenTelemetry configuration override.
+- **Resources** (`resources`): Set CPU and memory limits and requests.
+- **Autoscaling** (`autoscaling`): Configure the Horizontal Pod Autoscaler.
+- **Pod disruption budget** (`podDisruptionBudget`): Configure a pod disruption budget for high availability.
+- **Service account** (`serviceAccount`): Configure a service account with workload identity annotations for cloud environments, including AWS EKS, GCP GKE, and Azure AKS.
+- **Collector logs** (`collectorLogs`): Collect the collector's internal logs to files and `stdout` or `stderr`.
+- **Collector metrics** (`collectorMetrics`): Collect internal collector metrics and system metrics for CPU, memory, disk, and network.
 
 ### Collector logs
 
-For guidance on configuring and collecting the Collector's own logs, see [Collect Collector logs](collector-for-kafka-collector-logs.md).
+For information about configuring and collecting the Collector for Kafka logs, see [Collect logs from the Collector for Kafka](collector-for-kafka-collector-logs.md).
 
 ### Metrics collection
 
-Enable collection of collector internal metrics and system metrics. When enabled, the chart automatically configures:
+Enable collection of internal collector metrics and system metrics. The chart configures the following components:
 
-1. **Prometheus receiver** - Scrapes the collector's internal telemetry endpoint (exposed on port 8888)
-2. **Hostmetrics receiver** - Collects system metrics (CPU, memory, disk, network, filesystem, process)
-3. **Telemetry service** - Exposes collector metrics via Prometheus endpoint
-4. **Metrics pipeline** - Forwards metrics to Splunk using the first `splunkExporter`
+1. **Prometheus receiver**: Scrapes the collector's internal telemetry endpoint on port 8888.
+2. **Hostmetrics receiver**: Collects system metrics for CPU, memory, disk, network, filesystems, and processes.
+3. **Telemetry service**: Exposes collector metrics through a Prometheus endpoint.
+4. **Metrics pipeline**: Forwards metrics to Splunk by using the first `splunkExporter`.
 
 ```yaml
 collectorMetrics:
@@ -117,23 +117,23 @@ collectorMetrics:
 
 **Features:**
 
-- Collector internal metrics exposed via Prometheus endpoint (port 8888)
-- System metrics collected via hostmetrics receiver (CPU, memory, disk, network, filesystem, process)
-- Metrics forwarded to Splunk using the referenced `splunkExporter` (or first if not specified)
-- Service exposes metrics port for Prometheus scraping
-- All metrics go through the `resourcedetection` processor for host filtering
+- Exposes internal collector metrics through a Prometheus endpoint on port 8888.
+- Collects system metrics for CPU, memory, disk, network, filesystems, and processes by using the hostmetrics receiver.
+- Forwards metrics to Splunk by using the referenced `splunkExporter`, or the first exporter if none is specified.
+- Exposes a metrics port for Prometheus scraping.
+- Sends all metrics through the `resourcedetection` processor for host filtering.
 
 !!! note
 
-    Make sure you have a metrics-type index in Splunk for the metrics data. See the [SOC4Kafka health dashboard](collector-for-kafka-dashboard.md) for details.
+    Create a metrics index in Splunk for the metrics data. For details, see the [Collector for Kafka dashboard](collector-for-kafka-dashboard.md).
 
-**Advanced Configuration:** For custom metrics configuration (different exporter, scrapers, intervals, etc.), use `configOverride` to override the generated configuration.
+**Advanced configuration:** To customize metrics configuration, including exporters, scrapers, or intervals, use `configOverride` to override the generated configuration.
 
 ## Configuration precedence
 
-The chart merges configuration in the following order (highest to lowest priority):
+The chart merges configuration in this order, from highest to lowest priority:
 
-1. **`configOverride`** - Highest priority. Completely overrides any generated configuration. Use this for advanced customizations that can't be achieved through other means.
+1. **`configOverride`**: Has the highest priority and completely overrides generated configuration. Use it for customizations that the other settings do not support.
 
 2. **Explicit configuration** - Values specified directly in `kafkaReceivers` and `splunkExporters` override defaults. For example:
    
@@ -143,13 +143,13 @@ kafkaReceivers:
    group_id: "custom-group"  # This overrides defaults.receivers.kafka.group_id
 ```
 
-3. **`defaults`** - Lowest priority. Provides default values for receivers, processors, and exporters. These are used when not explicitly specified.
+3. **`defaults`**: Has the lowest priority and provides default values for receivers, processors, and exporters that you do not configure explicitly.
 
 **Merge behavior:**
 
-- `mustMergeOverwrite` is used, which means values are deeply merged, and explicit values completely replace defaults at the same path
-- For nested objects, only the specified keys are replaced; other keys from defaults are preserved
-- `configOverride` is applied last and can override any part of the generated configuration
+- The chart uses `mustMergeOverwrite` to merge values recursively. Explicit values replace defaults at the same path.
+- For nested objects, the chart replaces only the specified keys and preserves other default keys.
+- The chart applies `configOverride` last, so it can override any part of the generated configuration.
 
 **Example precedence:**
 ```yaml
@@ -175,11 +175,9 @@ configOverride:
 
 ## Automatic pod restarts
 
-The chart includes automatic pod restart triggers:
+The chart restarts pods automatically in these cases:
 
-- **ConfigMap changes**: Pods restart when the OpenTelemetry configuration changes (via `checksum/config` annotation)
-- **Secret changes**: Pods restart when:
-  - Token values in `values.yaml` change (for auto-created secrets)
-  - Secret references change (via `checksum/secrets` annotation)
+- **ConfigMap changes**: Pods restart when the OpenTelemetry configuration changes, based on the `checksum/config` annotation.
+- **Secret changes**: Pods restart when token values in `values.yaml` change for chart-created Secrets or when Secret references change, based on the `checksum/secrets` annotation.
 
-This ensures your collector always runs with the latest configuration and secrets.
+These restarts apply updated configuration and Secrets to the collector.

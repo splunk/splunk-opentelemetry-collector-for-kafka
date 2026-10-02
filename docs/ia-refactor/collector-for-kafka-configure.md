@@ -1,6 +1,6 @@
 # Configure the Collector for Kafka
 
-### Create a minimal config template
+## Create a minimal configuration template
 
 ```yaml
 receivers:
@@ -44,9 +44,9 @@ service:
       exporters: [splunk_hec]
 ```
 
-## Configuration table
+## Configuration reference
 
-This is a minimal configuration. To customize it, see the component documentation linked in the table.
+This table describes the minimal configuration. For customization options, see the linked component documentation.
 
 | **Category**   | **Component**                                                                                                                         | **Parameter**               | **Description**                                                                            | **Required** | **Default Value** |
 |----------------|---------------------------------------------------------------------------------------------------------------------------------------|-----------------------------|--------------------------------------------------------------------------------------------|--------------|-------------------|
@@ -113,6 +113,6 @@ service:
       exporters: [splunk_hec]
 ```
 
-Fill the file with your data and save it with a `.yaml` extension. For example `config.yaml`.
+Enter your values in the file and save it with a `.yaml` extension, for example, `config.yaml`.
 
-For component roles and pipeline design, see [Collector design](collector-for-kafka-design.md). For deployment-specific chart values, see [Configure the Helm chart](collector-for-kafka-kubernetes-configure-helm.md).
+For information about component roles and pipeline design, see [Design the Collector for Kafka](collector-for-kafka-design.md). For deployment-specific chart values, see [Configure the Helm chart](collector-for-kafka-kubernetes-configure-helm.md).
