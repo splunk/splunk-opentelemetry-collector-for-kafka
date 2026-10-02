@@ -123,5 +123,5 @@ You can set `insecure_skip_verify: true` for self-signed certificates or interna
 
 ## Related topics
 
-- [Configure the Helm chart](collector-for-kafka-kubernetes-configure-helm.md) for chart options.
+- [Configure the Helm chart](../deploy/collector-for-kafka-kubernetes-configure-helm.md) for chart options.
 - [Manage secrets for the Helm chart](collector-for-kafka-configure-secrets.md) for tokens and passwords.

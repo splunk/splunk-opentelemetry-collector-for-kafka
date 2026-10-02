@@ -10,8 +10,8 @@ In the OpenTelemetry Collector, configure settings on individual receivers (data
 
 | Splunk Connect for Kafka field | Collector for Kafka setting | Description |
 |----------------------------------------------|--------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `topics` | `receivers.kafka.logs.topics` | Configure one topic per Kafka receiver. Add multiple receivers to a pipeline to collect from multiple topics. See [Collector design](collector-for-kafka-design.md). |
-| `topics.regex` | `receivers.kafka.logs.topics` | Prefix the topic pattern with `^` to use a regular expression. See [Subscribe to topics with regular expressions](collector-for-kafka-configure-regex-topics.md). |
+| `topics` | `receivers.kafka.logs.topics` | Configure one topic per Kafka receiver. Add multiple receivers to a pipeline to collect from multiple topics. See [Collector design](../collector-for-kafka-design.md). |
+| `topics.regex` | `receivers.kafka.logs.topics` | Prefix the topic pattern with `^` to use a regular expression. See [Subscribe to topics with regular expressions](../configure/collector-for-kafka-configure-regex-topics.md). |
 | `splunk.indexes` | `exporters.splunk_hec.index` | Configure one `index` per Splunk HEC exporter. Add multiple exporters to a pipeline to send data to multiple indexes. |
 | `splunk.sources` | `exporters.splunk_hec.source` | Configure one `source` per Splunk HEC exporter. Add multiple exporters to a pipeline to use multiple sources. |
 | `splunk.sourcetypes` | `exporters.splunk_hec.sourcetype` | Configure one `sourcetype` per Splunk HEC exporter. Add multiple exporters to a pipeline to use multiple sourcetypes. |
@@ -24,13 +24,13 @@ In the OpenTelemetry Collector, configure settings on individual receivers (data
 | `splunk.hec.max.batch.size` | `splunk_hec.sending_queue.batch.min_size` | Number of spans, metric data points, or log records to batch before sending. The default is 1000. |
 | `splunk.hec.event.timeout` | `splunk.timeout` | Timeout for Splunk exporter operations. |
 | `splunk.hec.socket.timeout` | `splunk.socket.timeout` | Socket timeout for Splunk exporter operations. |
-| `splunk.header.support` | `receivers.kafka.header_extraction.extract_headers` | When `true`, the Kafka receiver parses headers for use as metadata in Splunk events. See [Extract data from headers](collector-for-kafka-configure-extract-data.md#extract-data-from-headers). |
+| `splunk.header.support` | `receivers.kafka.header_extraction.extract_headers` | When `true`, the Kafka receiver parses headers for use as metadata in Splunk events. See [Extract data from headers](../configure/collector-for-kafka-configure-extract-data.md#extract-data-from-headers). |
 | `splunk.header.custom` | `receivers.kafka.header_extraction.headers` | Extract custom headers and use them with custom processors. |
 | `splunk.header.index` | `exporters.splunk_hec.otel_attrs_to_hec_metadata.index` | Maps Kafka header values to Splunk index metadata by using custom processors. |
 | `splunk.header.source` | `exporters.splunk_hec.otel_attrs_to_hec_metadata.source` | Maps Kafka header values to Splunk source metadata by using custom processors. |
 | `splunk.header.sourcetype` | `exporters.splunk_hec.otel_attrs_to_hec_metadata.sourcetype` | Maps Kafka header values to Splunk sourcetype metadata by using custom processors. |
 | `splunk.header.host` | `exporters.splunk_hec.otel_attrs_to_hec_metadata.host` | Maps Kafka header values to Splunk host metadata by using custom processors. |
-| `enable.timestamp.extraction` | `processors.timestamp` | Configure timestamp extraction with processors. See [Extract timestamps](collector-for-kafka-configure-extract-data.md#extract-timestamps). |
+| `enable.timestamp.extraction` | `processors.timestamp` | Configure timestamp extraction with processors. See [Extract timestamps](../configure/collector-for-kafka-configure-extract-data.md#extract-timestamps). |
 | `timestamp.regex` | `processors.timestamp.regex` | Regular expression for extracting timestamps from log data. |
 | `timestamp.format` | `processors.timestamp.format` | Format of extracted timestamps. |
 | `timestamp.timezone` | `processors.timestamp.timezone` | Time zone for extracted timestamps. |
@@ -40,10 +40,10 @@ In the OpenTelemetry Collector, configure settings on individual receivers (data
 | Splunk Connect for Kafka field | Description |
 |---------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `connector.class` | The Collector for Kafka uses receivers, processors, and exporters instead of a connector class. |
-| `tasks.max` | Configure scaling differently. See [Scale the Collector for Kafka](collector-for-kafka-scale.md). |
+| `tasks.max` | Configure scaling differently. See [Scale the Collector for Kafka](../operate/collector-for-kafka-scale.md). |
 | `splunk.hec.raw.line.breaker` | Configure line breaking with custom processors. |
 | `splunk.hec.json.event.enrichment` | Configure JSON enrichment with custom processors. |
-| `splunk.hec.auto.extract.timestamp` | Configure timestamp extraction with processors. See [Extract timestamps](collector-for-kafka-configure-extract-data.md#extract-timestamps). |
+| `splunk.hec.auto.extract.timestamp` | Configure timestamp extraction with processors. See [Extract timestamps](../configure/collector-for-kafka-configure-extract-data.md#extract-timestamps). |
 | `value.converter` | Not supported by the Collector for Kafka. |
 | `value.converter.schema.registry.url` | Not supported by the Collector for Kafka. |
 | `value.converter.schemas.enable` | Not supported by the Collector for Kafka. |

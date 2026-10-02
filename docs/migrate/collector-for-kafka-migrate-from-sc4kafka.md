@@ -30,7 +30,7 @@ Follow these steps to migrate from Splunk Connect for Kafka to the Collector for
 1. **Review the existing Splunk Connect for Kafka configuration.** Record the topics, indexes, sourcetypes, and any custom settings. To read the configuration, use the REST API commands in [Read the existing Splunk Connect for Kafka configuration](#read-the-existing-splunk-connect-for-kafka-configuration).
 2. **Map the configuration settings.** Use the [configuration mapping table](collector-for-kafka-migrate-config.md) to find equivalent settings for the Collector for Kafka.
 3. **Create a configuration for the Collector for Kafka.** Include the required Kafka brokers, topics, Splunk HEC endpoint, and token.
-4. **Install the Collector for Kafka.** Follow the instructions for [installing the Collector for Kafka with Helm](collector-for-kafka-kubernetes-install-helm.md). Make sure that it can access Kafka and Splunk.
+4. **Install the Collector for Kafka.** Follow the instructions for [installing the Collector for Kafka with Helm](../deploy/collector-for-kafka-kubernetes-install-helm.md). Make sure that it can access Kafka and Splunk.
 5. **Test the configuration.** In a test environment, confirm that the Collector for Kafka connects to Kafka, collects messages, and sends them to Splunk.
 6. **Monitor and validate the deployment.** Confirm that the Collector for Kafka forwards all messages. Check for data discrepancies and performance issues.
 7. **Decommission Splunk Connect for Kafka.** After you confirm that the Collector for Kafka works as expected, decommission the Splunk Connect for Kafka deployment.

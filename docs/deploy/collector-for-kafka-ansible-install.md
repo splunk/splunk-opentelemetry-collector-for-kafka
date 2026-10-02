@@ -3,7 +3,7 @@
 Install the Collector for Kafka on a Linux or macOS host by using the Ansible playbook.
 
 !!! note
-    The playbook creates a basic configuration in `values.yaml`. Edit the file to meet your requirements. For more configuration options, see [Configure the Collector for Kafka](collector-for-kafka-configure.md).
+    The playbook creates a basic configuration in `values.yaml`. Edit the file to meet your requirements. For more configuration options, see [Configure the Collector for Kafka](../configure/collector-for-kafka-configure.md).
 
 ## Prerequisites
 
@@ -41,7 +41,7 @@ ansible-playbook install_soc4kafka_collector.yaml
 ```
 
 
-When the collector is running, its logs appear in the Splunk platform. For more configuration options, see [Configure the Collector for Kafka](collector-for-kafka-configure.md).
+When the collector is running, its logs appear in the Splunk platform. For more configuration options, see [Configure the Collector for Kafka](../configure/collector-for-kafka-configure.md).
 
 
 ## Ansible variables

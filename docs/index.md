@@ -4,7 +4,7 @@ The Splunk Distribution of OpenTelemetry Collector for Kafka subscribes to Kafka
 
 ## Features
 
-The Collector for Kafka supports horizontal scaling and load balancing. See [Scale the Collector](ia-refactor/collector-for-kafka-scale.md) and [Load balance HEC traffic](ia-refactor/collector-for-kafka-load-balance.md).
+The Collector for Kafka supports horizontal scaling and load balancing. See [Scale the Collector](operate/collector-for-kafka-scale.md) and [Load balance HEC traffic](operate/collector-for-kafka-load-balance.md).
 
 ## Requirements
 
@@ -23,22 +23,22 @@ The Collector for Kafka does not support acknowledgment support or Protobuf enco
 
 ## Deploy the Collector
 
-Choose a deployment method in [Deploy the Collector for Kafka](ia-refactor/collector-for-kafka-deploy.md).
+Choose a deployment method in [Deploy the Collector for Kafka](deploy/collector-for-kafka-deploy.md).
 
 ## Configure the Collector
 
-For receiver, processor, exporter, and pipeline guidance, see [Configure the Collector for Kafka](ia-refactor/collector-for-kafka-configure.md).
+For receiver, processor, exporter, and pipeline guidance, see [Configure the Collector for Kafka](configure/collector-for-kafka-configure.md).
 
 ## Advanced configuration
 
-- [Collect events from multiple topics](ia-refactor/collector-for-kafka-configure-multiple-topics.md)
-- [Subscribe to topics using regular expressions](ia-refactor/collector-for-kafka-configure-regex-topics.md)
-- [Extract data from headers and timestamps](ia-refactor/collector-for-kafka-configure-extract-data.md)
+- [Collect events from multiple topics](configure/collector-for-kafka-configure-multiple-topics.md)
+- [Subscribe to topics using regular expressions](configure/collector-for-kafka-configure-regex-topics.md)
+- [Extract data from headers and timestamps](configure/collector-for-kafka-configure-extract-data.md)
 
 ## Migration
 
-To migrate from Splunk Connect for Kafka, see [Migrate from Splunk Connect for Kafka](ia-refactor/collector-for-kafka-migrate-from-sc4kafka.md).
+To migrate from Splunk Connect for Kafka, see [Migrate from Splunk Connect for Kafka](migrate/collector-for-kafka-migrate-from-sc4kafka.md).
 
 ## Monitor the Collector
 
-See [Monitor the Collector for Kafka](ia-refactor/collector-for-kafka-monitor.md) for dashboard and Collector log guidance.
+See [Monitor the Collector for Kafka](monitor/collector-for-kafka-monitor.md) for dashboard and Collector log guidance.

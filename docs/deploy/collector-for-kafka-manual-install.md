@@ -35,7 +35,7 @@ chmod a+x otelcol_linux_amd64
 ./otelcol_linux_amd64 --config config.yaml
 ```
 
-For information about the pipeline, see [Understand the Collector for Kafka design](collector-for-kafka-design.md).
+For information about the pipeline, see [Understand the Collector for Kafka design](../collector-for-kafka-design.md).
 
 ## OCI Streaming on Ubuntu with systemd
 

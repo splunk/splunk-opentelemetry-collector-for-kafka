@@ -261,7 +261,7 @@ export TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
 mkdir -p ./soc4kafka-otel
 
 # Start the collector with a config file that uses the TIMESTAMP variable
-echo "Starting OpenTelemetry collector with timestamp: $TIMESTAMP"
+echo "Starting OpenTelemetry Collector with timestamp: $TIMESTAMP"
 ./<otel_package> --config values_timestamp.yaml
 ```
 The script creates log files with timestamps in their names, such as `otel-collector-20231005_143200.log` and `otel-collector-errors-20231005_143200.log`.

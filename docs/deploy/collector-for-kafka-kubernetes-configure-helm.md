@@ -4,7 +4,7 @@
 
 ### Kafka receivers
 
-Define one or more Kafka receivers. The chart supports all standard Kafka receiver options. For details about the receiver, see [Understand the Collector for Kafka design](collector-for-kafka-design.md).
+Define one or more Kafka receivers. The chart supports all standard Kafka receiver options. For details about the receiver, see [Understand the Collector for Kafka design](../collector-for-kafka-design.md).
 
 ```yaml
 kafkaReceivers:
@@ -24,13 +24,13 @@ kafkaReceivers:
 
 !!! note
 
-    For Kafka authentication with `plain_text`, SASL, or Kerberos, reference an existing Kubernetes Secret by using the `secret` field. See [Manage secrets for the Helm chart](collector-for-kafka-configure-secrets.md) for details.
+    For Kafka authentication with `plain_text`, SASL, or Kerberos, reference an existing Kubernetes Secret by using the `secret` field. See [Manage secrets for the Helm chart](../configure/collector-for-kafka-configure-secrets.md) for details.
 
-**TLS:** For Kafka brokers that use TLS, add a `tls` block. For details and examples, see [Configure TLS](collector-for-kafka-configure-tls.md).
+**TLS:** For Kafka brokers that use TLS, add a `tls` block. For details and examples, see [Configure TLS](../configure/collector-for-kafka-configure-tls.md).
 
 ### Splunk HTTP Event Collector (HEC) exporters
 
-Define one or more Splunk HEC exporters. The chart supports all standard Splunk HEC exporter options. For details about the exporter, see [Understand the Collector for Kafka design](collector-for-kafka-design.md).
+Define one or more Splunk HEC exporters. The chart supports all standard Splunk HEC exporter options. For details about the exporter, see [Understand the Collector for Kafka design](../collector-for-kafka-design.md).
 
 ```yaml
 splunkExporters:
@@ -56,15 +56,15 @@ splunkExporters:
 
 !!! note
 
-    Instead of entering `token` directly, you can reference an existing Kubernetes Secret by using the `secret` field. See [Manage secrets for the Helm chart](collector-for-kafka-configure-secrets.md) for details.
+    Instead of entering `token` directly, you can reference an existing Kubernetes Secret by using the `secret` field. See [Manage secrets for the Helm chart](../configure/collector-for-kafka-configure-secrets.md) for details.
 
-**TLS:** Use an `https://` endpoint to connect with TLS. The same `tls` options as for Kafka apply. See [Configure TLS](collector-for-kafka-configure-tls.md).
+**TLS:** Use an `https://` endpoint to connect with TLS. The same `tls` options as for Kafka apply. See [Configure TLS](../configure/collector-for-kafka-configure-tls.md).
 
 **Queueing and batching:** The chart applies HEC exporter defaults from `defaults.exporters.splunk_hec`. The default queue uses `block_on_overflow: true` so the collector applies backpressure when Splunk HEC is slow instead of immediately rejecting data at queue capacity. Batching is configured under `sending_queue.batch`; the default pipelines no longer use the processor `batch`.
 
 ### Pipelines
 
-Connect receivers to exporters. For details about pipelines, see [Understand the Collector for Kafka design](collector-for-kafka-design.md).
+Connect receivers to exporters. For details about pipelines, see [Understand the Collector for Kafka design](../collector-for-kafka-design.md).
 
 **Chart-specific:** You can omit `processors`; the chart then uses `defaults.pipelineProcessors` (default: `["resourcedetection"]`). Override per pipeline or change the default in `values.yaml`.
 
@@ -85,7 +85,7 @@ pipelines:
 
 See [values.yaml](https://github.com/splunk/splunk-opentelemetry-collector-for-kafka/blob/main/helm-chart/splunk-opentelemetry-collector-for-kafka/values.yaml) for all available configuration options. Key areas:
 
-- **TLS** ([tls.md](collector-for-kafka-configure-tls.md)): Configure TLS for Kafka receivers and Splunk HEC exporters.
+- **TLS** ([tls.md](../configure/collector-for-kafka-configure-tls.md)): Configure TLS for Kafka receivers and Splunk HEC exporters.
 - **Component defaults** (`defaults`): Override default OpenTelemetry component settings.
 - **Configuration override** (`configOverride`): Provide a complete OpenTelemetry configuration override.
 - **Resources** (`resources`): Set CPU and memory limits and requests.
@@ -97,7 +97,7 @@ See [values.yaml](https://github.com/splunk/splunk-opentelemetry-collector-for-k
 
 ### Collector logs
 
-For information about configuring and collecting the Collector for Kafka logs, see [Collect logs from the Collector for Kafka](collector-for-kafka-collector-logs.md).
+For information about configuring and collecting the Collector for Kafka logs, see [Collect logs from the Collector for Kafka](../monitor/collector-for-kafka-collector-logs.md).
 
 ### Metrics collection
 
@@ -125,7 +125,7 @@ collectorMetrics:
 
 !!! note
 
-    Create a metrics index in Splunk for the metrics data. For details, see the [Collector for Kafka dashboard](collector-for-kafka-dashboard.md).
+    Create a metrics index in Splunk for the metrics data. For details, see the [Collector for Kafka dashboard](../monitor/collector-for-kafka-dashboard.md).
 
 **Advanced configuration:** To customize metrics configuration, including exporters, scrapers, or intervals, use `configOverride` to override the generated configuration.
 

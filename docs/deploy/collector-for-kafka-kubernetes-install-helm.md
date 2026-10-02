@@ -55,7 +55,7 @@ helm upgrade --install soc4kafka splunk-opentelemetry-collector-for-kafka/splunk
 
 !!! note
 
-    For information about managing secrets (auto-created or existing Kubernetes secrets), see [Secret management](collector-for-kafka-configure-secrets.md).
+    For information about managing secrets (auto-created or existing Kubernetes secrets), see [Secret management](../configure/collector-for-kafka-configure-secrets.md).
 
 ## Deploy to OCI Streaming with MicroK8s and Helm
 
