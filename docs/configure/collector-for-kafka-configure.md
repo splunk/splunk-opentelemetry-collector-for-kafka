@@ -1,24 +1,6 @@
-## How to start with SOC4Kafka?
+# Configure the Collector for Kafka
 
-Choose an installation method that fits your environment:
-
-- **Kubernetes (Helm):** Use the [Helm chart](helm/installation.md) to deploy SOC4Kafka on Kubernetes.
-- **Automated (Ansible):** See the [Quickstart Guide](quickstart_guide.md) for automated installation.
-- **Manual:** Follow the steps below to run the collector from a downloaded package and config file. For a full command-by-command walkthrough against a real source, see the [OCI Streaming on a VM](oci_installation.md) guide.
-
-### Download Splunk OTel Collector package
-
-The SOC4Kafka base package is the Splunk OpenTelemetry Collector, offering multiple installation methods to suit different needs.
-Get the newest release (prefixed with `v`) using [this link](https://github.com/signalfx/splunk-otel-collector/releases), download
-the package suited for your platform.
-
-For instance, if you are using Linux on an AMD64 architecture, you can execute the following `wget` command:
-
-```commandline
-wget https://github.com/signalfx/splunk-otel-collector/releases/download/v0.158.0/otelcol_linux_amd64
-```
-
-### Create a minimal config template
+## Create a minimal configuration template
 
 ```yaml
 receivers:
@@ -62,9 +44,9 @@ service:
       exporters: [splunk_hec]
 ```
 
-#### Configuration Table
+## Configuration reference
 
-Mind that this is just a minimal configuration. You can customize it further based on your requirements by referring to the official documentation linked in the Component column.
+This table describes the minimal configuration. For customization options, see the linked component documentation.
 
 | **Category**   | **Component**                                                                                                                         | **Parameter**               | **Description**                                                                            | **Required** | **Default Value** |
 |----------------|---------------------------------------------------------------------------------------------------------------------------------------|-----------------------------|--------------------------------------------------------------------------------------------|--------------|-------------------|
@@ -72,7 +54,7 @@ Mind that this is just a minimal configuration. You can customize it further bas
 |                |                                                                                                                                       | `logs.topics`               | Kafka list of topics to subscribe to for receiving messages.                               | Yes          | N/A               |
 |                |                                                                                                                                       | `logs.encoding`             | Encoding format of the Kafka messages.                                                     | No           | `"text"`          |
 | **Processors** | [resourcedetection](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/resourcedetectionprocessor) |                             | Sets a `host` field based on a machine's information.                                      | No           | N/A               |
-| **Exporters**  | [splunk_hec](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter/splunkhecexporter)                  | `token`                     | Splunk HEC token for authentication.                                                       | Yes          | N/A               |
+| **Exporters**  | [splunk_hec](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter/splunkhecexporter)                  | `token`                     | Splunk HTTP Event Collector (HEC) token for authentication.                                                       | Yes          | N/A               |
 |                |                                                                                                                                       | `endpoint`                  | Splunk HEC endpoint URL for sending data.                                                  | Yes          | N/A               |
 |                |                                                                                                                                       | `source`                    | Source metadata for events sent to Splunk.                                                 | No           | `"otel"`          |
 |                |                                                                                                                                       | `sourcetype`                | Sourcetype metadata for events sent to Splunk.                                             | No           | `"otel"`          |
@@ -87,7 +69,7 @@ Mind that this is just a minimal configuration. You can customize it further bas
 |                |                                                                                                                                       | `pipelines.logs.processors` | Specifies the processor(s) for the log pipeline.                                           | No           | `[]` (empty)      |
 |                |                                                                                                                                       | `pipelines.logs.exporters`  | Specifies the exporter(s) for the log pipeline.                                            | Yes          | N/A               |
 
-#### Example configuration
+## Example configuration
 
 ```yaml
 receivers:
@@ -131,29 +113,6 @@ service:
       exporters: [splunk_hec]
 ```
 
-Fill the file with your data and save it with a `.yaml` extension. For example `config.yaml`.
+Enter your values in the file and save it with a `.yaml` extension, for example, `config.yaml`.
 
-### Run Splunk OTel Collector package with config file
-
-To run SOC4Kafka Connect, use the base package along with a completed configuration template.
-
-```commandline
-./<otel_package> --config <config_file>
-```
-
-!!! note
-
-    Ensure the file has executable permissions before running the command. On Linux-based systems you can add executable permissions using the following command:
-
-```commandline
-chmod a+x <otel_package>
-```
-
-**Example**: For Linux on AMD64 architecture:
-
-```commandline
-chmod a+x otelcol_linux_amd64
-./otelcol_linux_amd64 --config config.yaml
-```
-
-To understand the collector's pipeline design, refer to the [Design](otel_design.md) guide.
+For information about component roles and pipeline design, see [Design the Collector for Kafka](../collector-for-kafka-design.md). For deployment-specific chart values, see [Configure the Helm chart](../deploy/collector-for-kafka-kubernetes-configure-helm.md).

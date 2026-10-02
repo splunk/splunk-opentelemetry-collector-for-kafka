@@ -1,10 +1,10 @@
-## Collecting events from multiple topics
+# Collect events from multiple topics
 
-The configuration is similar to the default one described [here](getting_started.md#create-a-minimal-config-template), with the addition of multiple receivers - one for each topic you want to monitor. Thanks to the flexibility of the OpenTelemetry Collector, the setup can be tailored to meet specific requirements. This modular approach allows you to treat the components as building blocks, enabling you to create a pipeline that aligns perfectly with your use case. Depending on your needs, you can either use a single exporter for all receivers or configure a separate exporter for each receiver.
+Start with the [minimal configuration template](collector-for-kafka-configure.md#create-a-minimal-configuration-template). Add a Kafka receiver for each topic you want to collect. You can connect all receivers to one exporter or configure a separate exporter for each receiver.
 
-![SOC4Kafka multiple topics](images/kafka-multiple-topics.png)
+![Collector for Kafka multiple topics](../images/kafka-multiple-topics.png)
 
-### Example config
+## Example configuration
 
 ```yaml
 receivers:

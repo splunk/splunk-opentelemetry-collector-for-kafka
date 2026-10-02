@@ -1,6 +1,6 @@
-# Examples
+# Collector for Kafka configuration examples
 
-## Basic Single Receiver/Exporter
+## Configure a single receiver and exporter
 
 ```yaml
 kafkaReceivers:
@@ -39,7 +39,7 @@ pipelines:
     # processors omitted: defaults to ["resourcedetection"]
 ```
 
-## Multiple Topics to Multiple Indexes
+## Send data from multiple topics to multiple indexes
 
 ```yaml
 kafkaReceivers:
@@ -96,9 +96,9 @@ pipelines:
       - error-index
 ```
 
-## Kafka with TLS (e.g. port 9093)
+## Connect to Kafka brokers with TLS
 
-When connecting to TLS-enabled Kafka brokers, add a `tls` block. Use `ca_pem` for a custom CA and set `insecure_skip_verify` only for development:
+To connect to Kafka brokers that use TLS, add a `tls` block. Use `ca_pem` for a custom CA certificate. Set `insecure_skip_verify` only in development environments:
 
 ```yaml
 kafkaReceivers:
@@ -136,9 +136,9 @@ pipelines:
       - primary
 ```
 
-See [TLS Configuration](tls.md) for all options and security recommendations.
+For TLS options and security recommendations, see [Configure TLS](collector-for-kafka-configure-tls.md).
 
-## Authenticated Kafka with Secret Management
+## Authenticate with Kafka by using secrets
 
 ```yaml
 kafkaReceivers:
@@ -172,9 +172,9 @@ pipelines:
       - primary
 ```
 
-## With Collector Logs Enabled
+## Collect internal logs
 
-Enable collection of the collector's own logs for debugging and monitoring:
+Enable collection of internal logs from the Collector for Kafka to support debugging and monitoring:
 
 ```yaml
 kafkaReceivers:
@@ -219,22 +219,21 @@ collectorLogs:
     exporter: ""  # Uses the "primary" exporter (or omit to use first exporter)
 ```
 
-When enabled, collector logs will be:
+When enabled, the chart writes collector logs to files in `/var/log/otelcol/` inside the container. The logs are also available in pod output and can be forwarded to Splunk.
 
-- Written to files in `/var/log/otelcol/` inside the container
-- Available in pod logs via `kubectl logs` (stdout/stderr)
-- Automatically forwarded to Splunk using the referenced `splunkExporter` (uses its endpoint, token, index, source, sourcetype)
-- Tracked with `file_storage` extension to prevent re-reading on restart
+Use `kubectl logs` to view the logs written to standard output and standard error. The chart can also forward logs to Splunk by using the referenced `splunkExporter`, which provides the endpoint, token, index, source, and sourcetype.
 
-The chart automatically adds:
+The chart tracks log file positions with the `file_storage` extension so that it does not read the same logs again after a restart.
+
+The chart adds the following components:
 
 - `filelog` receiver to read collector log files
 - `file_storage` extension for checkpointing
-- `logs/internal` pipeline connecting filelog → processors → referenced exporter
+- A `logs/internal` pipeline that connects the `filelog` receiver, processors, and referenced exporter.
 
-## With Metrics Collection Enabled
+## Collect metrics
 
-Enable collection of collector internal metrics and system metrics (CPU, memory, disk, network):
+Enable collection of internal collector metrics and system metrics, such as CPU, memory, disk, and network metrics:
 
 ```yaml
 kafkaReceivers:
@@ -276,12 +275,12 @@ collectorMetrics:
   exporter: "metrics"  # Optional: use specific exporter for metrics (or omit to use first exporter)
 ```
 
-When enabled, the chart automatically adds:
+When enabled, the chart adds the following components:
 
-- **Prometheus receiver** - Scrapes the collector's internal telemetry endpoint (port 8888)
-- **Hostmetrics receiver** - Collects system metrics (CPU, memory, disk, network, filesystem, process)
-- **Telemetry service** - Exposes collector metrics via Prometheus endpoint
-- **Metrics pipeline** - Forwards metrics to Splunk using the referenced `splunkExporter`
+- **Prometheus receiver**: Scrapes the collector's internal telemetry endpoint on port 8888.
+- **Hostmetrics receiver**: Collects system metrics for CPU, memory, disk, network, filesystems, and processes.
+- **Telemetry service**: Exposes collector metrics through a Prometheus endpoint.
+- **Metrics pipeline**: Forwards metrics to Splunk by using the referenced `splunkExporter`.
 
 !!! note
-    Make sure you have a metrics-type index in Splunk for the metrics data. The service exposes port 8888 for Prometheus scraping if needed.
+    Create a metrics index in Splunk for the metrics data. The service exposes port 8888 for Prometheus scraping.
