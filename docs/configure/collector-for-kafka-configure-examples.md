@@ -1,4 +1,4 @@
-# Collector for Kafka configuration examples
+# Splunk Distribution of OpenTelemetry Collector for Kafka configuration examples
 
 ## Configure a single receiver and exporter
 
@@ -174,7 +174,7 @@ pipelines:
 
 ## Collect internal logs
 
-Enable collection of internal logs from the Collector for Kafka to support debugging and monitoring:
+Enable collection of internal logs from the Splunk Distribution of OpenTelemetry Collector for Kafka to support debugging and monitoring:
 
 ```yaml
 kafkaReceivers:

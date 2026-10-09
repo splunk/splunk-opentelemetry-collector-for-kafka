@@ -2,7 +2,7 @@
 
 Start with the [minimal configuration template](collector-for-kafka-configure.md#create-a-minimal-configuration-template). Add a Kafka receiver for each topic you want to collect. You can connect all receivers to one exporter or configure a separate exporter for each receiver.
 
-![Collector for Kafka multiple topics](../images/kafka-multiple-topics.png)
+![Splunk Distribution of OpenTelemetry Collector for Kafka multiple topics](../images/kafka-multiple-topics.png)
 
 ## Example configuration
 

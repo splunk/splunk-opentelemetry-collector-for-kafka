@@ -1,4 +1,4 @@
-# Uninstall the Collector for Kafka Helm release
+# Uninstall the Splunk Distribution of OpenTelemetry Collector for Kafka Helm release
 
 ## Uninstall the Helm release
 

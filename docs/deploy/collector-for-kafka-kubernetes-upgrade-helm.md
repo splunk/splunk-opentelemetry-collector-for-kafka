@@ -1,4 +1,4 @@
-# Upgrade the Collector for Kafka Helm release
+# Upgrade the Splunk Distribution of OpenTelemetry Collector for Kafka Helm release
 
 ## Upgrade the Helm release
 

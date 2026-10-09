@@ -1,14 +1,14 @@
-# Map Splunk Connect for Kafka settings to the Collector for Kafka
+# Map Splunk Connect for Kafka settings to the Splunk Distribution of OpenTelemetry Collector for Kafka
 
 ## Configuration mapping
 
-You cannot transfer Splunk Connect for Kafka settings directly to the Collector for Kafka because the products use different architectures. However, many settings have equivalent options. Use the table below to map each setting.
+You cannot transfer settings directly from Splunk Connect for Kafka to the Splunk Distribution of OpenTelemetry Collector for Kafka because the products use different architectures. However, many settings have equivalent options. Use the table below to map each setting.
 
-In the OpenTelemetry Collector, configure settings on individual receivers (data sources) and exporters (data destinations). Then connect the components in a pipeline.
+In the Splunk Distribution of OpenTelemetry Collector for Kafka, configure settings on individual receivers (data sources) and exporters (data destinations). Then connect the components in a pipeline.
 
-## Settings supported by the Collector for Kafka
+## Settings supported by the Splunk Distribution of OpenTelemetry Collector for Kafka
 
-| Splunk Connect for Kafka field | Collector for Kafka setting | Description |
+| Splunk Connect for Kafka field | Splunk Distribution of OpenTelemetry Collector for Kafka setting | Description |
 |----------------------------------------------|--------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `topics` | `receivers.kafka.logs.topics` | Configure one topic per Kafka receiver. Add multiple receivers to a pipeline to collect from multiple topics. See [Collector design](../collector-for-kafka-design.md). |
 | `topics.regex` | `receivers.kafka.logs.topics` | Prefix the topic pattern with `^` to use a regular expression. See [Subscribe to topics with regular expressions](../configure/collector-for-kafka-configure-regex-topics.md). |
@@ -35,29 +35,29 @@ In the OpenTelemetry Collector, configure settings on individual receivers (data
 | `timestamp.format` | `processors.timestamp.format` | Format of extracted timestamps. |
 | `timestamp.timezone` | `processors.timestamp.timezone` | Time zone for extracted timestamps. |
 
-## Settings without an equivalent in the Collector for Kafka
+## Settings without an equivalent in the Splunk Distribution of OpenTelemetry Collector for Kafka
 
 | Splunk Connect for Kafka field | Description |
 |---------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `connector.class` | The Collector for Kafka uses receivers, processors, and exporters instead of a connector class. |
-| `tasks.max` | Configure scaling differently. See [Scale the Collector for Kafka](../operate/collector-for-kafka-scale.md). |
+| `connector.class` | The Splunk Distribution of OpenTelemetry Collector for Kafka uses receivers, processors, and exporters instead of a connector class. |
+| `tasks.max` | Configure scaling differently. See [Scale the Splunk Distribution of OpenTelemetry Collector for Kafka](../operate/collector-for-kafka-scale.md). |
 | `splunk.hec.raw.line.breaker` | Configure line breaking with custom processors. |
 | `splunk.hec.json.event.enrichment` | Configure JSON enrichment with custom processors. |
 | `splunk.hec.auto.extract.timestamp` | Configure timestamp extraction with processors. See [Extract timestamps](../configure/collector-for-kafka-configure-extract-data.md#extract-timestamps). |
-| `value.converter` | Not supported by the Collector for Kafka. |
-| `value.converter.schema.registry.url` | Not supported by the Collector for Kafka. |
-| `value.converter.schemas.enable` | Not supported by the Collector for Kafka. |
-| `key.converter` | Not supported by the Collector for Kafka. |
-| `key.converter.schema.registry.url` | Not supported by the Collector for Kafka. |
-| `key.converter.schemas.enable` | Not supported by the Collector for Kafka. |
-| `splunk.hec.ack.enabled` | Not supported by the Collector for Kafka. |
-| `splunk.hec.ack.poll.interval` | Not supported by the Collector for Kafka. |
-| `splunk.hec.ack.poll.threads` | Not supported by the Collector for Kafka. |
-| `splunk.hec.total.channels` | The Collector for Kafka does not use channels. |
+| `value.converter` | Not supported by the Splunk Distribution of OpenTelemetry Collector for Kafka. |
+| `value.converter.schema.registry.url` | Not supported by the Splunk Distribution of OpenTelemetry Collector for Kafka. |
+| `value.converter.schemas.enable` | Not supported by the Splunk Distribution of OpenTelemetry Collector for Kafka. |
+| `key.converter` | Not supported by the Splunk Distribution of OpenTelemetry Collector for Kafka. |
+| `key.converter.schema.registry.url` | Not supported by the Splunk Distribution of OpenTelemetry Collector for Kafka. |
+| `key.converter.schemas.enable` | Not supported by the Splunk Distribution of OpenTelemetry Collector for Kafka. |
+| `splunk.hec.ack.enabled` | Not supported by the Splunk Distribution of OpenTelemetry Collector for Kafka. |
+| `splunk.hec.ack.poll.interval` | Not supported by the Splunk Distribution of OpenTelemetry Collector for Kafka. |
+| `splunk.hec.ack.poll.threads` | Not supported by the Splunk Distribution of OpenTelemetry Collector for Kafka. |
+| `splunk.hec.total.channels` | The Splunk Distribution of OpenTelemetry Collector for Kafka does not use channels. |
 | `splunk.hec.threads` | Threading is managed differently and does not require explicit configuration. |
 | `splunk.hec.track.data` | Handle data tracking and debugging with custom processors or external monitoring tools. |
 | `splunk.hec.json.event.formatted` | Send events already formatted for HEC with the `exporters.splunk_hec.export_raw` option. |
-| `splunk.hec.ssl.trust.store.path` | Trust store configuration is not supported by the Collector for Kafka. |
+| `splunk.hec.ssl.trust.store.path` | Trust store configuration is not supported by the Splunk Distribution of OpenTelemetry Collector for Kafka. |
 | `splunk.hec.ssl.trust.store.password` | |
 | `kerberos.user.principal` | Kerberos authentication is supported by the Kafka receiver. For details, see the [Kafka receiver configuration](https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/f1d708538c1038aacf60f6659ed23189481358e4/receiver/kafkareceiver/README.md?plain=1#L72). |
 | `kerberos.keytab.path` | |

@@ -2,7 +2,7 @@
 
 
 
-Use these examples to migrate common Splunk Connect for Kafka configurations to the Collector for Kafka:
+Use these examples to migrate common Splunk Connect for Kafka configurations to the Splunk Distribution of OpenTelemetry Collector for Kafka:
 
 - Configure string messages from Kafka.
 - Extract timestamps.
@@ -31,7 +31,7 @@ curl localhost:8083/connectors -X POST -H "Content-Type: application/json" -d '{
   }'
 ```
 
-### Collector for Kafka configuration
+### Splunk Distribution of OpenTelemetry Collector for Kafka configuration
 
 ```yaml
 receivers:
@@ -71,7 +71,7 @@ service:
 
 ## Extract timestamps
 
-By default, the Collector for Kafka assigns each event a timestamp based on when it collects the event. To use a timestamp from the log body, extract it with a transform processor. For example, consider this event:
+By default, the Splunk Distribution of OpenTelemetry Collector for Kafka assigns each event a timestamp based on when it collects the event. To use a timestamp from the log body, extract it with a transform processor. For example, consider this event:
 
 ```
 [2025-06-26 11:45:00]  the message with a timestamp
@@ -125,11 +125,11 @@ The event appears in Splunk as follows:
 
 ## Set the host automatically
 
-### Collector for Kafka configuration
+### Splunk Distribution of OpenTelemetry Collector for Kafka configuration
 
-By default, events produced by the Collector for Kafka might have the host field set to `unknown`. Configure the [resource detection processor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/resourcedetectionprocessor) to set another value.
+By default, events produced by the Splunk Distribution of OpenTelemetry Collector for Kafka might have the host field set to `unknown`. Configure the [resource detection processor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/resourcedetectionprocessor) to set another value.
 
-The following example uses the processor to get the hostname of the machine that runs the Collector for Kafka. Depending on your requirements, you can instead get the host value from an environment variable or an API. For details, see the [resource detection processor documentation](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/resourcedetectionprocessor).
+The following example uses the processor to get the hostname of the machine that runs the Splunk Distribution of OpenTelemetry Collector for Kafka. Depending on your requirements, you can instead get the host value from an environment variable or an API. For details, see the [resource detection processor documentation](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/resourcedetectionprocessor).
 ```yaml
 receivers:
   kafka:
@@ -173,7 +173,7 @@ service:
      exporters: [splunk_hec]
 ```
 
-![Splunk search result showing the host detected by Collector for Kafka](../images/migration/message-with-host.png)
+![Splunk search result showing the host detected by Splunk Distribution of OpenTelemetry Collector for Kafka](../images/migration/message-with-host.png)
 
 ## Extract headers
 
@@ -207,7 +207,7 @@ curl localhost:8083/connectors -X POST -H "Content-Type: application/json" -d '{
   }'
 ```
 
-### Collector for Kafka configuration
+### Splunk Distribution of OpenTelemetry Collector for Kafka configuration
 
 ```yaml
 receivers:
@@ -252,15 +252,15 @@ Events from Splunk Connect for Kafka appear in Splunk as follows:
 
 ![Splunk event with headers extracted by Splunk Connect for Kafka](../images/migration/sc4kafka-headers.png)
 
-Events from the Collector for Kafka appear in a similar format:
+Events from the Splunk Distribution of OpenTelemetry Collector for Kafka appear in a similar format:
 
-![Splunk event with headers extracted by Collector for Kafka](../images/migration/soc4kafka-headers.png)
+![Splunk event with headers extracted by Splunk Distribution of OpenTelemetry Collector for Kafka](../images/migration/soc4kafka-headers.png)
 
 ## Send data from multiple Kafka topics to multiple Splunk HEC endpoints
 
 In Splunk Connect for Kafka, you can provide a list of topics and a corresponding list of indexes. Each topic's data is mapped to its respective index. For example, the first topic maps to the first index, the second topic maps to the second index, and so on.
 
-In the Collector for Kafka, configure Kafka receivers and Splunk HEC exporters separately, then connect them in a pipeline. Each exporter can use different source and sourcetype values.
+In the Splunk Distribution of OpenTelemetry Collector for Kafka, configure Kafka receivers and Splunk HEC exporters separately, then connect them in a pipeline. Each exporter can use different source and sourcetype values.
 
 ### Splunk Connect for Kafka configuration
 
@@ -278,7 +278,7 @@ curl localhost:8083/connectors -X POST -H "Content-Type: application/json" -d '{
   }'
 ```
 
-### Collector for Kafka configuration
+### Splunk Distribution of OpenTelemetry Collector for Kafka configuration
 
 ```yaml
 receivers:
@@ -352,12 +352,12 @@ Events from Splunk Connect for Kafka appear as follows:
 ![Splunk Connect for Kafka event from the two-pat topic](../images/migration/sc4kafka-two-pat.png)
 ![Splunk Connect for Kafka event from the three-pat topic](../images/migration/sc4kafka-three-pat.png)
 
-Events from the Collector for Kafka appear as follows:
+Events from the Splunk Distribution of OpenTelemetry Collector for Kafka appear as follows:
 
-![Collector for Kafka event from the two-pat topic](../images/migration/soc4kafka-two-pat.png)
-![Collector for Kafka event from the three-pat topic](../images/migration/sock4kafka-three-pat.png)
+![Splunk Distribution of OpenTelemetry Collector for Kafka event from the two-pat topic](../images/migration/soc4kafka-two-pat.png)
+![Splunk Distribution of OpenTelemetry Collector for Kafka event from the three-pat topic](../images/migration/sock4kafka-three-pat.png)
 
-The Collector for Kafka lets you configure a unique source and sourcetype for each topic. Use these values to filter and organize events in Splunk.
+The Splunk Distribution of OpenTelemetry Collector for Kafka lets you configure a unique source and sourcetype for each topic. Use these values to filter and organize events in Splunk.
 
 ## Send events that are already in HEC format
 
@@ -383,9 +383,9 @@ curl localhost:8083/connectors -X POST -H "Content-Type: application/json" -d' {
  }'
 ```
 
-### Collector for Kafka configuration
+### Splunk Distribution of OpenTelemetry Collector for Kafka configuration
 
-To get the same result with the Collector for Kafka, set the `export_raw` option in the exporter configuration:
+To get the same result with the Splunk Distribution of OpenTelemetry Collector for Kafka, set the `export_raw` option in the exporter configuration:
 
 ```yaml
 receivers:

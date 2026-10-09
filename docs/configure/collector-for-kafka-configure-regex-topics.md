@@ -3,7 +3,7 @@
 Use a regular expression to subscribe to Kafka topics that match a pattern. Start the pattern with the `^` character to identify it as a regular expression.
 
 ## How regular expression topic subscriptions work
-The Kafka receiver subscribes to existing topics that match the pattern and detects new matching topics as they are created. For example, `^myPrefix.*` matches topics that begin with `myPrefix`.
+The Kafka receiver continuously monitors the Kafka cluster for topics that match the pattern. It subscribes to matching topics that already exist and detects new matching topics as they are created. This lets one receiver consume from multiple topics that share a naming pattern without listing each topic individually. For example, `^myPrefix.*` matches topics that begin with `myPrefix`.
 
 !!! note
     Ensure that your regex pattern is valid and correctly formatted to avoid any subscription issues.

@@ -1,8 +1,8 @@
-# Collect logs from the Collector for Kafka
+# Collect logs from the Splunk Distribution of OpenTelemetry Collector for Kafka
 
 ## Write logs to a file or standard output
 
-To collect logs from the Collector for Kafka, add a `telemetry` section under the `service` block in its configuration file. Use this section to set the logging level and log output paths. You can write logs to a file, standard output (`stdout`), or both.
+To collect logs from the Splunk Distribution of OpenTelemetry Collector for Kafka, add a `telemetry` section under the `service` block in its configuration file. Use this section to set the logging level and log output paths. You can write logs to a file, standard output (`stdout`), or both.
 
 !!! note
 
@@ -28,7 +28,7 @@ service:
         - ./soc4kafka-otel/otel-collector-errors.log
         - stderr
 ```
-The following configuration writes Collector for Kafka logs and includes the `telemetry` section:
+The following configuration writes Splunk Distribution of OpenTelemetry Collector for Kafka logs and includes the `telemetry` section:
 
 ```yaml
 receivers:
@@ -80,7 +80,7 @@ service:
 ```
 
 ## Forward logs from multiple collector instances
-To monitor collector instances on multiple hosts, add the `filelog` receiver to forward log files to Splunk. This lets you monitor logs centrally instead of connecting to each VM over SSH.
+To monitor and troubleshoot collector instances on multiple hosts, add the `filelog` receiver to forward log files to Splunk. This lets you monitor logs centrally instead of connecting to each VM over SSH.
 
 The `file_storage` extension records the read position in each log file. After a restart, the collector resumes reading from that position instead of sending the entire file again.
 

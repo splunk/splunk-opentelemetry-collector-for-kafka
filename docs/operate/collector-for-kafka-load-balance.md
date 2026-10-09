@@ -2,9 +2,7 @@
 
 ## Configure a load balancer for Splunk HEC
 
-Splunk Connect for Kafka includes client-side load balancing. The Collector for Kafka sends data to one Splunk HTTP Event Collector (HEC) endpoint. In a multi-indexer environment, configure that endpoint to use a load balancer. The load balancer manages traffic, health checks, and failover.
-
-Configure the collector with one HEC endpoint. In a multi-indexer environment, set this endpoint to the address of a load balancer.
+Splunk Connect for Kafka (SC4Kafka) includes client-side load balancing. The Splunk Distribution of OpenTelemetry Collector for Kafka delegates load balancing and high availability for Splunk HTTP Event Collector (HEC) endpoints to dedicated infrastructure components. This separates traffic management, health checks, and failover from the collector. In a multi-indexer environment, configure the collector with a single HEC endpoint that points to an external load balancer.
 
 ## Place a load balancer in front of the indexers
 

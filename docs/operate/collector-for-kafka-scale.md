@@ -1,6 +1,6 @@
-# Scale the Collector for Kafka
+# Scale the Splunk Distribution of OpenTelemetry Collector for Kafka
 
-To increase throughput, deploy multiple instances of the Collector for Kafka. Kafka distributes partitions among consumers in the same consumer group.
+To increase throughput, deploy multiple instances of the Splunk Distribution of OpenTelemetry Collector for Kafka. Kafka distributes partitions among consumers in the same consumer group.
 
 ## Scale horizontally
 
@@ -11,7 +11,7 @@ To increase throughput, deploy multiple instances of the Collector for Kafka. Ka
 
 ### Use the same consumer group
 
-Configure each instance of the Collector for Kafka to use the same `group_id`. Kafka assigns each partition to one consumer in the group.
+Configure each instance of the Splunk Distribution of OpenTelemetry Collector for Kafka to use the same `group_id`. Kafka assigns each partition to one consumer in the group.
 
 ```yaml
 receivers:
@@ -48,4 +48,4 @@ service:
 ```
 
 !!! note
-    Replace `<GROUP ID>` with a name shared by all instances of the Collector for Kafka. This setting puts all instances in the same consumer group.
+    Replace `<GROUP ID>` with a name shared by all instances of the Splunk Distribution of OpenTelemetry Collector for Kafka. This setting puts all instances in the same consumer group.

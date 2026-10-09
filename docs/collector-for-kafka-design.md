@@ -1,12 +1,12 @@
-# Understand the Collector for Kafka design
+# Understand the Splunk Distribution of OpenTelemetry Collector for Kafka design
 
-The Collector for Kafka uses the OpenTelemetry Collector framework and includes three pipeline component types:
+The Splunk Distribution of OpenTelemetry Collector for Kafka uses the OpenTelemetry Collector framework and includes three pipeline component types:
 
 - Receivers
 - Processors
 - Exporters
 
-![OpenTelemetry Collector pipeline with receivers, processors, and exporters](../images/kafka-otel-scheme.png)
+![OpenTelemetry Collector pipeline with receivers, processors, and exporters](./images/kafka-otel-scheme.png)
 
 ## Receivers
 
@@ -14,7 +14,7 @@ The Kafka receiver collects data from a Kafka cluster. For configuration details
 
 ## Processors
 
-Processors are optional pipeline components that transform, filter, or drop data before export. The Collector for Kafka configures Splunk HTTP Event Collector (HEC) batching in the exporter `sending_queue.batch` setting instead of using a pipeline `batch` processor. For more information, see the [OpenTelemetry Collector processor documentation](https://github.com/open-telemetry/opentelemetry-collector/tree/main/processor#general-information).
+Processors are optional pipeline components that transform, filter, or drop data before export. The Splunk Distribution of OpenTelemetry Collector for Kafka configures Splunk HTTP Event Collector (HEC) batching in the exporter `sending_queue.batch` setting instead of using a pipeline `batch` processor. For more information, see the [OpenTelemetry Collector processor documentation](https://github.com/open-telemetry/opentelemetry-collector/tree/main/processor#general-information).
 
 ## Exporters
 

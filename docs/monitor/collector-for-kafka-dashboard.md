@@ -1,20 +1,20 @@
-# Monitor the Collector for Kafka with a dashboard
+# Monitor the Splunk Distribution of OpenTelemetry Collector for Kafka with a dashboard
 
-Use the Collector for Kafka dashboard to monitor Kafka metrics. The dashboard combines data from three sources to show the environment's performance and health.
+Use the Splunk Distribution of OpenTelemetry Collector for Kafka dashboard to monitor Kafka metrics. The dashboard combines data from three sources to show the environment's performance and health.
 
 ## Dashboard controls
 
 The dashboard has seven tabs. Each tab contains graphs, gauges, and inputs for the data it displays. All tabs share these three controls:
 
 - **Time Range**: Select the date and time range for metrics. Some gauges, such as Active Collectors, always show the latest information.
-- **Log Indexes**: Select the event and metrics indexes to display all dashboard features.
+- **Log Indexes**: Choose the indexes that contain dashboard event data and metrics. Select both an event index and a metrics index to display all dashboard features.
 - **Time Span**: Select the interval for aggregating data in time-based graphs.
 
 ![Dashboard filters for time range, log indexes, and time span](../images/dashboard/global-inputs.png)
 
 ### General
 
-The **General** tab shows Collector for Kafka health, including a table of active collector instances and a gauge for active Kafka brokers. The Active Collectors gauge shows data from the past 5 minutes.
+The **General** tab shows Splunk Distribution of OpenTelemetry Collector for Kafka health, including a table of active collector instances and a gauge for active Kafka brokers. The Active Collectors gauge shows data from the past 5 minutes.
 
 ![General dashboard tab showing active collector instances and Kafka brokers](../images/dashboard/global-tab-active-instances.png)
 
@@ -37,24 +37,24 @@ For the last two charts, select the appropriate topic for each consumer group. O
 
 ### CPU, memory, disk, network
 
-The next four tabs show system metrics for the machines that run instances of the Collector for Kafka.
+The next four tabs show system metrics for the machines that run instances of the Splunk Distribution of OpenTelemetry Collector for Kafka.
 
 The **CPU** tab shows the number of logical CPU cores, process CPU utilization, and system CPU utilization. Select the task types to include in the statistics. By default, the dashboard includes system and CPU modes.
 
-![CPU metrics in the Collector for Kafka dashboard](../images/dashboard/cpu-tab.png)
-![Additional CPU metrics in the Collector for Kafka dashboard](../images/dashboard/cpu-tab-2.png)
+![CPU metrics in the Splunk Distribution of OpenTelemetry Collector for Kafka dashboard](../images/dashboard/cpu-tab.png)
+![Additional CPU metrics in the Splunk Distribution of OpenTelemetry Collector for Kafka dashboard](../images/dashboard/cpu-tab-2.png)
 
 The **Memory** tab shows system memory utilization, total available memory, and system and memory usage. Select the memory metrics to include in the graphs.
 
-![Memory metrics in the Collector for Kafka dashboard](../images/dashboard/memory-tab.png)
+![Memory metrics in the Splunk Distribution of OpenTelemetry Collector for Kafka dashboard](../images/dashboard/memory-tab.png)
 
 The **Disk** tab shows disk usage. The filesystem utilization gauge shows the selected filesystem's space usage. Select a filesystem from the list.
 
-![Disk usage metrics in the Collector for Kafka dashboard](../images/dashboard/disk-tab.png)
+![Disk usage metrics in the Splunk Distribution of OpenTelemetry Collector for Kafka dashboard](../images/dashboard/disk-tab.png)
 
 The **Network** tab shows network traffic.
 
-![Network metrics in the Collector for Kafka dashboard](../images/dashboard/network-tab.png)
+![Network metrics in the Splunk Distribution of OpenTelemetry Collector for Kafka dashboard](../images/dashboard/network-tab.png)
 
 ### Events
 
@@ -64,7 +64,7 @@ The **Events** tab shows data about events received by the Splunk platform. Use 
 
 ## Install the dashboard
 
-### Configure the Collector for Kafka
+### Configure the Splunk Distribution of OpenTelemetry Collector for Kafka
 
 The dashboard uses these three telemetry data sources:
 

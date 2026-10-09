@@ -2,7 +2,7 @@
 
 ## Extract data from headers
 
-The Collector for Kafka can extract data from Kafka message headers.
+The Splunk Distribution of OpenTelemetry Collector for Kafka can extract data from Kafka message headers.
 
 ### Example configuration
 
@@ -56,7 +56,7 @@ With this configuration, the collector sends `kafka.header.myHeader1` and `kafka
 
 ### View the extracted headers in Splunk
 
-![Collector for Kafka headers extraction](../images/kafka-header-extraction.png)
+![Splunk Distribution of OpenTelemetry Collector for Kafka headers extraction](../images/kafka-header-extraction.png)
 
 ## Extract timestamps
 

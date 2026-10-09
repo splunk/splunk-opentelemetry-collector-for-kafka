@@ -1,10 +1,10 @@
-# Configure the Helm chart for the Collector for Kafka
+# Configure the Helm chart for the Splunk Distribution of OpenTelemetry Collector for Kafka
 
 ## Core configuration
 
 ### Kafka receivers
 
-Define one or more Kafka receivers. The chart supports all standard Kafka receiver options. For details about the receiver, see [Understand the Collector for Kafka design](../collector-for-kafka-design.md).
+Define one or more Kafka receivers. The chart supports all standard Kafka receiver options. For details about the receiver, see [Understand the Splunk Distribution of OpenTelemetry Collector for Kafka design](../collector-for-kafka-design.md).
 
 ```yaml
 kafkaReceivers:
@@ -30,7 +30,7 @@ kafkaReceivers:
 
 ### Splunk HTTP Event Collector (HEC) exporters
 
-Define one or more Splunk HEC exporters. The chart supports all standard Splunk HEC exporter options. For details about the exporter, see [Understand the Collector for Kafka design](../collector-for-kafka-design.md).
+Define one or more Splunk HEC exporters. The chart supports all standard Splunk HEC exporter options. For details about the exporter, see [Understand the Splunk Distribution of OpenTelemetry Collector for Kafka design](../collector-for-kafka-design.md).
 
 ```yaml
 splunkExporters:
@@ -64,7 +64,7 @@ splunkExporters:
 
 ### Pipelines
 
-Connect receivers to exporters. For details about pipelines, see [Understand the Collector for Kafka design](../collector-for-kafka-design.md).
+Connect receivers to exporters. For details about pipelines, see [Understand the Splunk Distribution of OpenTelemetry Collector for Kafka design](../collector-for-kafka-design.md).
 
 **Chart-specific:** You can omit `processors`; the chart then uses `defaults.pipelineProcessors` (default: `["resourcedetection"]`). Override per pipeline or change the default in `values.yaml`.
 
@@ -97,7 +97,7 @@ See [values.yaml](https://github.com/splunk/splunk-opentelemetry-collector-for-k
 
 ### Collector logs
 
-For information about configuring and collecting the Collector for Kafka logs, see [Collect logs from the Collector for Kafka](../monitor/collector-for-kafka-collector-logs.md).
+For information about configuring and collecting the Splunk Distribution of OpenTelemetry Collector for Kafka logs, see [Collect logs from the Splunk Distribution of OpenTelemetry Collector for Kafka](../monitor/collector-for-kafka-collector-logs.md#collect-logs-with-helm).
 
 ### Metrics collection
 
@@ -125,7 +125,7 @@ collectorMetrics:
 
 !!! note
 
-    Create a metrics index in Splunk for the metrics data. For details, see the [Collector for Kafka dashboard](../monitor/collector-for-kafka-dashboard.md).
+    Create a metrics index in Splunk for the metrics data. For details, see the [Splunk Distribution of OpenTelemetry Collector for Kafka dashboard](../monitor/collector-for-kafka-dashboard.md).
 
 **Advanced configuration:** To customize metrics configuration, including exporters, scrapers, or intervals, use `configOverride` to override the generated configuration.
 
@@ -180,4 +180,4 @@ The chart restarts pods automatically in these cases:
 - **ConfigMap changes**: Pods restart when the OpenTelemetry configuration changes, based on the `checksum/config` annotation.
 - **Secret changes**: Pods restart when token values in `values.yaml` change for chart-created Secrets or when Secret references change, based on the `checksum/secrets` annotation.
 
-These restarts apply updated configuration and Secrets to the collector.
+These restarts apply updated configuration and secrets to the collector.

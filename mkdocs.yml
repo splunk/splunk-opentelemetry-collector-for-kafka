@@ -1,5 +1,5 @@
 ---
-site_name: Splunk OpenTelemetry Collector for Kafka (SOC4Kafka)
+site_name: Splunk Distribution of OpenTelemetry Collector for Kafka
 site_url: https://splunk.github.io/splunk-opentelemetry-collector-for-kafka/
 
 repo_url: https://github.com/splunk/splunk-opentelemetry-collector-for-kafka
@@ -41,7 +41,7 @@ theme:
     accent: "orange"
 
 nav:
-  - Collector for Kafka: "index.md"
+  - Splunk Distribution of OpenTelemetry Collector for Kafka: "index.md"
   - Design: "collector-for-kafka-design.md"
   - Deploy:
       - Overview: "deploy/collector-for-kafka-deploy.md"
@@ -55,10 +55,6 @@ nav:
       - Ansible:
           - Overview: "deploy/collector-for-kafka-ansible.md"
           - Install: "deploy/collector-for-kafka-ansible-install.md"
-          - Configure: "deploy/collector-for-kafka-ansible-configure.md"
-          - Troubleshoot: "deploy/collector-for-kafka-ansible-troubleshoot.md"
-          - Upgrade: "deploy/collector-for-kafka-ansible-upgrade.md"
-          - Uninstall: "deploy/collector-for-kafka-ansible-uninstall.md"
       - Manual:
           - Overview: "deploy/collector-for-kafka-manual.md"
           - Install: "deploy/collector-for-kafka-manual-install.md"
@@ -77,7 +73,6 @@ nav:
       - Overview: "operate/collector-for-kafka-operate.md"
       - Scale the Collector: "operate/collector-for-kafka-scale.md"
       - Load balance HEC traffic: "operate/collector-for-kafka-load-balance.md"
-      - Troubleshoot the Collector: "operate/collector-for-kafka-troubleshoot.md"
   - Monitor:
       - Overview: "monitor/collector-for-kafka-monitor.md"
       - Dashboard: "monitor/collector-for-kafka-dashboard.md"

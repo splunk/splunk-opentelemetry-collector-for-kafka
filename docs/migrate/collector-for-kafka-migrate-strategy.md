@@ -2,7 +2,7 @@
 
 
 
-When you run Splunk Connect for Kafka and the Collector for Kafka at the same time, Kafka's at-least-once delivery semantics can result in duplicate events in Splunk. This behavior is expected because Kafka prioritizes data durability over deduplication.
+When you run Splunk Connect for Kafka and the Splunk Distribution of OpenTelemetry Collector for Kafka at the same time, Kafka's at-least-once delivery semantics can result in duplicate events in Splunk. This behavior is expected because Kafka prioritizes data durability over deduplication.
 
 Choose a migration strategy based on how the two products use Kafka consumer groups.
 
@@ -43,7 +43,7 @@ The output shows which partitions are assigned to Splunk Connect for Kafka and w
 
 ## Use different consumer groups
 
-If you do not configure `group_id`, the Collector for Kafka uses `otel_collector` by default. Because this ID differs from the one used by Splunk Connect for Kafka, both products consume the same Kafka topic independently.
+If you do not configure `group_id`, the Splunk Distribution of OpenTelemetry Collector for Kafka uses `otel_collector` by default. Because this ID differs from the one used by Splunk Connect for Kafka, both products consume the same Kafka topic independently.
 
 As a result:
 
@@ -55,11 +55,11 @@ Don't use this approach in production unless duplicate events are acceptable or 
 
 ## Use the same consumer group ID
 
-Configure Splunk Connect for Kafka and the Collector for Kafka to use the same Kafka consumer group ID. Kafka then assigns partitions across both products instead of having each product consume every message.
+Configure Splunk Connect for Kafka and the Splunk Distribution of OpenTelemetry Collector for Kafka to use the same Kafka consumer group ID. Kafka then assigns partitions across both products instead of having each product consume every message.
 
 ### Configure the consumer group ID
 
-Set `group_id` in the Collector for Kafka configuration to the ID used by Splunk Connect for Kafka. For example:
+Set `group_id` in the Splunk Distribution of OpenTelemetry Collector for Kafka configuration to the ID used by Splunk Connect for Kafka. For example:
 
 ```yaml
 receivers:
@@ -81,7 +81,7 @@ When both products use the same consumer group:
 * The products share consumption according to their partition assignments.
 * Kafka changes partition assignments during group rebalances.
 
-Kafka consumer groups distribute work; they do not provide active-standby failover. When you decommission Splunk Connect for Kafka, the Collector for Kafka takes over its uncommitted partitions. Splunk Connect for Kafka might replay offsets that it processed but had not committed, which can result in duplicate events in Splunk.
+Kafka consumer groups distribute work; they do not provide active-standby failover. When you decommission Splunk Connect for Kafka, the Splunk Distribution of OpenTelemetry Collector for Kafka takes over its uncommitted partitions. Splunk Connect for Kafka might replay offsets that it processed but had not committed, which can result in duplicate events in Splunk.
 
 !!! note
     Kafka consumer groups support resilience and throughput, but they do not provide seamless connector replacement. This strategy reduces duplicate events compared with separate consumer groups, but it does not eliminate them.
@@ -90,12 +90,12 @@ Using the same consumer group ID is the recommended strategy when both products 
 
 ## Use separate topics for a parallel migration
 
-Create new Kafka topics for the Collector for Kafka while Splunk Connect for Kafka continues to consume from the existing topics. Configure event producers to send data to the new topics. This lets both products run in parallel without sharing consumer groups or partitions.
+Create new Kafka topics for the Splunk Distribution of OpenTelemetry Collector for Kafka while Splunk Connect for Kafka continues to consume from the existing topics. Configure event producers to send data to the new topics. This lets both products run in parallel without sharing consumer groups or partitions.
 
 
 **Configuration**
 
-1. Create Kafka topics for the Collector for Kafka. Use a naming convention that distinguishes them from existing topics. For example:
+1. Create Kafka topics for the Splunk Distribution of OpenTelemetry Collector for Kafka. Use a naming convention that distinguishes them from existing topics. For example:
 
 ```yaml
 kafka-topics.sh \
@@ -107,7 +107,7 @@ kafka-topics.sh \
 ```
 
 2. Update Kafka producers to publish events to the new topics, such as `topic2`, instead of the original topics.
-3. Configure the Collector for Kafka to consume from the new topics:
+3. Configure the Splunk Distribution of OpenTelemetry Collector for Kafka to consume from the new topics:
 
 ```yaml
 receivers:

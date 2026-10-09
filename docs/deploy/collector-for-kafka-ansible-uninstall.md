@@ -1,1 +1,0 @@
-# Uninstall the Ansible deployment

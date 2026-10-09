@@ -1,10 +1,10 @@
-# Collector for Kafka
+# Splunk Distribution of OpenTelemetry Collector for Kafka
 
 The Splunk Distribution of OpenTelemetry Collector for Kafka subscribes to Kafka topics and sends their data to Splunk Observability Cloud or to the Splunk platform through a Splunk HTTP Event Collector (HEC) exporter. It replaces Splunk Connect for Kafka ([kafka-connect-splunk](https://github.com/splunk/kafka-connect-splunk)).
 
 ## Features
 
-The Collector for Kafka supports horizontal scaling and load balancing. See [Scale the Collector](operate/collector-for-kafka-scale.md) and [Load balance HEC traffic](operate/collector-for-kafka-load-balance.md).
+The Splunk Distribution of OpenTelemetry Collector for Kafka supports horizontal scaling and load balancing. See [Scale the Collector](operate/collector-for-kafka-scale.md) and [Load balance HEC traffic](operate/collector-for-kafka-load-balance.md).
 
 ## Requirements
 
@@ -19,15 +19,15 @@ The Collector for Kafka supports horizontal scaling and load balancing. See [Sca
 
 ## Differences from Splunk Connect for Kafka
 
-The Collector for Kafka does not support acknowledgment support or Protobuf encoding. It also does not support HEC acknowledgments.
+The Splunk Distribution of OpenTelemetry Collector for Kafka does not support acknowledgment support or Protobuf encoding. It also does not support HEC acknowledgments.
 
 ## Deploy the Collector
 
-Choose a deployment method in [Deploy the Collector for Kafka](deploy/collector-for-kafka-deploy.md).
+Choose a deployment method in [Deploy the Splunk Distribution of OpenTelemetry Collector for Kafka](deploy/collector-for-kafka-deploy.md).
 
 ## Configure the Collector
 
-For receiver, processor, exporter, and pipeline guidance, see [Configure the Collector for Kafka](configure/collector-for-kafka-configure.md).
+For receiver, processor, exporter, and pipeline guidance, see [Configure the Splunk Distribution of OpenTelemetry Collector for Kafka](configure/collector-for-kafka-configure.md).
 
 ## Advanced configuration
 
@@ -41,4 +41,4 @@ To migrate from Splunk Connect for Kafka, see [Migrate from Splunk Connect for K
 
 ## Monitor the Collector
 
-See [Monitor the Collector for Kafka](monitor/collector-for-kafka-monitor.md) for dashboard and Collector log guidance.
+Monitor the Splunk Distribution of OpenTelemetry Collector for Kafka with the [health dashboard](monitor/collector-for-kafka-dashboard.md) or [Collector logs](monitor/collector-for-kafka-collector-logs.md).

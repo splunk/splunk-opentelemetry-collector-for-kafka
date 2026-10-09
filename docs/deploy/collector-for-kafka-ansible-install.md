@@ -1,9 +1,9 @@
-# Install the Collector for Kafka with Ansible
+# Install the Splunk Distribution of OpenTelemetry Collector for Kafka with Ansible
 
-Install the Collector for Kafka on a Linux or macOS host by using the Ansible playbook.
+Install the Splunk Distribution of OpenTelemetry Collector for Kafka on a Linux or macOS host by using the Ansible playbook.
 
 !!! note
-    The playbook creates a basic configuration in `values.yaml`. Edit the file to meet your requirements. For more configuration options, see [Configure the Collector for Kafka](../configure/collector-for-kafka-configure.md).
+    The playbook creates a basic configuration in `values.yaml`. Edit the file to meet your requirements. For more configuration options, see [Configure the Splunk Distribution of OpenTelemetry Collector for Kafka](../configure/collector-for-kafka-configure.md).
 
 ## Prerequisites
 
@@ -20,7 +20,7 @@ Before you begin, make sure that you have the following prerequisites:
 - Network connectivity among Kafka, the Splunk platform, and the host where you will install the collector
 - Ansible installed on the host where you will install the collector
 
-## Install the Collector for Kafka
+## Install the Splunk Distribution of OpenTelemetry Collector for Kafka
 
 1. Download the Ansible script [install_soc4kafka_collector.yaml](https://github.com/splunk/splunk-opentelemetry-collector-for-kafka/blob/main/quickstart/install_soc4kafka_collector.yaml):
 
@@ -41,7 +41,7 @@ ansible-playbook install_soc4kafka_collector.yaml
 ```
 
 
-When the collector is running, its logs appear in the Splunk platform. For more configuration options, see [Configure the Collector for Kafka](../configure/collector-for-kafka-configure.md).
+When the collector is running, its logs appear in the Splunk platform. For more configuration options, see [Configure the Splunk Distribution of OpenTelemetry Collector for Kafka](../configure/collector-for-kafka-configure.md).
 
 
 ## Ansible variables
@@ -52,7 +52,7 @@ When the collector is running, its logs appear in the Splunk platform. For more 
 | `Operating_System`  | String  | Operating system.                                                                             | `linux`, `darwin`   | `"linux"`                | -                                                      |
 | `Architecture`      | String  | System architecture.                                                                          | `amd64`, `arm64`    | `"amd64"`                | -                                                      |
 | `Brokers`           | String  | Comma-separated Kafka broker addresses in the format `broker:port`.                          | -                    | -                        | `"broker1:port1"` or `"broker1:port1,broker2:port2"` |
-| **Topic**             | String  | Kafka topic from which to collect messages.                                                    | -                    | -                        | `"example-topic"`                                      |
+| `Topic`               | String  | Kafka topic from which to collect messages.                                                    | -                    | -                        | `"example-topic"`                                      |
 | `Encoding`          | String  | Kafka message encoding format.                                                                | `text`, `json`      | `"text"`                 | -                                                      |
 | `Insecure_Skip_Verify` | Boolean | Set to `true` to skip TLS certificate verification. Not recommended for production.           | `true`, `false`     | `false`                  | -                                                      |
 | `Splunk_HEC_Token`  | String  | HTTP Event Collector (HEC) token for authentication.                                         | -                    | -                        | `"your-splunk-hec-token"`                              |

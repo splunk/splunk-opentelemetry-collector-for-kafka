@@ -1,4 +1,4 @@
-# Configure the Collector for Kafka
+# Configure the Splunk Distribution of OpenTelemetry Collector for Kafka
 
 ## Create a minimal configuration template
 
@@ -115,4 +115,4 @@ service:
 
 Enter your values in the file and save it with a `.yaml` extension, for example, `config.yaml`.
 
-For information about component roles and pipeline design, see [Design the Collector for Kafka](../collector-for-kafka-design.md). For deployment-specific chart values, see [Configure the Helm chart](../deploy/collector-for-kafka-kubernetes-configure-helm.md).
+For information about component roles and pipeline design, see [Design the Splunk Distribution of OpenTelemetry Collector for Kafka](../collector-for-kafka-design.md). For deployment-specific chart values, see [Configure the Helm chart](../deploy/collector-for-kafka-kubernetes-configure-helm.md).

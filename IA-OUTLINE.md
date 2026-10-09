@@ -1,4 +1,4 @@
-# Collector for Kafka documentation information architecture draft
+# Splunk Distribution of OpenTelemetry Collector for Kafka documentation information architecture draft
 
 This outline records the source-to-target map for the information architecture refactor. Content has been moved into the pages listed below. The hierarchy reflects the current page tree.
 
@@ -15,13 +15,10 @@ This outline records the source-to-target map for the information architecture r
     - `deploy/collector-for-kafka-kubernetes-uninstall-helm.md`
   - `deploy/collector-for-kafka-ansible.md` `[provisional]`
     - `deploy/collector-for-kafka-ansible-install.md`
-    - `deploy/collector-for-kafka-ansible-configure.md`
-    - `deploy/collector-for-kafka-ansible-troubleshoot.md` `[provisional]`
-    - `deploy/collector-for-kafka-ansible-upgrade.md` `[provisional]`
-    - `deploy/collector-for-kafka-ansible-uninstall.md` `[provisional]`
+    - Potential topics to confirm with engineering: configuration, troubleshooting, upgrading, and uninstalling. Create pages only if those topics need distinct Ansible-specific content.
   - `deploy/collector-for-kafka-manual.md`
     - `deploy/collector-for-kafka-manual-install.md`
-  - `deploy/collector-for-kafka-oci-streaming.md` `[provisional; current source is an OCI Ubuntu scenario]`
+  - `deploy/collector-for-kafka-oci-streaming.md` `[provisional; includes OCI Ubuntu systemd and MicroK8s/Helm procedures]`
 - `configure/collector-for-kafka-configure.md` — shared Collector receiver, processor, exporter, pipeline, and configuration guidance
   - `configure/collector-for-kafka-configure-secrets.md`
   - `configure/collector-for-kafka-configure-tls.md`
@@ -33,7 +30,6 @@ This outline records the source-to-target map for the information architecture r
 - `operate/collector-for-kafka-operate.md`
   - `operate/collector-for-kafka-scale.md`
   - `operate/collector-for-kafka-load-balance.md`
-  - `operate/collector-for-kafka-troubleshoot.md`
 - `monitor/collector-for-kafka-monitor.md`
   - `monitor/collector-for-kafka-dashboard.md`
   - `monitor/collector-for-kafka-collector-logs.md` — distinguish Collector internal logs from Kafka event logs
@@ -60,10 +56,10 @@ The landing page is stored at `docs/index.md` so Zensical serves it at the site 
 | Original `docs/index.md` — overview, requirements, platforms, features, migration and monitoring links | `docs/index.md` (landing page; logical topic `collector-for-kafka-intro`) | Merge and split | Moved; stored at root for Zensical; DITA filename exception recorded above |
 | `docs/otel_design.md` | `collector-for-kafka-design.md` | Move | Moved |
 | `docs/getting_started.md` — deployment choices, manual-install introduction, package download/run, minimal config and table | `deploy/collector-for-kafka-deploy.md`, `deploy/collector-for-kafka-manual-install.md`, `configure/collector-for-kafka-configure.md` | Split | Moved |
-| `docs/quickstart_guide.md` — Ansible quickstart and variables | `deploy/collector-for-kafka-ansible-install.md` | Move | Moved; other Ansible pages remain provisional |
+| `docs/quickstart_guide.md` — Ansible quickstart and variables | `deploy/collector-for-kafka-ansible-install.md` | Move | Moved; additional Ansible topics remain provisional and have no placeholder pages |
 | `docs/oci_installation.md` — OCI Streaming prerequisites and method chooser | `deploy/collector-for-kafka-oci-streaming.md` | Split | Moved |
-| `docs/oci_installation.md` — systemd procedure | `deploy/collector-for-kafka-manual-install.md` | Split | Moved |
-| `docs/oci_installation.md` — MicroK8s/Helm procedure | `deploy/collector-for-kafka-kubernetes-install-helm.md` | Split | Moved |
+| `docs/oci_installation.md` — systemd procedure | `deploy/collector-for-kafka-oci-streaming.md` | Split | Moved; OCI-specific procedure grouped with the OCI Streaming deployment page |
+| `docs/oci_installation.md` — MicroK8s/Helm procedure | `deploy/collector-for-kafka-oci-streaming.md` | Split | Moved; OCI-specific procedure grouped with the OCI Streaming deployment page |
 | `docs/helm/installation.md` — install, upgrade, uninstall | `deploy/collector-for-kafka-kubernetes-install-helm.md`, `deploy/collector-for-kafka-kubernetes-upgrade-helm.md`, `deploy/collector-for-kafka-kubernetes-uninstall-helm.md` | Split | Moved |
 | `docs/helm/configuration.md` — chart configuration, precedence, restarts, metrics | `deploy/collector-for-kafka-kubernetes-configure-helm.md` | Move | Moved |
 | `docs/helm/configuration.md` — Collector log settings | `monitor/collector-for-kafka-collector-logs.md` | Split | Moved |
