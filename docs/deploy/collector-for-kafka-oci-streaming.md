@@ -1,40 +1,34 @@
-# SOC4Kafka Installation Guide - OCI Streaming to Splunk
+# Deploy the Splunk Distribution of OpenTelemetry Collector for Kafka for OCI Streaming
 
-This guide walks you through installing and configuring the **Splunk OpenTelemetry Collector for
-Kafka (SOC4Kafka)** on an OCI Ubuntu VM so that records published to an **OCI Streaming** stream are
-forwarded to **Splunk** via HTTP Event Collector (HEC).
+Install and configure the Splunk Distribution of OpenTelemetry Collector for Kafka on an OCI Ubuntu VM to forward records from an OCI Streaming stream to Splunk by using HTTP Event Collector (HEC).
 
-It covers two deployment forms - pick the one that fits your environment:
+Choose the deployment method that fits your environment:
 
-- **Option A - Bare metal / systemd**: the collector binary runs directly on the VM. No container
-  runtime required. Good for a simple single-host setup.
-- **Option B - Kubernetes**: the collector runs as a Kubernetes pod via the official Helm chart. Good
-  if you want pod-level isolation and rolling updates.
+- **Systemd**: Run the collector binary directly on the VM. Choose this method for a simple, single-host deployment when you do not want to install a container runtime or Kubernetes.
+- **Kubernetes**: Run the collector in a Kubernetes pod by using the Helm chart. Choose this method when you want pod isolation and Kubernetes-managed rolling updates.
 
 ---
 
-## Before you start - values to have ready
+## Gather the required values
 
-Collect the following before touching the VM. Everything in this document is a
-`<PLACEHOLDER>` - substitute your real values as you go.
+Collect the following values before you configure the VM. Replace each `<PLACEHOLDER>` with your value.
 
-### From OCI Console
+### From the OCI Console
 
 | What you need | Where to find it | Placeholder |
 |---|---|---|
 | Kafka bootstrap endpoint | Streaming → Stream Pools → select pool → **Kafka Connection Settings** → Bootstrap Servers | `<KAFKA_BOOTSTRAP>` |
 | Kafka SASL username | Same page → **Username** (fully formed, ready to copy) | `<SASL_USERNAME>` |
-| OCI auth token (SASL password) | Profile → User Settings → **Auth Tokens** → Generate Token - copy immediately, shown once | `<OCI_AUTH_TOKEN>` |
+| OCI auth token (SASL password) | Profile → User Settings → **Auth Tokens** → Generate Token. Copy the token when it appears; OCI displays it only once. | `<OCI_AUTH_TOKEN>` |
 | Stream / topic name | Streaming → **Streams** | `<TOPIC>` |
 
 !!! info 
-    **Handling special characters:** the OCI auth token may contain characters like `&`, `|`, `>`, 
-    `` ` ``, or `!` - no need to regenerate the token if it does. Just make sure to keep the single
-    quotes shown around `KAFKA_SASL_PASS` and `--from-literal=...` below when you set it: without
-    them, the **shell** interprets those characters itself and can silently truncate or empty out
-    the value before it ever reaches the collector.
+    **Preserve special characters:** The OCI auth token can contain characters such as `&`, `|`, `>`,
+    `` ` ``, or `!`. Keep the single quotes shown around `KAFKA_SASL_PASS` and `--from-literal=...`
+    when you enter the token. Without the quotes, the shell can interpret the characters and change
+    the value before passing it to the collector.
 
-### From Splunk
+### From the Splunk platform
 
 | What you need | Where to find it | Placeholder |
 |---|---|---|
@@ -43,26 +37,27 @@ Collect the following before touching the VM. Everything in this document is a
 | Target index | Settings → **Indexes** | `<SPLUNK_INDEX>` |
 
 !!! info 
-    **HEC prerequisites:** before installing the collector, make sure HEC is globally enabled
-    (**Global Settings → Enabled**) and that **Indexer Acknowledgement is OFF** - SOC4Kafka does not
-    implement HEC ACK and the connection will stall if it is on.
+    **HEC prerequisites:** Before you install the collector, make sure that HEC is globally enabled
+    (**Global Settings → Enabled**) and that **Indexer Acknowledgement is OFF**. The Splunk Distribution of OpenTelemetry Collector for Kafka
+    does not implement HEC acknowledgments. If you enable them, the connection stalls.
 
 ### Choose a consumer group name
 
-Pick a short, unique string for `<CONSUMER_GROUP>` (e.g. `soc4kafka-v1`). This name identifies your
-collector instance to the Kafka broker. **Use a fresh name** - reusing a group ID from a previous
-failed install can cause the collector to loop indefinitely on startup.
+Set `<CONSUMER_GROUP>` to a short, unique string, such as `soc4kafka-v1`. Kafka uses this name to identify the collector instance. Use a new name for each installation. Reusing the group ID from a failed installation can cause the collector to loop during startup.
 
 ---
 
-## Option A - Bare metal / systemd
+## Choose an installation method
+
+Follow [the systemd procedure](#oci-streaming-on-ubuntu-with-systemd) on an Ubuntu VM, or [the MicroK8s and Helm procedure](#deploy-to-oci-streaming-with-microk8s-and-helm) on a single-node Kubernetes VM.
+
+## OCI Streaming on Ubuntu with systemd
 
 All commands run on the OCI VM over SSH.
 
 ### A.1 Install dependencies
 
-These packages are used for connectivity testing and producing test messages. They are not required
-for the collector itself to run.
+These packages support connectivity tests and test message production. The Splunk Distribution of OpenTelemetry Collector for Kafka does not require them to run.
 
 ```bash
 sudo apt-get update
@@ -71,8 +66,7 @@ sudo apt-get install -y kafkacat curl netcat-openbsd
 
 ### A.2 Download the collector binary
 
-SOC4Kafka releases are published on GitHub. Download the binary for your target version, make it
-executable, and place it in a working directory.
+Splunk Distribution of OpenTelemetry Collector for Kafka releases are published on GitHub. Download the binary for your target version, make it executable, and place it in a working directory.
 
 ```bash
 mkdir -p ~/soc4kafka && cd ~/soc4kafka
@@ -80,9 +74,9 @@ wget https://github.com/signalfx/splunk-otel-collector/releases/download/v0.158.
 chmod +x otelcol_linux_amd64
 ```
 
-!!! note 
+!!! note
     Check the [releases page](https://github.com/splunk/splunk-opentelemetry-collector-for-kafka/releases)
-    for newer versions and substitute `v0.158.0` accordingly.
+    for newer versions and replace `v0.158.0` with the version you want to install.
 
 ### A.3 Create the secrets file
 
@@ -105,10 +99,10 @@ chmod 600 ~/soc4kafka/collector.env
     Wrap `KAFKA_SASL_PASS` in **single quotes** so the shell does not expand special characters in the
     token value.
 
-### A.4 Create the collector config
+### A.4 Create the collector configuration
 
 Create `~/soc4kafka/config.yaml` with the content below. Substitute `<CONSUMER_GROUP>` and `<TOPIC>`
-directly in the file - these are not secrets and do not need to be in the env file.
+directly in the file. These values are not secrets and do not need to be in the environment file.
 
 ```yaml
 receivers:
@@ -164,8 +158,7 @@ Check that the VM can reach Splunk HEC:
 nc -vz <SPLUNK_HEC_HOST> 8088
 ```
 
-Check that the VM can reach the Kafka broker and authenticate (this is the single best end-to-end
-connectivity test - success means DNS, routing, TLS, and SASL all work):
+Check that the VM can reach and authenticate with the Kafka broker. This end-to-end test confirms that DNS, routing, TLS, and SASL work:
 
 ```bash
 set -a; source ~/soc4kafka/collector.env; set +a
@@ -177,8 +170,7 @@ kafkacat -L \
   -X sasl.password="$KAFKA_SASL_PASS" | head -20
 ```
 
-You should see `<TOPIC>` listed in the output. If it times out or returns an auth error, resolve that
-before proceeding - the collector will exhibit the same failure.
+The output should list `<TOPIC>`. If the command times out or returns an authentication error, resolve the issue before continuing. The collector will encounter the same failure.
 
 ### A.6 Start the collector
 
@@ -202,10 +194,9 @@ Everything is ready. Begin running and processing data.
 If you see `NOT_COORDINATOR` repeating, stop the collector, change `group_id` and `client_id` to a
 new name in `config.yaml`, and restart.
 
-### A.7 Install as a systemd service
+### A.7 Install the collector as a systemd service
 
-Once the collector starts cleanly, promote it to a managed service so it restarts automatically and
-its logs are captured by journald.
+After the collector starts without errors, install it as a managed service. The service restarts automatically, and journald captures its logs.
 
 Copy files into place:
 
@@ -256,7 +247,7 @@ sudo systemctl enable --now soc4kafka
 sudo journalctl -u soc4kafka -f
 ```
 
-### A.8 Send a test message and confirm in Splunk
+### A.8 Send a test message and confirm it appears in Splunk
 
 ```bash
 set -a; source ~/soc4kafka/collector.env; set +a
@@ -270,38 +261,28 @@ printf '{"hello":"splunk","ts":"%s"}\n' "$(date -u +%FT%TZ)" | \
     -X sasl.password="$KAFKA_SASL_PASS"
 ```
 
-In Splunk search:
+In Splunk, search for the event:
 
 ```
 index=<SPLUNK_INDEX> sourcetype=oci:streaming:text
 ```
 
-You can also monitor collector throughput from the VM:
+You can also monitor collector throughput from the VM by running:
 
 ```bash
 curl -s http://127.0.0.1:8888/metrics | grep -E 'otelcol_(receiver_accepted|exporter_sent)'
 ```
 
-`receiver_accepted_log_records_total` should increment when you produce; `exporter_sent_log_records_total`
-should follow shortly after as the batch flushes.
+The `receiver_accepted_log_records_total` value increases when you produce a message. The `exporter_sent_log_records_total` value increases after the collector sends the batch.
 
----
+## Deploy to OCI Streaming with MicroK8s and Helm
 
-## Option B - Kubernetes
-
-All commands run on the OCI VM over SSH.
+Run all commands from an SSH session on the OCI VM.
 
 !!! info
-    **Kubernetes distribution note:** this guide uses **MicroK8s** as a representative example of a
-    single-node Kubernetes setup. The SOC4Kafka Helm chart is distribution-agnostic and will run on
-    any conformant Kubernetes cluster (EKS, GKE, AKS, K3s, vanilla kubeadm, etc.). If you are using
-    a different distribution, substitute your cluster's `kubectl` and `helm` commands for the
-    `microk8s kubectl` and `microk8s helm3` equivalents used below. The DNS configuration (step B.1),
-    firewall fix (step B.2), and the OCI-specific CIDRs in the step B.2 callout are specific to
-    MicroK8s on an OCI Ubuntu VM and will differ on other distributions or cloud providers.
+    **Kubernetes distribution:** This procedure uses **MicroK8s** as an example of a single-node Kubernetes setup. The Splunk Distribution of OpenTelemetry Collector for Kafka Helm chart runs on any conformant Kubernetes cluster, including EKS, GKE, AKS, K3s, and kubeadm. If you use another distribution, replace the `microk8s kubectl` and `microk8s helm3` commands with the commands for your cluster. The DNS configuration in step B.1, firewall configuration in step B.2, and OCI-specific CIDR ranges apply to MicroK8s on an OCI Ubuntu VM. They differ on other distributions and cloud providers.
 
-    MicroK8s ships its own bundled `helm3` and `kubectl`. The commands below use `microk8s helm3` and
-    `microk8s kubectl` - not the system-level tools.
+    MicroK8s includes its own `helm3` and `kubectl` commands. This procedure uses `microk8s helm3` and `microk8s kubectl` instead of system-level commands.
 
 ### B.1 Install MicroK8s
 
@@ -312,7 +293,7 @@ sudo chown -f -R "$USER" ~/.kube
 newgrp microk8s
 ```
 
-Enable the addons the chart needs:
+Enable the add-ons required by the chart:
 
 ```bash
 microk8s enable hostpath-storage
@@ -320,31 +301,25 @@ microk8s enable rbac
 microk8s enable metrics-server
 ```
 
-Enable DNS pinned to the **OCI VCN resolver**. This resolver handles both private OCI names (your
-broker's private endpoint) and public names (your Splunk HEC host) - using it as the single
-upstream is important:
+Configure DNS to use the **OCI VCN resolver**. It resolves private OCI names, such as your broker's private endpoint, and public names, such as your Splunk HEC host. Use it as the only upstream resolver:
 
 ```bash
 microk8s enable dns:169.254.169.254
 ```
 
 !!! warning
-    Do **not** add a public resolver like `8.8.8.8` alongside it. The OCI Streaming broker resolves
-    to a private VCN IP, and a public resolver will return NXDOMAIN for it, causing intermittent
-    connection failures.
+    Do not add a public resolver such as `8.8.8.8`. The OCI Streaming broker resolves to a private VCN IP address, which a public resolver cannot resolve. Adding a public resolver can cause intermittent connection failures.
 
-### B.2 Fix the OCI host firewall
+### B.2 Configure the OCI host firewall
 
-The OCI Ubuntu image ships a firewall rule that blocks forwarded traffic. This prevents pods from
-reaching the Kubernetes API server, causing CoreDNS and Calico to crash-loop. Remove the rule:
+The OCI Ubuntu image includes a firewall rule that blocks forwarded traffic. This prevents pods from reaching the Kubernetes API server and causes CoreDNS and Calico to restart repeatedly. Remove the rule:
 
 ```bash
 sudo iptables -L FORWARD -n --line-numbers | head
 sudo iptables -D FORWARD 1    # removes the REJECT rule (usually at position 1)
 ```
 
-Pods recover within about 60 seconds. **Make the fix permanent** - the rule returns on reboot
-otherwise:
+Pods recover within about 60 seconds. Make the change permanent; otherwise, the rule returns after a reboot:
 
 ```bash
 # Edit the persisted ruleset and remove the REJECT line, then reload:
@@ -353,16 +328,15 @@ sudo grep -nE 'REJECT|icmp-host-prohibited' /etc/iptables/rules.v4
 sudo netfilter-persistent reload
 ```
 
-On a test VM you can instead disable the OS firewall entirely - the OCI VCN security list still
-controls ingress at the cloud layer:
+On a test VM, you can turn off the OS firewall. The OCI VCN security list still controls ingress at the cloud layer:
 
 ```bash
 sudo systemctl disable --now netfilter-persistent
 ```
 
 !!! warning
-    **If Calico still crash-loops** after removing the FORWARD rule, your image also has an INPUT-chain
-    REJECT that blocks pod traffic to the Kubernetes API server VIP (`10.152.183.1`) and pod CIDR
+    **If Calico continues to restart** after you remove the FORWARD rule, the image also has an INPUT-chain
+    REJECT rule that blocks pod traffic to the Kubernetes API server VIP (`10.152.183.1`) and pod CIDR
     (`10.1.0.0/16`). These are standard MicroK8s defaults. Allow them:
 
     `sudo iptables -I INPUT 4 -s 10.152.183.0/24 -j ACCEPT`
@@ -372,10 +346,10 @@ sudo systemctl disable --now netfilter-persistent
     `sudo iptables -I INPUT 4 -s 10.1.0.0/16    -j ACCEPT`
 
     `sudo iptables -I INPUT 4 -d 10.1.0.0/16    -j ACCEPT`
-    
-    The `-I INPUT 4` inserts before the catch-all REJECT. Confirm position with
+
+    The `-I INPUT 4` option inserts the rule before the catch-all REJECT. Confirm the position by running
     `sudo iptables -L INPUT -n --line-numbers` first. If you customised MicroK8s CIDRs, replace the
-    ranges with your actual service CIDR (`grep service-cluster-ip-range /var/snap/microk8s/current/args/*`)
+    ranges with your service CIDR (`grep service-cluster-ip-range /var/snap/microk8s/current/args/*`)
     and pod CIDR (`grep cluster-cidr /var/snap/microk8s/current/args/*`).
 
 ### B.3 Create the namespace
@@ -384,10 +358,9 @@ sudo systemctl disable --now netfilter-persistent
 microk8s kubectl create namespace soc4kafka
 ```
 
-### B.4 Create the Kubernetes secrets
+### B.4 Create the Kubernetes Secrets
 
-The collector reads credentials from Kubernetes Secrets injected as environment variables - they
-never appear in the Helm values file.
+The collector reads credentials from Kubernetes Secrets injected as environment variables. This keeps the credentials out of the Helm values file.
 
 ```bash
 # Kafka SASL password - the key name "password" is required by the chart
@@ -399,12 +372,11 @@ microk8s kubectl -n soc4kafka create secret generic splunk-hec \
   --from-literal=splunk-hec-token='<SPLUNK_HEC_TOKEN>'
 ```
 !!! warning
-    Wrap values in **single quotes** to prevent the shell from interpreting special characters.
+    Enclose values in **single quotes** to prevent the shell from interpreting special characters.
 
 ### B.5 Create `values.yaml`
 
-Create this file on the VM (e.g. at `~/soc4kafka_microk8s/values.yaml`) before running the Helm
-install. Substitute all `<PLACEHOLDERS>` with your real values.
+Create this file on the VM, for example, at `~/soc4kafka_microk8s/values.yaml`, before you install the chart. Replace each `<PLACEHOLDER>` with the corresponding value.
 
 ```yaml
 replicaCount: 1
@@ -482,18 +454,17 @@ microk8s helm3 upgrade --install soc4kafka \
 ```
 
 !!! warning
-    Always include `-n soc4kafka`. Without it the release lands in the `default` namespace and will be
-    difficult to find.
+    Include `-n soc4kafka` in the command. Otherwise, Helm installs the release in the `default` namespace.
 
 ### B.7 Verify the deployment
 
-Check that all pods are running:
+Confirm that all pods are running:
 
 ```bash
 microk8s kubectl get pods -A
 ```
 
-Tail the collector logs and look for the healthy startup sequence:
+View the collector logs and confirm that the startup sequence completes:
 
 ```bash
 microk8s kubectl -n soc4kafka logs -f \
@@ -510,12 +481,11 @@ franz   assigning partitions      ...
 ```
 
 !!! note
-    If you see `NOT_COORDINATOR` repeating, change `client_id` and `group_id` to a new name in
-    `values.yaml` and re-run the `helm3 upgrade` command from step B.6.
+    If `NOT_COORDINATOR` repeats, change `client_id` and `group_id` to a new name in `values.yaml`. Then run the `helm3 upgrade` command from step B.6 again.
 
-### B.8 Send a test message and confirm in Splunk
+### B.8 Send a test message and confirm it appears in Splunk
 
-Produce a message from the VM (install `kafkacat` first if needed: `sudo apt-get install -y kafkacat`):
+Produce a message from the VM. If `kafkacat` is not installed, install it by running `sudo apt-get install -y kafkacat`:
 
 ```bash
 echo "hello-from-microk8s-$(date -Is)" | kafkacat -P \
@@ -528,9 +498,9 @@ echo "hello-from-microk8s-$(date -Is)" | kafkacat -P \
   -X ssl.ca.location=/etc/ssl/certs/ca-certificates.crt
 ```
 
-Alternatively use the OCI Console: **Streaming → Streams → select stream → Produce Test Message**.
+Alternatively, use the OCI Console and select **Streaming → Streams → your stream → Produce Test Message**.
 
-In Splunk search:
+In Splunk, search for the event:
 
 ```
 index=<SPLUNK_INDEX> sourcetype="oci:streaming:text" earliest=-5m
