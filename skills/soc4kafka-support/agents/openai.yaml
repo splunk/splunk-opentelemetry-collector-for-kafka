@@ -1,0 +1,4 @@
+interface:
+  display_name: "SOC4Kafka Support"
+  short_description: "Troubleshoot SOC4Kafka issues with customer support"
+  default_prompt: "Help me troubleshoot a SOC4Kafka collector issue. Start by asking for the key redacted artifacts, then guide me through diagnosis and escalation."
