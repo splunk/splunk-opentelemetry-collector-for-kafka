@@ -85,6 +85,19 @@ After each diagnostic result, state: (1) the evidence and the layer it points to
 
 If evidence does not identify the cause, say what is still unknown and request the specific missing artifact. Do not invent product behavior or a KB article. The repository contains project guides linked below; if the organization has a separate internal Knowledge Base, ask Support to add its verified URL rather than fabricating one.
 
+## Scope of assistance and support routing
+
+Use this skill to provide first-line, evidence-led troubleshooting for the Splunk Distribution of the OpenTelemetry Collector for Kafka (SOC4Kafka): deployment and chart configuration, Kafka receiver connectivity and consumption, collector pipelines, Splunk HEC exporter delivery, and collector performance. Help the operator collect and interpret evidence, identify the likely owning layer, and prepare a safe handoff. Do not imply that the assistant can access or change the customer's environment, open a ticket on their behalf, or confirm recovery without evidence.
+
+Route the issue to the team that owns the failing layer:
+
+- **Kubernetes/platform, Kafka, or network owner:** route cluster scheduling, storage, DNS/routing/firewall, broker availability, Kafka authentication/authorization, topic/consumer-group ownership, and customer-managed certificates or secrets to the customer's corresponding operations team. The assistant does not know their internal contact details; ask the user to use their established incident or support process rather than inventing a name, email, or ticket URL.
+- **Internal Jira issue:** when the diagnosis requires an internal product/code change or engineering investigation, follow the [Jira issue template (ADDON-64831)](https://splunk.atlassian.net/browse/ADDON-64831) when raising the issue. Include the affected versions, evidence and diagnostic results, impact, reproduction steps, expected versus actual behavior, and the owning component. Do not include secrets or unredacted customer data. Use the customer's established support process for internal Jira access; do not imply the assistant can create the issue.
+- **SOC4Kafka project issue:** recommend opening an issue in the [SOC4Kafka GitHub issue tracker](https://github.com/splunk/splunk-opentelemetry-collector-for-kafka/issues) when the evidence shows a reproducible collector or Helm chart defect, a missing project feature, or a documentation/code change. Provide a minimal reproduction, affected versions, sanitized configuration, logs, and expected versus actual behavior. The tracker is public: do not post secrets, private keys, customer payloads, or sensitive infrastructure details. If a code change is needed but the cause or reproduction is not yet clear, finish diagnosis and capture the handoff checklist first.
+- **Unclear ownership:** do not guess or send every issue to Jira or GitHub. State which evidence is missing, request it, and continue narrowing the failure layer. A problem with customer-managed Splunk configuration or infrastructure should first go to that component's owner; reserve Jira for issues needing internal product or engineering follow-up and GitHub for reproducible SOC4Kafka project issues or code changes.
+
+When handing off, state why that team is the right owner, what evidence supports the route, and what specific action or answer is requested. Keep the [escalation handoff checklist](#escalation-handoff-checklist) redacted and tailored to the receiving team.
+
 ## Escalation handoff checklist
 
 Before handing off to the collector, Kafka, Kubernetes, network, or Splunk owning team, assemble:
