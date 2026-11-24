@@ -32,8 +32,8 @@ Not supported features which are available in previous version of Splunk Connect
 Choose an installation method that fits your environment:
 
 - **Kubernetes (Helm):** Use the [Helm chart](helm-chart/splunk-opentelemetry-collector-for-kafka/README.md) to deploy SOC4Kafka on Kubernetes. See the chart [Installation Guide](https://splunk.github.io/splunk-opentelemetry-collector-for-kafka/main/helm/installation/) for install and upgrade steps.
-- **Automated (Ansible):** See the [Quickstart Guide](https://splunk.github.io/splunk-opentelemetry-collector-for-kafka/main/quickstart_guide/) for automated installation.
-- **OCI Streaming:** See the [OCI Streaming](https://splunk.github.io/splunk-opentelemetry-collector-for-kafka/main/oci_installation/) for Oracle Cloud Infrastructure installation.
+- **Automated (Ansible):** See the [Quickstart Guide](https://splunk.github.io/splunk-opentelemetry-collector-for-kafka/main/deploy/collector-for-kafka-ansible-install/) for automated installation.
+- **OCI Streaming:** See the [OCI Streaming](https://splunk.github.io/splunk-opentelemetry-collector-for-kafka/main/deploy/collector-for-kafka-oci-streaming/) for Oracle Cloud Infrastructure installation.
 - **Manual:** Follow the steps below to run the collector from a downloaded package and config file.
 
 ### Download Splunk OTel Collector package
