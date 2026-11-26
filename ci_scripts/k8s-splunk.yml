@@ -36,9 +36,6 @@ metadata:
     app: splunk
 spec:
   hostNetwork: true
-  securityContext:
-    runAsUser: 0
-    runAsGroup: 0
   containers:
     - name: splunk
       image: docker.io/__SPLUNK_IMAGE__
