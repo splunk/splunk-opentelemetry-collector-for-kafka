@@ -36,6 +36,9 @@ metadata:
     app: splunk
 spec:
   hostNetwork: true
+  securityContext:
+    runAsUser: 41812
+    runAsGroup: 41812
   containers:
     - name: splunk
       image: docker.io/__SPLUNK_IMAGE__
@@ -56,6 +59,8 @@ spec:
           value: --accept-license
         - name: SPLUNK_PASSWORD
           value: __SPLUNK_PASSWORD__
+        - name: SPLUNK_HOME_OWNERSHIP_ENFORCEMENT
+          value: "false"
       resources:
         requests:
           cpu: 500m
